@@ -1,0 +1,83 @@
+body {
+	font-family: "Trebuchet MS", sans-serif;
+}
+.ui-button, .ui-selectmenu-button {
+	font-size: .8em!important;
+}
+#source {
+    background-color: darkslategrey;
+}
+#output {
+    background-color: black;
+}
+#JSONata_area {
+	background-color: greenyellow;
+}
+.json-formatter {
+	padding: 10px;
+	margin: 20px 0;
+}
+.json-formatter button {
+	float:right;
+}
+div.errors {
+	background-color: red;
+	margin-bottom: 5px;
+}
+.ui-widget-overlay {
+	opacity: .50 !important;
+	filter: Alpha(Opacity=50) !important;
+	background: rgb(50, 50, 50) !important;
+}
+#map { 
+	height: 400px;
+	width: 600px;
+}
+.marker {
+	background-color: red;
+	width: 15px;
+	height: 15px;
+	border-radius: 50%;
+	cursor: pointer;
+}
+.mapboxgl-popup {
+	max-width: 200px;
+}
+.mapboxgl-popup-content {
+	text-align: left;
+	font-family: 'Open Sans', sans-serif;
+}
+.mapboxgl-popup-content h3 a {
+    background-image: url(./images/external-ltr.svg);
+    background-position: center right;
+    background-repeat: no-repeat;
+    padding-right: 13px;
+}
+div.popup_links {
+	max-height: 300px;
+    font-style: italic;
+    overflow-x: auto;
+}
+a.popup_link.wikidata{
+    margin-right: 10px;
+    background-color: beige;
+}
+.popup_link img {
+	height: 40px;	
+}
+.mapboxgl-popup-close-button {
+	font-size: 2em!important;
+    font-weight: bold;
+}
+.APIButton span {
+	color: red;
+    font-weight: bold;
+}
+.datafile_url {
+    font: inherit;
+    color: inherit;
+    text-align: left!important;
+    outline: none;
+    cursor: text;
+    width: 170px;
+}

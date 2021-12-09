@@ -1,0 +1,103 @@
+{
+  "@context": [
+    "http://schema.org/",
+    {
+      "anno": "http://www.w3.org/ns/anno.jsonld/",
+      "lpo": "http://linkedpasts.org/ontology/lpo.jsonld/"
+    },
+    {
+      "Annotation": "http://schema.org/Dataset",
+      "body": "http://schema.org/isRelatedTo",
+      "earliest": "http://schema.org/startDate",
+      "geometry": "http://schema.org/geo",
+      "id": "http://schema.org/identifier",
+      "latest": "http://schema.org/endDate",
+      "motivation": "lpo:motivation",
+      "relation": "lpo:relation",
+      "target": "http://schema.org/subjectOf",
+      "title": "http://schema.org/name",
+      "traces": "http://schema.org/hasPart",
+      "when": "http://schema.org/temporalCoverage"
+    }
+  ],
+  "@type": "Dataset",
+  "_comment": "Aliasing allows use of the Linked Traces schema namespace",
+  "created": "2021-11-01",
+  "creator": {
+    "@type": "Person",
+    "name": "Stephen Gadd",
+    "url": "https://orcid.org/0000-0003-3060-0181"
+  },
+  "description": "DATA MODEL STILL UNDER DEVELOPMENT: Dummy data assembled for the purpose of developing and testing indexing of schema.org, using https://search.google.com/test/rich-results.",
+  "isAccessibleForFree": true,
+  "license": "https://creativecommons.org/licenses/by/4.0/",
+  "name": "LaNC Test Data",
+  "traces": [
+    {
+      "body": [
+        {
+          "additionalType": "Place",
+          "geometry": {
+            "@type": "GeoCoordinates",
+            "addressCountry": "TR",
+            "latitude": "41.008239047196604",
+            "longitude": "28.973398552441676"
+          },
+          "id": "https://whgazetteer.org/places/12345979",
+          "relation": "locationCreated",
+          "title": "Constantinople",
+          "when": [
+            {
+              "earliest": "0400",
+              "latest": "0700"
+            }
+          ]
+        },
+        {
+          "additionalType": "Place",
+          "geometry": {
+            "@type": "GeoCoordinates",
+            "addressCountry": "GB",
+            "latitude": "51.002024",
+            "longitude": "-2.6827508"
+          },
+          "relation": "findspot",
+          "title": "Ilchester",
+          "when": [
+            {
+              "earliest": "1900",
+              "latest": "2009"
+            }
+          ]
+        },
+        {
+          "additionalType": "Person",
+          "identifier": "https://www.wikidata.org/wiki/Q173470",
+          "lpo:type": "seeAlso",
+          "title": "Anastasius I"
+        },
+        {
+          "additionalType": "LinkRole",
+          "identifier": "http://xxxx-some-url-xxxx?Other_Annotation_or_Target",
+          "linkRelationship": "Could be any text or controlled vocabulary item describing the relationship",
+          "lpo:type": "seeAlso"
+        }
+      ],
+      "description": "Annotation linking a data item to various resources",
+      "id": "http://xxxx-some-url-xxxx",
+      "motivation": "linking",
+      "name": "Annotation",
+      "target": {
+        "description": "Anastasius I (491-518), Constantinople,follis (512-7). Pierced.",
+        "id": "https://www.academia.edu/11482638/_Early_Byzantine_copper_coins_found_in_Britain_A_review_of_new_finds_recorded_with_the_Portable_Antiquities_Scheme_Ancient_History_Numismatics_and_Epigraphy_in_the_Mediterranean_World_ed_Og%C5%ADz_Tekin_Yayinlari_Istanbul_2009_263_274",
+        "lpo:type": [
+          "Artefact",
+          "Coin"
+        ],
+        "title": "Early Byzantine copper coins found in Britain",
+        "type": "CreativeWork"
+      },
+      "type": "Annotation"
+    }
+  ]
+}

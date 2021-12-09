@@ -1,0 +1,40 @@
+#Nearest cultural heritage sites
+#View results at https://query.wikidata.org/
+#defaultView:Map{"hide":"?geo", "markercluster": {}}
+SELECT DISTINCT ?site ?siteDescription ?geo ?distance (GROUP_CONCAT(DISTINCT ?classLabel_;separator=" | ") as ?classLabel) (SAMPLE(?image_) AS ?image) ?siteLabel
+    WHERE {
+          {?site wdt:P31/wdt:P279* wd:Q839954 .} # archaeological site
+          UNION {?site wdt:P31/wdt:P279* wd:Q916475 .} # historical monument
+          UNION {?site wdt:P31/wdt:P279* wd:Q676050 .} # historical city centre
+          UNION {?site wdt:P31/wdt:P279* wd:Q1081138 .} # historic site
+          UNION {?site wdt:P31/wdt:P279* wd:Q358 .} # heritage site
+          UNION {?site wdt:P31/wdt:P279* wd:Q15243209 .} # historic district
+          UNION {?site wdt:P31/wdt:P279* wd:Q4895508 .} # battlefield
+          UNION {?site wdt:P31/wdt:P279* wd:Q22674925 .} # former populated place
+          UNION {?site wdt:P31/wdt:P279* wd:Q35112127 .} # historic building
+          UNION {?site wdt:P31/wdt:P279* wd:Q5773747 .} # historic house
+          UNION {?site wdt:P31/wdt:P279* wd:Q15661340 .} # ancient city
+          UNION {?site wdt:P31/wdt:P279* wd:Q2434238 .} # heritage property
+          UNION {?site p:P709 ?statement0. ?statement0 (ps:P709) _:anyValueP709.} # Historic Scotland ID
+          UNION {?site p:P718 ?statement0. ?statement0 (ps:P718) _:anyValueP718.} # Canmore ID
+          UNION {?site p:P1460 ?statement0. ?statement0 (ps:P1460) _:anyValueP1460.} # NIEA Listed Building ID (Northern Ireland)
+          UNION {?site p:P1459 ?statement0. ?statement0 (ps:P1459) _:anyValueP1459.} # CADW Building ID
+          UNION {?site p:P3007 ?statement0. ?statement0 (ps:P3007) _:anyValueP3007.} # CADW Monument ID
+          UNION {?site p:P1216 ?statement0. ?statement0 (ps:P1216) _:anyValueP1216.} # National Heritage List for England
+          ?site wdt:P31 ?class.
+          SERVICE wikibase:around { 
+                ?site wdt:P625 ?geo . 
+                bd:serviceParam wikibase:center "Point(%%%lng%%% %%%lat%%%)"^^geo:wktLiteral . # Option: Specify location
+                bd:serviceParam wikibase:radius "%%%radius%%%" . 
+                bd:serviceParam wikibase:distance ?distance .
+          }
+          # Retrieve site names in English (default) or Welsh
+          SERVICE wikibase:label { bd:serviceParam wikibase:language "en,cy" .
+                                 ?class rdfs:label ?classLabel_ . 
+                                 ?site rdfs:label ?siteLabel . 
+                                 ?site schema:description ?siteDescription . }
+          OPTIONAL { ?site wdt:P18 ?image. }
+    } 
+    GROUP BY  ?site ?siteDescription ?geo ?distance ?image ?siteLabel
+ORDER BY ASC(?distance)
+LIMIT 20

@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+ <head>
+	<meta charset="UTF-8">
+	<title>LaNC Data Converter</title>
+	<meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no">
+	<script src="./js/jquery-3.6.0.min.js"></script>
+	<script src="./js/jquery-ui.min.js"></script>
+	<script src="./js/jsonata.min.js">// From https://github.com/jsonata-js/jsonata</script>
+	<script src="./js/papaparse.min.js">// From https://github.com/mholt/PapaParse</script>
+	<script src="./js/json-formatter.umd.min.js">// From https://github.com/mohsen1/json-formatter-js</script>
+	<script src="./js/uuidv4.min.js">// From https://github.com/uuidjs/uuid</script>
+	<script src="./js/jquery.loadingModal.min.js">// From https://github.com/do-web/jquery-loadingModal</script>
+	<script src="./js/data-converter.js"></script>
+	<link rel="stylesheet" href="./css/jquery-ui.min.css">
+	<link rel="stylesheet" href="./css/jquery-ui.theme.min.css">
+	<link rel="stylesheet" href="./css/jquery.loadingModal.min.css">
+	<link rel="stylesheet" href="./css/dc.css">
+	<link href="./css/mapbox-gl.css" rel="stylesheet">
+	<script src="./js/mapbox-gl.js"></script>
+	<base target="_blank">
+</head>
+<body>
+	<label for="file_source">Choose a data file:</label>
+	<input type="file" id="file_source" name="file_source" title="Delimited text filenames must end with .csv or .tsv"> 
+	or fetch from URL: <input type="text" id="datafile_url" title="Delimited text filenames must end with .csv or .tsv" placeholder="Datafile URL (JSON/CSV/TSV)"/><button id="fetch">Fetch</button> 
+	or load example: <select name="examples" id="examples"></select>
+	<div id="source" class="json-formatter"></div>
+	<label for="expression">Conversion type:</label>
+	<select name="expression" id="expression"></select>
+	<div id="output" class="json-formatter"></div>
+	<div id="modal" title="JSONata Expression"><p>Paste unescaped JSONata expression here: converted code will be copied to the clipboard and temporarily assigned to the selected conversion type.</p><p>Afterwards, download and replace your mappings.json file to make the assigment permanent.</p><textarea id="JSONata_area" rows="5" cols="67"></textarea></div>
+	<div id="map"></div>
+	<script>
+		// Initialise map
+		mapboxgl.accessToken = 'pk.eyJ1IjoiZG9jdXJhY3kiLCJhIjoiY2t3dnp0NmhkMDhwNzMwczhwa2VicGJoeSJ9.Gf3x44EB9xZfotN-gC0DBQ';
+		map = new mapboxgl.Map({
+		    container: 'map',
+		    style: 'https://raw.githubusercontent.com/docuracy/LaNC-peripleo-lite/main/src/map/nls.json',
+		    center: [0, 51],
+		    zoom: 9 
+		});
+		map
+			.addControl(new mapboxgl.FullscreenControl())
+			.addControl(new mapboxgl.NavigationControl());
+	</script>
+</body>
+</html>
