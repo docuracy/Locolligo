@@ -2,4 +2,4 @@
 ## ***Locolligo***: Geodata Curator
 * Active at https://docuracy.github.io/LaNC-Data-Processor/
 * See also: [Development of a LaNC Data Model](https://docs.google.com/document/d/1yhVAqpPnKJ9SWfl-yg2zfMyPMTDNkerI7lCGF-pB7I8/edit?usp=sharing)
-* See also: [LaNC Dataset Processor](https://docs.google.com/document/d/1H0KmYf405QS2ECozHpmAFsLz2MbXd_3qLKXBmLFCoJc/edit?usp=sharing)
+* See also: [Locolligo: Geodata Curator](https://docs.google.com/document/d/1H0KmYf405QS2ECozHpmAFsLz2MbXd_3qLKXBmLFCoJc/edit?usp=sharing)
