@@ -1,3 +1,7 @@
+<p align="right" width="100%">
+    <img width="25%" src="/images/LaNC-logo.png" />
+</p>
+
 # [Locating a National Collection](https://www.nationalcollection.org.uk/Foundation-Projects#:~:text=Locating%20a%20National%20Collection)
 ## ***Locolligo***: Geodata Curator
 A single-page, browser-based web application to facilitate the formatting, linking, and geolocation of datasets, with a particular focus on Cultural Heritage.
