@@ -8,6 +8,6 @@ This is part of the AHRC-funded [Locating a National Collection](https://tanc-ah
 
 Thanks to various project partners, who may retain copyright in their respective sample datasets:
 
-* Historic Environment Scotland - Scottish Charity No. SC045925 © Crown copyright and database right 2020.
-* Historic England - contains Ordnance Survey data © Crown copyright and database right 2020. The most recent publicly available Historic England GIS Data can be obtained from http://www.HistoricEngland.org.uk.
-* Portable Antiquities Scheme - linked images Courtesy of the Portable Antiquities Scheme - © The British Museum.
+* [Historic Environment Scotland](https://www.historicenvironment.scot/) - Scottish Charity No. SC045925 © Crown copyright and database right 2020.
+* [Historic England](http://www.HistoricEngland.org.uk) - contains Ordnance Survey data © Crown copyright and database right 2020.
+* [The Portable Antiquities Scheme](https://finds.org.uk/) - linked images Courtesy of the Portable Antiquities Scheme - © The British Museum.
