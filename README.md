@@ -12,6 +12,18 @@ This software is an output of the AHRC-funded [Locating a National Collection](h
 * See also: [*Locolligo*: Geodata Curator](https://docs.google.com/document/d/1H0KmYf405QS2ECozHpmAFsLz2MbXd_3qLKXBmLFCoJc/edit?usp=sharing)
 * See also [Peripleo-Lite](https://docuracy.github.io/LaNC-peripleo-lite/public/) (a proof-of-concept prototype that will be developed by LaNC)
 
+Feature development:
+- [x] Linking of [PAS](https://finds.org.uk/) and Wikidata records within a set radius
+- [x] Mapping of Peripleo-LD by JSONata translation to geoJSON
+- [x] Conversion of Recogito LD
+- [x] Conversion of CSV to Peripleo-LD
+- [x] OSGB to WGS84 CRS conversion
+- [x] Standardisation of annotation fragment selectors
+- [x] Implementation of schema.org vocabulary to facilitate dataset indexing and discovery
+- [ ] Curated interlinking of Peripleo-LD datasets
+- [ ] Georeferencing of un-gazetteered places
+- [ ] Pelagios Registry metadata generation
+
 Thanks to various project partners, who may retain copyright in their respective sample datasets used in this software:
 
 * [Historic Environment Scotland](https://www.historicenvironment.scot/) - Scottish Charity No. SC045925 © Crown copyright and database right 2020.
