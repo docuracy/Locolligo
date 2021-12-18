@@ -12,7 +12,7 @@ This software is an output of the AHRC-funded [Locating a National Collection](h
 * See also: [*Locolligo*: Geodata Curator](https://docs.google.com/document/d/1H0KmYf405QS2ECozHpmAFsLz2MbXd_3qLKXBmLFCoJc/edit?usp=sharing)
 * See also [Peripleo-Lite](https://docuracy.github.io/LaNC-peripleo-lite/public/) (a proof-of-concept prototype that will be developed by LaNC)
 
-Feature development:
+## Feature development:
 - [x] Linking of [PAS](https://finds.org.uk/) and Wikidata records within a set radius
 - [x] Mapping of Peripleo-LD by JSONata translation to geoJSON
 - [x] Conversion of Recogito LD
@@ -23,6 +23,8 @@ Feature development:
 - [ ] Curated interlinking of Peripleo-LD datasets
 - [ ] Georeferencing of un-gazetteered places
 - [ ] Pelagios Registry metadata generation
+
+## LaNC Project Partners
 
 Thanks to various project partners, who may retain copyright in their respective sample datasets used in this software:
 
