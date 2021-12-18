@@ -3,6 +3,8 @@
 </p>
 
 # ***Locolligo***: Geodata Curator
+(**Latin** *loca colligo* = 'I connect to places')
+
 A single-page, browser-based javascript application \[*under development*\] to facilitate the formatting, linking, and geolocation of datasets, with a particular focus on Cultural Heritage. It employs standards developed by the [Pelagios Network](https://pelagios.org/), and will (for example) conform datasets for use in the Network's *Peripleo* map visualisation software, and generate metadata for the submission of datasets to the Network's historical geodata Registry.
 
 This software is an output of the AHRC-funded [Locating a National Collection](https://www.nationalcollection.org.uk/Foundation-Projects#:~:text=Locating%20a%20National%20Collection) (LaNC) project, which sits within the AHRC programme: [Towards a National Collection: Opening UK Heritage to the World](https://www.nationalcollection.org.uk/).
