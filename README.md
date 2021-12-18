@@ -20,7 +20,9 @@ This software is an output of the AHRC-funded [Locating a National Collection](h
 - [x] OSGB to WGS84 CRS conversion
 - [x] Standardisation of annotation fragment selectors
 - [x] Implementation of schema.org vocabulary to facilitate dataset indexing and discovery
+- [ ] Linking of Wikipedia articles through GeoNames API
 - [ ] Curated interlinking of Peripleo-LD datasets
+- [ ] Geocoding of place-names using Wikidata, Geonames, and Google APIs
 - [ ] Georeferencing of un-gazetteered places
 - [ ] Pelagios Registry metadata generation
 
