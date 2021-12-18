@@ -13,13 +13,13 @@ This software is an output of the AHRC-funded [Locating a National Collection](h
 * See also [Peripleo-Lite](https://docuracy.github.io/LaNC-peripleo-lite/public/) (a proof-of-concept prototype that will be developed by LaNC)
 
 ## Feature development:
-- [x] Linking of [PAS](https://finds.org.uk/) and Wikidata records within a set radius
-- [x] Mapping of Peripleo-LD by JSONata translation to geoJSON
+- [x] Linking of [PAS](https://finds.org.uk/) and [Wikidata](https://www.wikidata.org/) records within a set radius of a given point
+- [x] Mapping of Peripleo-LD by [JSONata](https://jsonata.org/) translation to geoJSON
 - [x] Conversion of Recogito LD
 - [x] Conversion of CSV to Peripleo-LD
 - [x] OSGB to WGS84 CRS conversion
-- [x] Standardisation of annotation fragment selectors
-- [x] Implementation of schema.org vocabulary to facilitate dataset indexing and discovery
+- [x] Standardisation of annotation fragment selectors (see [here](https://github.com/docuracy/LaNC/blob/main/Peripleo_Fragment_Selector_SVG.js))
+- [x] Implementation of [schema.org](https://schema.org/) vocabulary to facilitate dataset indexing and discovery
 - [ ] Linking of Wikipedia articles through GeoNames API
 - [ ] Curated interlinking of Peripleo-LD datasets
 - [ ] Geocoding of place-names using Wikidata, Geonames, and Google APIs
