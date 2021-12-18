@@ -1,15 +1,15 @@
-<p align="right" width="100%">
+<p align="left" width="100%">
     <img width="25%" src="/images/LaNC-logo.png" />
 </p>
 
-# [Locating a National Collection](https://www.nationalcollection.org.uk/Foundation-Projects#:~:text=Locating%20a%20National%20Collection)
-## ***Locolligo***: Geodata Curator
-A single-page, browser-based web application to facilitate the formatting, linking, and geolocation of datasets, with a particular focus on Cultural Heritage.
+# ***Locolligo***: Geodata Curator
+A single-page, browser-based javascript application to facilitate the formatting, linking, and geolocation of datasets, with a particular focus on Cultural Heritage.
+
 * Active demonstration of prototype at https://docuracy.github.io/Locolligo/
 * See also: [Development of a LaNC Data Model](https://docs.google.com/document/d/1yhVAqpPnKJ9SWfl-yg2zfMyPMTDNkerI7lCGF-pB7I8/edit?usp=sharing)
 * See also: [*Locolligo*: Geodata Curator](https://docs.google.com/document/d/1H0KmYf405QS2ECozHpmAFsLz2MbXd_3qLKXBmLFCoJc/edit?usp=sharing)
 
-This software is an output of the AHRC-funded [Locating a National Collection](https://tanc-ahrc.github.io/LocatingTANC/) project, which sits within the AHRC programme: [Towards a National Collection: Opening UK Heritage to the World](https://www.nationalcollection.org.uk/).
+This software is an output of the AHRC-funded [Locating a National Collection](https://www.nationalcollection.org.uk/Foundation-Projects#:~:text=Locating%20a%20National%20Collection) project, which sits within the AHRC programme: [Towards a National Collection: Opening UK Heritage to the World](https://www.nationalcollection.org.uk/).
 
 Thanks to various project partners, who may retain copyright in their respective sample datasets used in this software:
 
