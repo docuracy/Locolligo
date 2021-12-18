@@ -3,7 +3,7 @@
 </p>
 
 # ***Locolligo***: Geodata Curator
-(**Latin** *loca colligo* = 'I link to places')
+(**Latin** *loc\[os c\]olligo* = 'I link to places')
 
 A single-page, browser-based javascript application \[*under development*\] to facilitate the formatting, linking, and geolocation of datasets, with a particular focus on Cultural Heritage. It employs standards developed by the [Pelagios Network](https://pelagios.org/), and will (for example) conform datasets for use in the Network's *Peripleo* map visualisation software, and generate metadata for the submission of datasets to the Network's historical geodata Registry.
 
