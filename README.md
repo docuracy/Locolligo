@@ -8,7 +8,7 @@
     <img src="/images/colligo.jpg" />
 </p>
 
-*Locolligo* is a single-page, browser-based javascript application \[*in the early stages of development*\] to facilitate the formatting, linking, and geolocation of datasets, with a particular focus on Cultural Heritage. It employs standards developed by the [Pelagios Network](https://pelagios.org/), and will (for example) conform datasets for use in the Network's *Peripleo* map visualisation software, and generate metadata for the submission of datasets to the Network's historical geodata Registry. It can be copied and run on a standalone PC, tablet, or smartphone, without any dependency on a database or other server infrastructure; basic features will even run without an internet connection.
+*Locolligo* is a single-page, browser-based javascript application \[*in the early stages of development*\] to facilitate the formatting, linking, and geolocation of datasets, with a particular focus on Cultural Heritage. It employs standards developed by the [Pelagios Network](https://pelagios.org/), and will (for example) conform datasets for use in the Network's *Peripleo* map visualisation software, and generate metadata for the submission of datasets to the Network's historical geodata Registry. It can be downloaded and run on a standalone PC, tablet, or smartphone, without any dependency on a database or other server infrastructure; basic features will even run without an internet connection.
 
 This software originates as an output of the AHRC-funded [Locating a National Collection](https://www.nationalcollection.org.uk/Foundation-Projects#:~:text=Locating%20a%20National%20Collection) (LaNC) project, which sits within the AHRC programme: [Towards a National Collection: Opening UK Heritage to the World](https://www.nationalcollection.org.uk/).
 
@@ -36,19 +36,21 @@ This software originates as an output of the AHRC-funded [Locating a National Co
 Dataset size is limited by local device memory. It may be possible to implement chunking to address this issue.
 
 ## LaNC Project Partners
-Thanks to various project partners, who may retain copyright in their respective sample datasets used in this software:
+Thanks to various project partners and others, who may retain copyright in their respective sample datasets used in this software:
 
 * [Historic Environment Scotland](https://www.historicenvironment.scot/) - Scottish Charity No. SC045925 © Crown copyright and database right 2020.
 * [Historic England](http://www.HistoricEngland.org.uk) - contains Ordnance Survey data © Crown copyright and database right 2020.
 * [The Portable Antiquities Scheme](https://finds.org.uk/) - linked images Courtesy of the Portable Antiquities Scheme - © The British Museum.
 * [The National Trust](https://www.nationaltrust.org.uk/) - Registered Charity in England & Wales No. 205846
+* [Viae Regiae](https://viaeregiae.org/) - a volunteer-driven member project of the Pelagios Network
 
 ## Other Acknowledgements
-Much of the functionality of this software is provided through the implementation of pre-existing javascript libraries, notably:
+Much of the functionality of this software is provided through the use of pre-existing JavaScript libraries, notably:
 
-* **JSONata** query and transformation language: https://jsonata.org/
-* **Papa Parse** - 'the first (and so far only) multi-threaded CSV parser': https://www.papaparse.com/
-* **JSON Formatter**, to render JSON objects in HTML with a collapsible navigation: https://azimi.me/json-formatter-js/
-* **UUIDJS** generates RFC-compliant UUIDs in JavaScript: https://github.com/uuidjs/uuid
+* **JQuery** simplifies cross-browser implementation of HTML document traversal and manipulation, event handling, animation, and Ajax: https://jquery.com/
+* **JSONata** is a query and transformation language for [JavaScript Object Notation](https://en.wikipedia.org/wiki/JSON) (JSON) datasets: https://jsonata.org/
+* **Papa Parse** is 'the first (and so far only) multi-threaded CSV parser', for converting between delimited text and JSON: https://www.papaparse.com/
+* **JSON Formatter** renders JSON objects in HTML with a collapsible navigation: https://azimi.me/json-formatter-js/
+* **UUIDJS** generates RFC-compliant [Universally Unique IDentifiers](https://en.wikipedia.org/wiki/Universally_unique_identifier) (UUIDs) in JavaScript: https://github.com/uuidjs/uuid
 * **Movable Type Scripts** convert between latitude/longitude & OS National Grid References: https://www.movable-type.co.uk/scripts/latlong-os-gridref.html
 * **Proj4js** transforms point coordinates from one system to another: https://github.com/proj4js/proj4js
