@@ -1,49 +1,31 @@
 // ===========================================================
 // DONE:
 // UUIDs generated for all traces
-// Linking of PAS and Wikidata records within set radius
-// Mapping of Peripleo-JSON by JSONata translation to geoJSON, with array of linked data. See https://try.jsonata.org/SAJMolM8A 
+// Linking of PAS and Wikidatarecords within set radius
+// Mapping of Peripleo-JSON by JSONata translation to geoJSON, with array of linked data
 // Autodetect known conversion types
 // JSONata expression paste module
 // Enable URL input 
-// Conversion for Recogito LD download
-// Fixed JSONata for geoJSON conversion from Peripleo-LD with multiple Places per trace body: https://try.jsonata.org/uFtDQQtG1
-// Included Wikidata identifiers for tags: https://try.jsonata.org/H1xppiTyx
-// CSV to Peripleo-LD JSONata example at https://try.jsonata.org/AiLGV4yn2
-// CSV to Peripleo-LD JSONata CRS-conversion example at https://try.jsonata.org/XU6jC_uwd
-// Included gazetteer in geoJSON links
-// Standardised fragment selectors  
-// Reformatted linked box selector as box+line+marker 
-// Implemented csv download for geoJSON
-// Implemented OSGB CRS conversion
-// Implemented CRS conversion definitions within mappings.json
-// Implemented geo-uncertainty as https://schema.org/geoWithin a https://schema.org/GeoShape (bounding box for OSGB: see https://try.jsonata.org/sB8tuSBCc) or https://schema.org/GeoCircle (e.g. radius 1m for PAS finds)
 //
 // TO DO:
 // SEE ALSO: https://docs.google.com/document/d/1H0KmYf405QS2ECozHpmAFsLz2MbXd_3qLKXBmLFCoJc/edit?usp=sharing
-// Genericise API query function using JSONata and an API-configurations file, to allow simple addition of further API endpoints.
-// Implement geoJSON and map shapes (boxes and circles) for geoWithin objects
-// GeoNames for nearby Wikipedia urls, e.g. http://api.geonames.org/findNearbyWikipediaJSON?lat=51.0177369115508&lng=-1.92513942718506&radius=10&username=docuracy&maxRows=500
-// GeoNames reverse geocoding for nearby toponyms, e.g. http://api.geonames.org/findNearbyJSON?lat=51.0177369115508&lng=-1.92513942718506&radius=10&username=docuracy&maxRows=500
-// GeoNames Points of Interest from OSM, e.g. http://api.geonames.org/findNearbyPOIsOSMJSON?lat=51.0177369115508&lng=-1.92513942718506&radius=1&username=docuracy&maxRows=50
-// Find places (and photos) by name using Google Places API, e.g. https://maps.googleapis.com/maps/api/place/findplacefromtext/json?fields=formatted_address,photo%2Cgeometry&locationbias=circle%3A678000%40-5.734863,55.813629&input=British%20Library&inputtype=textquery&key=AIzaSyAk3AdLLz8XoOwLD1NtwFGypLyh77vtw-k
-// Request API endpoint and specification for History of English Places (VCH) - and/or get permission to convert dataset to Peripleo-LD (includes links to BHO URLs)?
-// Fix superfluous quote marks in csv->Peripleo-LD "when" property. Seems to be a bug in JSONata.
-// Populate body Place titles from gazetteer urls; also 'when'?
+// Add links from Wikidata?
 // Pad descriptions to meet Google minimum length
+// Publish on GitHub pages
 // Hide everything below input area until it is populated
 // Switch display to side-by-side input and output?
 // Indicate display truncation of very large datasets: displaying only the first 5,000 lines
 // Map fields to controlled vocabulary (Schema.org AND Wikidata?), using populated drop-down lists (with text filtering?)
+// Conversion for common Recogito download formats
+// Implement CRS conversion
 // Georeferencing/linking of any input or output identifiable as Peripleo-JSON
-// Warn of unsaved edits (i.e. prompt download) after set interval and on leaving page
+// Warn of unsaved edits (i.e. prompt download)
 // Check Wikidata SPARQL query, which seems to return some duplicates
 // Catch and requeue rejected API requests if due to overload
-// Increase API limit (currently sliced down to 25 traces): need to check usage limits
-// Offer download of Pelagios Registry description for dataset
-// Google Rich Tests [SEEMS TO BREAK WITH >72 TRACES] (within <script type="application/ld+json"></script>): https://search.google.com/test/rich-results/result?id=E7YNkXX8uM3MCPofvDc2eQ
-// Check https://search.google.com/search-console/inspect?resource_id=https%3A%2F%2Fdescartes.emew.io%2FLaNC%2F&id=_OBiiM9Efsxpyod913oLcg&alt_id=XIs1hg9P665fjH4fvp6fGA
+// Genericise API function
 // ===========================================================
+
+// https://try.jsonata.org/7guqjvnqA
 
 // Global variables
 var mappings, 
@@ -56,7 +38,7 @@ var mappings,
 	sparql_base, 
 	activeAjaxConnections = 0;
 
-//Download output as file
+// Download output as file
 function download(jsonobject,filename=false){
 	$("<a />", {
 		"download": filename ? filename : "Peripleo_Data_"+ Math.floor(Date.now()/1000) +".json",
@@ -67,117 +49,12 @@ function download(jsonobject,filename=false){
 	})[0].click()
 }
 
-//Download geoJSON converted to CSV
-function downloadCSV(jsonobject,filename=false){
-	var dataset = [];
-	$.each(jsonobject, function(i,object){
-		dataset.push({'name': object.properties.name, 'latitude': object.geometry.coordinates[1], 'longitude': object.geometry.coordinates[0]});
-	});
-	$("<a />", {
-		"download": filename ? filename : "geoJSON_Data_"+ Math.floor(Date.now()/1000) +".csv",
-		"href" : "data:application/csv;charset=utf-8," + Papa.unparse(dataset)
-	}).appendTo("body")
-	.click(function() {
-		$(this).remove()
-	})[0].click()
-}
-
-// Standardise Fragment Selectors
-function standardiseSVG(selector){
-	if (selector.type == "SvgSelector") return selector;
-	const pointRadius = 6; // Minimum 0.5 for rendering
-	function getPoints([px,py,cx,cy,a,l,h]){ // Calculate tilted box corners
-	    var radians = (Math.PI / 180) * a, 
-	        cos = Math.cos(radians),
-	        sin = Math.sin(radians);
-		function rotate(x,y) {
-		    var nx = Math.round((cos * (x - cx)) + (sin * (y - cy)) + cx),
-		        ny = Math.round((cos * (y - cy)) - (sin * (x - cx)) + cy);
-		    return [nx,ny];
-		}
-		var points = [];
-		points.push([cx,cy]);
-		points.push(rotate(cx+l,cy));
-		points.push(rotate(cx+l,cy-h));
-		points.push(rotate(cx,cy-h));
-		if(px){ // Find linked box vertice closest to point
-			const distances = points.map(point => Math.sqrt((point[0]-px)**2 + (point[1]-py)**2));
-			var min = distances.indexOf(Math.min.apply(null,distances));
-			var line = '<defs><marker id="markerCircle" markerWidth="'+(4*pointRadius)+'" markerHeight="'+(4*pointRadius)+'" refX="'+(2*pointRadius)+'" refY="'+(2*pointRadius)+'"><circle cx="'+(2*pointRadius)+'" cy="'+(2*pointRadius)+'" r="'+pointRadius+'" /></marker></defs><path d="M'+points[min].join(',')+' '+px+','+py+'" style="marker-end: url(#markerArrow);" />';
-		}
-		return '<polygon points="'+points.map(pt => pt.join(',')).join(' ')+'" />'+ (px ? line : '');
-	}
-	// selector examples:
-	// xywh=pixel:159,72,10,45 // w & h = 0 for point
-	// point:159,72
-	// rect:x=137,y=1331,w=332,h=1004
-	// tbox:x=1229,y=1570,a=-1.431969101380953,l=737,h=150
-	// lbox:rx=1220,ry=620,px=610,py=1194,a=0.27186612134806865,l=1281,h=-329 // Oddly, Recogito outputs rx,ry for the point, and px,py for its linked rectangle
-	var parameters = Array.from([...selector.value.matchAll(/[=:,](-?[\d.]+)/g)], m => parseFloat(m[1])); // Extracts numeric elements of all of the above patterns.
-	var type = selector.value.split(":")[0];
-	if (type=='xywh=pixel') type = (parameters[2]==0 & parameters[3]==0) ? 'point' : 'rect';
-	switch (type){
-	case "point":
-		SVG = '<circle cx="'+parameters[0]+'" cy="'+parameters[1]+'" r="'+pointRadius+'" />';
-		break;
-	case "rect":
-		SVG = '<rect x="'+parameters[0]+'" y="'+parameters[1]+'" width="'+parameters[2]+'" height="'+parameters[3]+'" />';
-		break;
-	case "tbox":
-		parameters = [false,false].concat(parameters);
-	case "lbox":
-		SVG = getPoints(parameters);
-		break;
-	default:
-		SVG = "ERROR: HANDLE THIS!!!!!!";
-		console.log(SVG,selector);
-	}
-	return {
-		"type": "SvgSelector",
-		"value": "<svg:svg xmlns=\"http://www.w3.org/2000/svg\" fill=\"#ff0\" fill-opacity=\"0.5\" stroke=\"black\" viewBox=\"0 0 6407 4947\">"+SVG+"</svg:svg>" // Set fill, fill-opacity, and stroke via css, and viewBox dimensions based on target dimensions
-	}
-}
-
-// Convert CRS from OSGB to WGS84
-function OSGB_WGS84(input){
-	const gridref = OsGridRef.parse(input);
-	const wgs84 = gridref.toLatLon();
-	// Transform gridref based on input resolution
-	digits = input.replace(/\D/g,'').length/2;
-	gridref.easting += 10**(6-digits);
-	gridref.northing += 10**(6-digits);
-	const wgs84a = gridref.toLatLon();
-	const geowithin = {'geoWithin':{'box':wgs84._lon.toFixed(6)+','+wgs84._lat.toFixed(6)+' '+wgs84a._lon.toFixed(6)+','+wgs84a._lat.toFixed(6)}};
-	return [wgs84._lon.toFixed(6),wgs84._lat.toFixed(6),geowithin];
-}
-
-// Perform dataset conversion
+// Perform conversion
 function convert(){
 	input_formatter.openAtDepth(0); // Close input JSON
-	$.each($('#source').data('data').data,function(j,item){
-		$('#source').data('data').data[j].geoWithins = [];
-		$.each(mappings[$('#expression option:selected').val()].CRS_conversions, function(i,conversion){
-			input=[];
-			$.each(conversion[0],function(k,input_part){
-				input.push(eval("item."+input_part));
-			});
-			const result = eval(conversion[2].replace('%%%','"'+input.join(',')+'"'));
-			eval("$('#source').data('data').data[j]."+conversion[1][0]+" = parseFloat(result[0])");
-			eval("$('#source').data('data').data[j]."+conversion[1][1]+" = parseFloat(result[1])");
-			$('#source').data('data').data[j].geoWithins.push(result[2]);
-		});
-	});
 	var expression = mappings[$('#expression option:selected').val()].expression;
 	var jsonata_expression = jsonata(expression);
 	output = jsonata_expression.evaluate($('#source').data('data'));
-	// Check selectors
-	if(output.hasOwnProperty('traces')){
-		$.each(output.traces, function(i, trace){
-			if(trace.hasOwnProperty('target.selector')) $.each(trace.target.selector, function(j, selector){
-				output.traces[i].target.selector[j] = standardiseSVG(selector);
-			});
-		})
-	}
 	output_formatter = new JSONFormatter(output,1,{theme:'dark'});
 	renderJSON($('#output'),output_formatter,output);
 }
@@ -211,10 +88,6 @@ function renderJSON(target,object,data){
 		var clipButton = $('<button class="dataButton" title="Copy first three records to clipboard">Clip Sample</button>').prependTo(target);
 		clipButton.button().click(function(){clipSample($(this));});
 	}
-	if(data.hasOwnProperty('features')){ // Create button for downloading geoJSON points as csv
-		var csvButton = $('<button class="mapButton" title="Download basic csv">CSV</button>').prependTo(target);
-		csvButton.button().click(function(){downloadCSV($(this).parent('div').data('data').features);});
-	}
 	if(data.hasOwnProperty('traces')){ // Create buttons for viewing map and adding data from PAS API
 		var clipButton = $('<button class="mapButton" title="Visualise dataset on a map">Map</button>').prependTo(target);
 		clipButton.button().click(function(){drawMap($(this));});
@@ -235,7 +108,6 @@ function renderJSON(target,object,data){
 function identifyType(input){
 	if (input.hasOwnProperty('traces')){fields = JSON.stringify(['traces']);}
 	else if (input.hasOwnProperty('meta')){fields = JSON.stringify(input.meta.fields);}
-	else if (input.constructor === Array && input[0].hasOwnProperty('@context') && input[0]['@context']=='http://www.w3.org/ns/anno.jsonld'){fields = JSON.stringify(['annotations']);}
 	else return;
 	$.each(mappings, function(key,value){
 		if(JSON.stringify(mappings[key].fields) == fields){
@@ -249,7 +121,7 @@ function identifyType(input){
 function clipSample(el) {
 	var clipdata = el.parent('div').data('data');
 	if(clipdata.hasOwnProperty('traces')){
-		clipdata.traces = clipdata.traces.slice(0,100);
+		clipdata.traces = clipdata.traces.slice(0,3);
 	} 
 	else {
 		var wrapper = Object.create({data:false});
@@ -266,11 +138,10 @@ function clipSample(el) {
 // Show map for current dataset
 function drawMap(el){
 	$('body').loadingModal({text: 'Processing...'});
-	const jsonata_expression = jsonata( mappings[1].expression ); // Convert Peripleo-LD to geoJSON-T
+	const jsonata_expression = jsonata(mappings[0].expression);
 	const geoJSON = jsonata_expression.evaluate(el.parent('div').data('data'));
 	const bounds = new mapboxgl.LngLatBounds(geoJSON.features[0].geometry.coordinates,geoJSON.features[0].geometry.coordinates);
 	for (const feature of geoJSON.features) {
-		console.log(feature.geometry.coordinates);
 		bounds.extend(feature.geometry.coordinates);
 		const el = document.createElement('div');
 		el.className = 'marker';
@@ -304,7 +175,6 @@ function drawMap(el){
 }
 
 // Query API
-// This function should be genericised using JSONata and an API-configurations file, to allow simple addition of further API endpoints.
 function addAPIdata(el){
 	var dataset = el.parent('div').data('data');
 	dataset.traces = dataset.traces.slice(0,25); // API limits concurrent(?) requests *** TO BE ADDRESSED
@@ -375,13 +245,12 @@ function addAPIdata(el){
 								if(feature.geometry.coordinates[0]!==null){
 									// Note: 'findspot to 1km grid square level and slight obfuscation of findspot by randomised subtraction/addition of 10ths of a degree to the degraded findspot'
 									newbody.distance = distance([body.geometry.longitude,body.geometry.latitude],feature.geometry.coordinates,0); // 0 places = nearest kilometre
-									newbody.geoWithin = OSGB_WGS84(feature.properties.fourFigure)[2].geoWithin;
-//									newbody.geometry = { // The API currently returns precise, unobfuscated coordinates, which in the interest of find-site security must not be publicised
-//										"@type": "GeoCoordinates",
-//										"addressCountry": "GB",
-//										"longitude": feature.geometry.coordinates[0],
-//										"latitude": feature.geometry.coordinates[1]
-//									}
+									newbody.geometry = {
+										"@type": "GeoCoordinates",
+										"addressCountry": "GB",
+										"longitude": feature.geometry.coordinates[0],
+										"latitude": feature.geometry.coordinates[1]
+									}
 								}
 								dataset.traces[tracekey].body.push(newbody);
 							});		
@@ -448,12 +317,12 @@ $( document ).ready(function() {
 	}).trigger("selectmenuchange");
 	
 	// Populate JSONata expressions drop-down list
-	$.get('./templates/mappings.json?'+Date.now(), function(data) { // Do not use any cached file
+	$.get('./templates/mappings.json', function(data) {
 		mappings = data;
 		$.each(data, function(key,value) {
 			$('#expression').append('<option value="'+key+'">'+value.description+'</option>');
 		});
-		$('select#expression').selectmenu().on('selectmenuchange',function () {console.log(mappings[$('#expression option:selected').val()].expression)});
+		$('select#expression').selectmenu();
 	},'json');
 	
 	// Load base Wikidata SPARQL query
@@ -466,7 +335,7 @@ $( document ).ready(function() {
         	const delimited = ['csv','tsv'];
         	if(delimited.includes(filename.split('.').pop())){ // Delimited text input
         		input = Papa.parse(filecontent.replace(/[{}]/g, '_'),{header:true,dynamicTyping:true}); // Replace curly braces, which break JSONata when used in column headers
-        		$.each(input.data, function(key,value){ // Create uuid for each item/Trace
+        		$.each(input.data, function(key,value){ // Create uuid for each Trace
         			input.data[key].uuid = uuidv4();
         		});
         		input_truncated = input.data.slice(0,5000); // Truncated to avoid browser overload on expansion of large arrays.
@@ -513,12 +382,6 @@ $( document ).ready(function() {
 		document.execCommand("copy");
 		mappings[$('#expression option:selected').val()].expression = JSONata;
 		$('#modal').dialog('close');
-	});   
-	
-
-//	console.log(OSGB_WGS84('SP8311'),OSGB_WGS84('SP8312'));
-//	console.log(OSGB_WGS84('SP830110'),OSGB_WGS84('SP830120'));
-//	console.log(distance(OSGB_WGS84('SP8311'),OSGB_WGS84('SP8312'),2));
-//	console.log(distance(OSGB_WGS84('SP830110'),OSGB_WGS84('SP830111'),2));
+	});
 	
 });
