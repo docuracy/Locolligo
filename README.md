@@ -18,7 +18,7 @@ This software originates as an output of the AHRC-funded [Locating a National Co
 * See also [Peripleo-Lite](https://docuracy.github.io/LaNC-peripleo-lite/public/) (a proof-of-concept prototype that will be developed by LaNC)
 
 ## Feature development:
-- [x] Linking of [PAS](https://finds.org.uk/) and [Wikidata](https://www.wikidata.org/) records within a set radius of a given point
+- [x] Linking of [PAS](https://finds.org.uk/) finds and [Wikidata](https://www.wikidata.org/) records within a set radius of a given point
 - [x] Mapping of Peripleo-LD by [JSONata](https://jsonata.org/) translation to geoJSON
 - [x] Conversion of Recogito LD to Peripleo-LD
 - [x] Conversion of CSV to Peripleo-LD
