@@ -3,7 +3,7 @@
 </p>
 
 # ***Locolligo***: Historical Geodata Curator
-(**Latin**: *loco\[s co\]lligo* = 'I link places')
+(**Latin**: *loco\[s co\]lligo* &#8776; 'I link places')
 <p align="right" width="100%">
     <img src="/images/colligo.jpg" />
 </p>
