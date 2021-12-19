@@ -17,7 +17,7 @@ This software is an output of the AHRC-funded [Locating a National Collection](h
 ## Feature development:
 - [x] Linking of [PAS](https://finds.org.uk/) and [Wikidata](https://www.wikidata.org/) records within a set radius of a given point
 - [x] Mapping of Peripleo-LD by [JSONata](https://jsonata.org/) translation to geoJSON
-- [x] Conversion of Recogito LD
+- [x] Conversion of Recogito LD to Peripleo-LD
 - [x] Conversion of CSV to Peripleo-LD
 - [x] OSGB to WGS84 CRS conversion
 - [x] Standardisation of annotation fragment selectors (see [here](https://github.com/docuracy/LaNC/blob/main/Peripleo_Fragment_Selector_SVG.js))
@@ -27,9 +27,12 @@ This software is an output of the AHRC-funded [Locating a National Collection](h
 - [ ] Geocoding of place-names using Wikidata, Geonames, and Google APIs
 - [ ] Georeferencing of un-gazetteered places
 - [ ] Pelagios Registry metadata generation
+- [ ] Recogito meta-gazetteer generation
+
+## Limitations
+Dataset size is limited by local device memory. It may be possible to implement chunking to address this issue.
 
 ## LaNC Project Partners
-
 Thanks to various project partners, who may retain copyright in their respective sample datasets used in this software:
 
 * [Historic Environment Scotland](https://www.historicenvironment.scot/) - Scottish Charity No. SC045925 © Crown copyright and database right 2020.
