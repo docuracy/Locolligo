@@ -22,6 +22,7 @@ This software originates as an output of the AHRC-funded [**Locating a National 
 - [x] Convert uploaded dataset to JSON
     - [x] CSV
     - [x] Google Sheets
+    - [ ] Google Maps KML (from URL)
 - [x] JSON conversion to Peripleo-LD
     - [x] Recogito LD
     - [x] Uploaded datasets (JSONata configuration required, UI not yet built)
