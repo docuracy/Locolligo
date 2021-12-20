@@ -1,5 +1,10 @@
 body {
 	font-family: "Trebuchet MS", sans-serif;
+	background: lightcyan;
+    background-image: url(./images/bg.png);
+    background-position: top left;
+    background-repeat: no-repeat;
+    background-size: 100%;
 }
 .ui-button, .ui-selectmenu-button {
 	font-size: .8em!important;
