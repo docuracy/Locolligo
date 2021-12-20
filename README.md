@@ -19,9 +19,9 @@ This software originates as an output of the AHRC-funded [**Locating a National 
 * [*Peripleo-Lite*](https://docuracy.github.io/LaNC-peripleo-lite/public/): a proof-of-concept prototype that will be developed by LaNC
 
 ## Feature development:
-- [x] Convert uploaded dataset to JSON
-    - [x] CSV
-    - [x] Google Sheets
+- [x] Convert dataset to JSON
+    - [x] CSV (from upload or URL)
+    - [x] Google Sheets (from URL)
     - [ ] Google Maps KML (from URL)
 - [x] JSON conversion to Peripleo-LD
     - [x] Recogito LD
