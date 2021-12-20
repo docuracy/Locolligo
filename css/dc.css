@@ -10,16 +10,16 @@ body {
 	font-size: .8em!important;
 }
 #source {
-    background-color: darkslategrey;
+    background-image: linear-gradient(to right, darkslategrey 75%, black);
 }
 #output {
-    background-color: black;
+    background-image: linear-gradient(to right, #520303 75%, black);
 }
 #JSONata_area {
 	background-color: greenyellow;
 }
 .json-formatter {
-	padding: 10px;
+	padding: 10px 10px 18px 10px;
 	margin: 20px 0;
 }
 .json-formatter button {
