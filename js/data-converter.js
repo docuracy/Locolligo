@@ -468,7 +468,7 @@ $( document ).ready(function() {
 				    	$('body').loadingModal('destroy');
 				    }
 				});
-		}).trigger("selectmenuchange");
+		});
 	});
 	
 	
