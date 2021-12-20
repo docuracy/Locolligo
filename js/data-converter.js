@@ -23,12 +23,14 @@
 // TO DO:
 // SEE ALSO: https://docs.google.com/document/d/1H0KmYf405QS2ECozHpmAFsLz2MbXd_3qLKXBmLFCoJc/edit?usp=sharing
 // Genericise API query function using JSONata and an API-configurations file, to allow simple addition of further API endpoints.
+// Enable CSV download from Google Sheet URL
 // Implement geoJSON and map shapes (boxes and circles) for geoWithin objects
 // GeoNames for nearby Wikipedia urls, e.g. http://api.geonames.org/findNearbyWikipediaJSON?lat=51.0177369115508&lng=-1.92513942718506&radius=10&username=docuracy&maxRows=500
 // GeoNames reverse geocoding for nearby toponyms, e.g. http://api.geonames.org/findNearbyJSON?lat=51.0177369115508&lng=-1.92513942718506&radius=10&username=docuracy&maxRows=500
 // GeoNames Points of Interest from OSM, e.g. http://api.geonames.org/findNearbyPOIsOSMJSON?lat=51.0177369115508&lng=-1.92513942718506&radius=1&username=docuracy&maxRows=50
 // Find places (and photos) by name using Google Places API, e.g. https://maps.googleapis.com/maps/api/place/findplacefromtext/json?fields=formatted_address,photo%2Cgeometry&locationbias=circle%3A678000%40-5.734863,55.813629&input=British%20Library&inputtype=textquery&key=AIzaSyAk3AdLLz8XoOwLD1NtwFGypLyh77vtw-k
 // Request API endpoint and specification for History of English Places (VCH) - and/or get permission to convert dataset to Peripleo-LD (includes links to BHO URLs)?
+// OpenPlaques.org has an API (e.g. http://openplaques.org/plaques.csv?box=[55.0473,-1.757],[54.9161,-1.474]), and also a dump which could be converted to Peripleo-LD and used for distance matching. Some linking might be possible through NER on the inscription field.
 // Fix superfluous quote marks in csv->Peripleo-LD "when" property. Seems to be a bug in JSONata.
 // Populate body Place titles from gazetteer urls; also 'when'?
 // Pad descriptions to meet Google minimum length
@@ -434,7 +436,6 @@ $( document ).ready(function() {
 	
 	// Populate Examples drop-down list
 	$.getJSON('https://api.github.com/repos/docuracy/Locolligo/git/trees/main?recursive=1&nocache='+Date.now(),function(data){
-		console.log(data);
 		var options = [];
 		$.each(data.tree,function(i,pathobj){
 			if(pathobj.path.startsWith('examples/')){
@@ -449,7 +450,6 @@ $( document ).ready(function() {
 				    url: $('#examples option:selected').val(),
 				    headers: {'accept': 'application/vnd.github.VERSION.raw'},
 				    success: function(data){
-				    	console.log(data);
 				    	parse_file($('#examples option:selected').html().split('/').pop(),data);
 				    },
 				    complete: function(){
@@ -478,7 +478,7 @@ $( document ).ready(function() {
 	function parse_file(filename,filecontent){
         	const delimited = ['csv','tsv'];
         	if(delimited.includes(filename.split('.').pop())){ // Delimited text input
-        		input = Papa.parse(filecontent.replace(/[{}]/g, '_'),{header:true,dynamicTyping:true}); // Replace curly braces, which break JSONata when used in column headers
+        		input = Papa.parse(filecontent.replace(/[{}]/g, '_'),{header:true,dynamicTyping:true,skipEmptyLines:true}); // Replace curly braces, which break JSONata when used in column headers
         		$.each(input.data, function(key,value){ // Create uuid for each item/Trace
         			input.data[key].uuid = uuidv4();
         		});
@@ -513,8 +513,21 @@ $( document ).ready(function() {
 	// Process fetched file
 	$('#fetch').on('click', function () {
     	$('body').loadingModal({text: 'Processing...'});
-		$.get($('#datafile_url').val(), function(data) {
-			parse_file($('#datafile_url').val().split('\\').pop().split('/').pop(),data);
+    	var filetype,
+    		url = $('#datafile_url').val();
+    	if(url.startsWith('https://docs.google.com/spreadsheets/')){
+    		filetype = 'csv';
+    		var gid = $('#datafile_url').val().split('gid=').pop();
+    		url = url.split('/');
+    		url.splice(-1,1,'export?format=csv&gid='+gid);
+    		url = url.join('/');
+    	}
+    	else{
+    		var filetype = $('#datafile_url').val().split('\\').pop().split('/').pop();
+    	}
+    	console.log('Fetch '+url);
+		$.get(url, function(data) {
+			parse_file(filetype,data);
 		},'text').always(function() {
 			$('body').loadingModal('destroy');
 		});	
