@@ -20,9 +20,10 @@ This software originates as an output of the AHRC-funded [**Locating a National 
 
 ## Feature development:
 - [x] Convert dataset to JSON
-    - [x] CSV (from upload or URL)
+    - [x] CSV / TSV (from upload or URL)
     - [x] Google Sheets (from URL)
-    - [ ] Google Maps KML (from URL)
+    - [ ] XML (from upload or URL)
+    - [ ] Google Maps KML (from URL; also convert to geoJSON)
 - [x] JSON conversion to Peripleo-LD
     - [x] Recogito LD
     - [x] Uploaded datasets (JSONata configuration required, UI not yet built)
