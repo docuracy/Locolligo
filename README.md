@@ -44,6 +44,9 @@ This software originates as an output of the AHRC-funded [**Locating a National 
 - [ ] Georeferencing of un-gazetteered places
 - [ ] Pelagios Registry metadata generation
 - [ ] Recogito meta-gazetteer generation
+- [ ] Facilitate contributions to Wikidata
+    - [ ] Prepare dataset for [Import](https://www.wikidata.org/wiki/Wikidata:Data_Import_Guide)
+    - [ ] Create single items via API
 
 ## Limitations
 Dataset size is limited by local device memory. It may be possible to implement chunking to address this issue.
