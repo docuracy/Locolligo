@@ -12,7 +12,7 @@
 	<script src="./js/uuidv4.min.js">// From https://github.com/uuidjs/uuid</script>
 	<script src="./js/proj4.js">// From https://github.com/proj4js/proj4js</script>
 	<script src="./js/jquery.loadingModal.min.js">// From https://github.com/do-web/jquery-loadingModal</script>
-	<script src="./js/data-converter.js?1"></script>
+	<script src="./js/data-converter.js"></script>
 	<link rel="stylesheet" href="./css/jquery-ui.min.css">
 	<link rel="stylesheet" href="./css/jquery-ui.theme.min.css">
 	<link rel="stylesheet" href="./css/jquery.loadingModal.min.css">
@@ -26,7 +26,7 @@
 	<label for="file_source">Choose a data file:</label>
 	<input type="file" id="file_source" name="file_source" title="Delimited text filenames must end with .csv or .tsv"> 
 	or fetch from URL: <input type="text" id="datafile_url" title="Delimited text filenames must end with .csv or .tsv" placeholder="Datafile URL (JSON/CSV/TSV)"/><button id="fetch">Fetch</button> 
-	or load example: <select name="examples" id="examples"></select>
+	or load example: <select name="examples" id="examples"><option selected disabled="true">Select Example Dataset</option></select>
 	<div id="source" class="json-formatter"></div>
 	<label for="expression">Conversion type:</label>
 	<select name="expression" id="expression"></select>
