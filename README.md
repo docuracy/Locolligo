@@ -32,6 +32,7 @@ This software originates as an output of the AHRC-funded [**Locating a National 
 - [x] Standardisation of annotation fragment selectors (see [here](https://github.com/docuracy/LaNC/blob/main/Peripleo_Fragment_Selector_SVG.js))
 - [x] Implementation of [schema.org](https://schema.org/) vocabulary to facilitate dataset indexing and discovery
 - [ ] UI for configuration of JSONata transformation of unrecognised data models
+- [ ] Facilitate editing of dataset metadata
 - [ ] Data Linking
     - [x] Archaeological finds within radius: [PAS](https://finds.org.uk/) API
     - [x] Cultural Heritage sites within radius: [Wikidata](https://www.wikidata.org/)
