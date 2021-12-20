@@ -19,11 +19,13 @@
 // Implemented CRS conversion definitions within mappings.json
 // Implemented geo-uncertainty as https://schema.org/geoWithin a https://schema.org/GeoShape (bounding box for OSGB: see https://try.jsonata.org/sB8tuSBCc) or https://schema.org/GeoCircle (e.g. radius 1m for PAS finds)
 // Autopopulate Examples from GitHub directory
+// Enabled XML to JSON conversion (see https://github.com/NaturalIntelligence/fast-xml-parser)
+// Enabled CSV download from Google Sheet URL
+// Enabled KML to geoJSON conversion from Google Maps URL: see https://try.jsonata.org/CCI7JFmWf
 //
 // TO DO:
 // SEE ALSO: https://docs.google.com/document/d/1H0KmYf405QS2ECozHpmAFsLz2MbXd_3qLKXBmLFCoJc/edit?usp=sharing
 // Genericise API query function using JSONata and an API-configurations file, to allow simple addition of further API endpoints.
-// Enable CSV download from Google Sheet URL
 // Implement geoJSON and map shapes (boxes and circles) for geoWithin objects
 // GeoNames for nearby Wikipedia urls, e.g. http://api.geonames.org/findNearbyWikipediaJSON?lat=51.0177369115508&lng=-1.92513942718506&radius=10&username=docuracy&maxRows=500
 // GeoNames reverse geocoding for nearby toponyms, e.g. http://api.geonames.org/findNearbyJSON?lat=51.0177369115508&lng=-1.92513942718506&radius=10&username=docuracy&maxRows=500
@@ -217,6 +219,8 @@ function renderJSON(target,object,data){
 	if(data.hasOwnProperty('features')){ // Create button for downloading geoJSON points as csv
 		var csvButton = $('<button class="mapButton" title="Download basic csv">CSV</button>').prependTo(target);
 		csvButton.button().click(function(){downloadCSV($(this).parent('div').data('data').features);});
+		var mapButton = $('<button class="mapButton" title="Visualise dataset on a map">Map</button>').prependTo(target);
+		mapButton.button().click(function(){drawMap($(this));});
 	}
 	if(data.hasOwnProperty('traces')){ // Create buttons for viewing map and adding data from PAS API
 		var clipButton = $('<button class="mapButton" title="Visualise dataset on a map">Map</button>').prependTo(target);
@@ -237,6 +241,7 @@ function renderJSON(target,object,data){
 // Try to recognise type of uploaded file; perform conversion if found
 function identifyType(input){
 	if (input.hasOwnProperty('traces')){fields = JSON.stringify(['traces']);}
+	else if (input.hasOwnProperty('kml')){fields = JSON.stringify(['kml']);}
 	else if (input.hasOwnProperty('meta')){fields = JSON.stringify(input.meta.fields);}
 	else if (input.constructor === Array && input[0].hasOwnProperty('@context') && input[0]['@context']=='http://www.w3.org/ns/anno.jsonld'){fields = JSON.stringify(['annotations']);}
 	else return;
@@ -269,8 +274,15 @@ function clipSample(el) {
 // Show map for current dataset
 function drawMap(el){
 	$('body').loadingModal({text: 'Processing...'});
-	const jsonata_expression = jsonata( mappings[1].expression ); // Convert Peripleo-LD to geoJSON-T
-	const geoJSON = jsonata_expression.evaluate(el.parent('div').data('data'));
+	var geoJSON;
+	if(el.parent('div').data('data').hasOwnProperty('features')){
+		geoJSON = el.parent('div').data('data');
+		console.log(geoJSON);
+	}
+	else{
+		const jsonata_expression = jsonata( mappings[1].expression ); // Convert Peripleo-LD to geoJSON-T
+		geoJSON = jsonata_expression.evaluate(el.parent('div').data('data'));
+	}
 	const bounds = new mapboxgl.LngLatBounds(geoJSON.features[0].geometry.coordinates,geoJSON.features[0].geometry.coordinates);
 	for (const feature of geoJSON.features) {
 		console.log(feature.geometry.coordinates);
@@ -484,7 +496,12 @@ $( document ).ready(function() {
         		});
         		input_truncated = input.data.slice(0,5000); // Truncated to avoid browser overload on expansion of large arrays.
         	}
-        	else{ // JSON input
+        	else if(filename.split('.').pop()=='xml'){
+        		const parser = new fxparser.XMLParser();
+        		input = parser.parse(filecontent);
+        		input_truncated = input; // TO DO: Find generic method for truncation, to avoid browser overload on expansion of large arrays.
+        	}
+        	else{ // Assume JSON input
         		input = JSON.parse(filecontent);
         		input_truncated = input; // TO DO: Find generic method for truncation, to avoid browser overload on expansion of large arrays.
         	}
@@ -522,13 +539,17 @@ $( document ).ready(function() {
     		url.splice(-1,1,'export?format=csv&gid='+gid);
     		url = url.join('/');
     	}
+    	else if(url.startsWith('https://www.google.co.uk/maps/d/')){
+    		filetype = 'xml';
+    		url = url.replace('/viewer?mid=','/kml?forcekml=1&mid=');
+    	}
     	else{
     		var filetype = $('#datafile_url').val().split('\\').pop().split('/').pop();
     	}
     	console.log('Fetch '+url);
 		$.get(url, function(data) {
 			parse_file(filetype,data);
-		},'text').always(function() {
+		}, 'text').always(function() {
 			$('body').loadingModal('destroy');
 		});	
 	});
@@ -540,5 +561,5 @@ $( document ).ready(function() {
 		mappings[$('#expression option:selected').val()].expression = JSONata;
 		$('#modal').dialog('close');
 	});   
-		
+	
 });
