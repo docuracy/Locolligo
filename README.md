@@ -68,5 +68,9 @@ Much of the functionality of this software is provided through the use of pre-ex
 * **Movable Type Scripts** convert between latitude/longitude & OS National Grid References: https://www.movable-type.co.uk/scripts/latlong-os-gridref.html
 * **Proj4js** transforms point coordinates from one system to another: https://github.com/proj4js/proj4js
 
+## Licence
+
+All original work within this software is offered under the terms of the **CC-BY 4.0 International** licence detailed [here](./LICENSE.md).
+
 ## Suggestions / Contact
 Please tag [@docuracy](https://twitter.com/docuracy) on Twitter, using the hashtags **#BL_LaNC** and **#Locolligo**
