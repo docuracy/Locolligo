@@ -34,6 +34,9 @@ div.errors {
 	filter: Alpha(Opacity=50) !important;
 	background: rgb(50, 50, 50) !important;
 }
+#modal, #map {
+	display: none;
+}
 #map { 
 	height: 400px;
 	width: 600px;
