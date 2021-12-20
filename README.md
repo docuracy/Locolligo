@@ -19,16 +19,28 @@ This software originates as an output of the AHRC-funded [**Locating a National 
 * [*Peripleo-Lite*](https://docuracy.github.io/LaNC-peripleo-lite/public/): a proof-of-concept prototype that will be developed by LaNC
 
 ## Feature development:
-- [x] Linking of [PAS](https://finds.org.uk/) finds and [Wikidata](https://www.wikidata.org/) records within a set radius of a given point
-- [x] Mapping of Peripleo-LD by [JSONata](https://jsonata.org/) translation to geoJSON
-- [x] Conversion of Recogito LD to Peripleo-LD
-- [x] Conversion of CSV to Peripleo-LD
+- [x] Convert uploaded dataset to JSON
+    - [x] CSV
+    - [x] Google Sheets
+- [x] JSON conversion to Peripleo-LD
+    - [x] Recogito LD
+    - [x] Uploaded datasets (JSONata configuration required, UI not yet built)
+- [x] Peripleo-LD conversion to geoJSON (and basic mapping)
 - [x] OSGB to WGS84 CRS conversion
 - [x] Standardisation of annotation fragment selectors (see [here](https://github.com/docuracy/LaNC/blob/main/Peripleo_Fragment_Selector_SVG.js))
 - [x] Implementation of [schema.org](https://schema.org/) vocabulary to facilitate dataset indexing and discovery
-- [ ] Linking of Wikipedia articles through GeoNames API
-- [ ] Curated interlinking of Peripleo-LD datasets
-- [ ] Geocoding of place-names using Wikidata, Geonames, and Google APIs
+- [ ] UI for configuration of JSONata transformation of unrecognised data models
+- [ ] Data Linking
+    - [x] Archaeological finds within radius: [PAS](https://finds.org.uk/) API
+    - [x] Cultural Heritage sites within radius: [Wikidata](https://www.wikidata.org/)
+    - [ ] Wikipedia articles: GeoNames API
+    - [ ] Historical Plaques: OpenPlaques.org API (or data dump converted to Peripleo-LD)
+    - [ ] Curated interlinking of Peripleo-LD datasets
+- [ ] Geocoding of place-names
+    - [ ] [World Historical Gazetteer](https://whgazetteer.org/)
+    - [ ] Wikidata
+    - [ ] Geonames
+    - [ ] Google
 - [ ] Georeferencing of un-gazetteered places
 - [ ] Pelagios Registry metadata generation
 - [ ] Recogito meta-gazetteer generation
