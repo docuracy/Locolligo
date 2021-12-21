@@ -1,5 +1,5 @@
-<p align="left" width="100%">
-    <img width="25%" src="/images/LaNC-logo.png" />
+<p align="right" width="100%">
+    <img width="25%" src="/images/Locolligo.png" />
 </p>
 
 # ***Locolligo***: Historical Geodata Curator
