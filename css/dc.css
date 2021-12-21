@@ -1,6 +1,7 @@
 :root {
   --ip-color: darkslategrey;
   --op-color: #520303;
+  --bg-color: lightcyan;
 }
 html {
 	box-sizing: border-box;
@@ -8,7 +9,7 @@ html {
 }
 body {
 	font-family: "Trebuchet MS", sans-serif;
-	background: lightcyan;
+	background: var(--bg-color);
     background-image: url(./images/bg.png);
     background-position: top left;
     background-repeat: no-repeat;
@@ -29,7 +30,7 @@ body {
 span.initial{
 	font-family: 'Montserrat', sans-serif;
     font-size: 1.7em;
-    color: aliceblue;
+    color: var(--bg-color);
     display: table;
     margin: 0 auto;
     cursor: help;
@@ -62,7 +63,6 @@ span.initial{
 	padding: 10px 10px 18px 10px;
 	margin: 20px 0;
 	border-radius: 6px;
-    box-shadow: aquamarine;
     box-shadow: 3px 3px 4px 2px rgb(10 10 10 / 45%);
 }
 .json-formatter button {
