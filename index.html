@@ -39,10 +39,10 @@ For details see https://github.com/docuracy/Locolligo/blob/main/LICENSE.md
 		or fetch from URL: <input type="text" id="datafile_url" title="Delimited text filenames must end with .csv or .tsv" placeholder="Datafile URL (JSON/CSV/TSV)"/><button id="fetch">Fetch</button> 
 		or load example: <select name="examples" id="examples"><option selected disabled="true">Select Example Dataset</option></select>
 	</div>
-	<div id="source" class="json-formatter"><span class="initial">{input}</span></div>
+	<div id="source" class="json-formatter"><span class="initial" title="Use the options above to Upload, Fetch, or Select an input dataset.">{input}</span></div>
 	<label for="expression">Conversion type:</label>
 	<select name="expression" id="expression"></select>
-	<div id="output" class="json-formatter"><span class="initial">{output}</span></div>
+	<div id="output" class="json-formatter"><span class="initial" title="After choosing an input dataset, select a conversion type and then click on [Convert]. Other configuration options are not yet available.">{output}</span></div>
 	<div id="modal" title="JSONata Expression"><p>Paste unescaped JSONata expression here: converted code will be copied to the clipboard and temporarily assigned to the selected conversion type.</p><p>Afterwards, download and replace your mappings.json file to make the assigment permanent.</p><textarea id="JSONata_area" rows="5" cols="67"></textarea></div>
 	<div id="map"></div>
 	<script type="module">
