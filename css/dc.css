@@ -35,6 +35,7 @@ span.initial{
     display: table;
     margin: 0 auto;
     cursor: help;
+    z-index: 10;
 }
 .ui-button, .ui-selectmenu-button {
 	font-size: .8em!important;
@@ -52,10 +53,15 @@ span.initial{
 	color: var(--op-color);
 }
 #source {
-    background-image: linear-gradient(to top right, var(--ip-color) 75%, black);
+    background-image: linear-gradient(to top right, var(--ip-color) 70%, black);
+    position: relative;
+	color: var(--ip-color);
 }
 #output {
-    background-image: linear-gradient(to top right, var(--op-color) 75%, black);
+    background-image: linear-gradient(to top right, var(--op-color) 70%, black);
+    position: relative;
+	color: var(--op-color);
+	text-shadow: 0.07em 0.07em 0.15em rgb(10 10 10 / 45%);
 }
 #JSONata_area {
 	background-color: greenyellow;
@@ -168,4 +174,11 @@ a.popup_link.wikidata{
   border-width: 20px 15px 0;
   border-style: solid;
   border-color: var(--ip-color) transparent transparent;
+}
+.bg-text {
+	position: absolute;
+	top: 4px;
+	right: 8px;
+	overflow: hidden;
+	text-shadow: 0.03em 0.03em 0.1em var(--bg-color);
 }
