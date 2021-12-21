@@ -133,9 +133,6 @@ a.popup_link.wikidata{
 *:after {
   box-sizing: inherit;
 }
-#midband {
-	display: flex;
-}
 .arrow {
   position: fixed;
   left: 50%;
