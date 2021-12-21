@@ -494,26 +494,27 @@ $( document ).ready(function() {
 	
 	// Parse file
 	function parse_file(filename,filecontent){
-        	const delimited = ['csv','tsv'];
-        	if(delimited.includes(filename.split('.').pop())){ // Delimited text input
-        		input = Papa.parse(filecontent.replace(/[{}]/g, '_'),{header:true,dynamicTyping:true,skipEmptyLines:true}); // Replace curly braces, which break JSONata when used in column headers
-        		$.each(input.data, function(key,value){ // Create uuid for each item/Trace
-        			input.data[key].uuid = uuidv4();
-        		});
-        		input_truncated = input.data.slice(0,5000); // Truncated to avoid browser overload on expansion of large arrays.
-        	}
-        	else if(filename.split('.').pop()=='xml'){
-        		const parser = new fxparser.XMLParser();
-        		input = parser.parse(filecontent);
-        		input_truncated = input; // TO DO: Find generic method for truncation, to avoid browser overload on expansion of large arrays.
-        	}
-        	else{ // Assume JSON input
-        		input = JSON.parse(filecontent);
-        		input_truncated = input; // TO DO: Find generic method for truncation, to avoid browser overload on expansion of large arrays.
-        	}
-        	input_formatter = new JSONFormatter(input_truncated,1,{theme:'dark'});
-    		renderJSON($('#source'),input_formatter,input);
-        	identifyType(input);		
+    	const delimited = ['csv','tsv'];
+    	const xml = ['xml','kml'];
+    	if(delimited.includes(filename.split('.').pop())){ // Delimited text input
+    		input = Papa.parse(filecontent.replace(/[{}]/g, '_'),{header:true,dynamicTyping:true,skipEmptyLines:true}); // Replace curly braces, which break JSONata when used in column headers
+    		$.each(input.data, function(key,value){ // Create uuid for each item/Trace
+    			input.data[key].uuid = uuidv4();
+    		});
+    		input_truncated = input.data.slice(0,5000); // Truncated to avoid browser overload on expansion of large arrays.
+    	}
+    	else if(xml.includes(filename.split('.').pop())){
+    		const parser = new fxparser.XMLParser();
+    		input = parser.parse(filecontent);
+    		input_truncated = input; // TO DO: Find generic method for truncation, to avoid browser overload on expansion of large arrays.
+    	}
+    	else{ // Assume JSON input
+    		input = JSON.parse(filecontent);
+    		input_truncated = input; // TO DO: Find generic method for truncation, to avoid browser overload on expansion of large arrays.
+    	}
+    	input_formatter = new JSONFormatter(input_truncated,1,{theme:'dark'});
+		renderJSON($('#source'),input_formatter,input);
+    	identifyType(input);		
 	}
 	
 	// Process uploaded file
