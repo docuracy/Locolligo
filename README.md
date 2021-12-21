@@ -1,5 +1,5 @@
-<p align="right" width="100%">
-    <img width="25%" src="/images/Locolligo.png" />
+<p align="center" width="100%">
+    <img src="/images/Locolligo.png" />
 </p>
 
 # ***Locolligo***: Historical Geodata Curator
