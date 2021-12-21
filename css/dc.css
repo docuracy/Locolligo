@@ -6,6 +6,17 @@ body {
     background-repeat: no-repeat;
     background-size: 100%;
 }
+#header {
+	height: 33px;
+}
+span.initial{
+	font-family: 'Montserrat', sans-serif;
+    font-size: 1.7em;
+    text-align: center;
+    color: aliceblue;
+    display: table;
+    margin: 0 auto;
+}
 .ui-button, .ui-selectmenu-button {
 	font-size: .8em!important;
 }
