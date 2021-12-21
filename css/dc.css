@@ -1,10 +1,18 @@
+:root {
+  --ip-color: darkslategrey;
+  --op-color: #520303;
+}
+html {
+	box-sizing: border-box;
+	-webkit-font-smoothing: antialiased;
+}
 body {
 	font-family: "Trebuchet MS", sans-serif;
 	background: lightcyan;
     background-image: url(./images/bg.png);
     background-position: top left;
     background-repeat: no-repeat;
-    background-size: 100%;
+    background-size: 1887px;
 }
 #header {
 	height: 33px;
@@ -12,10 +20,10 @@ body {
 #footer{
     font-size: 0.7em;
     text-align: right;
-    color: #520303;
+    color: var(--op-color);
 }
 #footer a{
-	color: #520303;
+	color: var(--op-color);
     text-decoration-style: dotted;
 }
 span.initial{
@@ -33,18 +41,18 @@ span.initial{
 	font-family: 'Montserrat', sans-serif;
 	font-size: 2em;
     font-weight: bold;
-	color: darkslategrey;
+	color: var(--ip-color);
     text-decoration: none;
 	float: right;
 }
 #logo span{
-	color: #520303;
+	color: var(--op-color);
 }
 #source {
-    background-image: linear-gradient(to top right, darkslategrey 75%, black);
+    background-image: linear-gradient(to top right, var(--ip-color) 75%, black);
 }
 #output {
-    background-image: linear-gradient(to top right, #520303 75%, black);
+    background-image: linear-gradient(to top right, var(--op-color) 75%, black);
 }
 #JSONata_area {
 	background-color: greenyellow;
@@ -119,4 +127,37 @@ a.popup_link.wikidata{
     outline: none;
     cursor: text;
     width: 170px;
+}
+*,
+*:before,
+*:after {
+  box-sizing: inherit;
+}
+#midband {
+	display: flex;
+}
+.arrow {
+  position: fixed;
+  left: 50%;
+  margin-left: -16px;
+  width: 30px;
+  margin-top: -20px;
+  height: 80px;
+}
+.arrow__body {
+  width: 100%;
+  height: 60px;
+  margin-left: 11px;
+  border-width: 0 0 0 8px;
+  border-style: double;
+  border-color: var(--ip-color);
+}
+.arrow__body::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  border-width: 20px 15px 0;
+  border-style: solid;
+  border-color: var(--ip-color) transparent transparent;
 }
