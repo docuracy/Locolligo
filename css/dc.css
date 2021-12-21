@@ -9,10 +9,18 @@ body {
 #header {
 	height: 33px;
 }
+#footer{
+    font-size: 0.7em;
+    text-align: right;
+    color: #520303;
+}
+#footer a{
+	color: #520303;
+    text-decoration-style: dotted;
+}
 span.initial{
 	font-family: 'Montserrat', sans-serif;
     font-size: 1.7em;
-    text-align: center;
     color: aliceblue;
     display: table;
     margin: 0 auto;
