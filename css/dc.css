@@ -9,11 +9,22 @@ body {
 .ui-button, .ui-selectmenu-button {
 	font-size: .8em!important;
 }
+#logo {
+	font-family: 'Montserrat', sans-serif;
+	font-size: 2em;
+    font-weight: bold;
+	color: darkslategrey;
+    text-decoration: none;
+	float: right;
+}
+#logo span{
+	color: #520303;
+}
 #source {
-    background-image: linear-gradient(to right, darkslategrey 75%, black);
+    background-image: linear-gradient(to top right, darkslategrey 75%, black);
 }
 #output {
-    background-image: linear-gradient(to right, #520303 75%, black);
+    background-image: linear-gradient(to top right, #520303 75%, black);
 }
 #JSONata_area {
 	background-color: greenyellow;
