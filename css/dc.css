@@ -133,13 +133,18 @@ a.popup_link.wikidata{
 *:after {
   box-sizing: inherit;
 }
+#conversions {
+	z-index: 20;
+    position: relative;
+	float: left;
+}
 .arrow {
-  position: fixed;
+  position: relative;
+  z-index: 10;
   left: 50%;
-  margin-left: -16px;
   width: 30px;
-  margin-top: -20px;
   height: 80px;
+  margin: -20px 0 -33px -16px;
 }
 .arrow__body {
   width: 100%;
