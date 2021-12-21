@@ -17,6 +17,7 @@ body {
 }
 #header {
 	height: 33px;
+	display: contents;
 }
 #footer{
     font-size: 0.7em;
@@ -141,6 +142,7 @@ a.popup_link.wikidata{
 	z-index: 20;
     position: relative;
 	float: left;
+	display: flex;
 }
 .arrow {
   position: relative;
