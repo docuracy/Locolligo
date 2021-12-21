@@ -16,6 +16,7 @@ span.initial{
     color: aliceblue;
     display: table;
     margin: 0 auto;
+    cursor: help;
 }
 .ui-button, .ui-selectmenu-button {
 	font-size: .8em!important;
