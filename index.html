@@ -2,7 +2,7 @@
 <html lang="en">
  <head>
 	<meta charset="UTF-8">
-	<title>Locolligo: Geodata Curator</title>
+	<title>Locolligo: Historical Geodata Curator</title>
 	<meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no">
 	<script src="./js/jquery-3.6.0.min.js"></script>
 	<script src="./js/jquery-ui.min.js"></script>
@@ -20,10 +20,12 @@
 	<link rel="stylesheet" href="./css/dc.css">
 	<link href="./css/mapbox-gl.css" rel="stylesheet">
 	<link rel="shortcut icon" type="image/x-icon" href="favicon.ico">
+	<style>@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@100&display=swap');</style>
 	<script src="./js/mapbox-gl.js"></script>
 	<base target="_blank">
 </head>
 <body>
+	<a id="logo" aria-label="Locolligo" title="About Locolligo: Historical Geodata Curator" href="https://github.com/docuracy/Locolligo/blob/main/README.md">{Lo<span>co:lligo</span>}</a>
 	<label for="file_source">Choose a data file:</label>
 	<input type="file" id="file_source" name="file_source" title="Delimited text filenames must end with .csv or .tsv"> 
 	or fetch from URL: <input type="text" id="datafile_url" title="Delimited text filenames must end with .csv or .tsv" placeholder="Datafile URL (JSON/CSV/TSV)"/><button id="fetch">Fetch</button> 
