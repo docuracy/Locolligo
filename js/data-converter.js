@@ -1,4 +1,10 @@
 // ===========================================================
+//
+// Copyright (C) 2021 Stephen Gadd - All Rights Reserved
+// Released under CC-BY 4.0 International Licence
+// For details see https://github.com/docuracy/Locolligo/blob/main/LICENSE.md
+//
+// ===========================================================
 // DONE:
 // UUIDs generated for all traces
 // Linking of PAS and Wikidata records within set radius
@@ -21,7 +27,7 @@
 // Autopopulate Examples from GitHub directory
 // Enabled XML to JSON conversion (see https://github.com/NaturalIntelligence/fast-xml-parser)
 // Enabled CSV download from Google Sheet URL
-// Enabled KML to geoJSON conversion from Google Maps URL: see https://try.jsonata.org/CCI7JFmWf
+// Enabled KML to geoJSON conversion from Google Maps URL: see https://try.jsonata.org/PLgXDO5Jm
 //
 // TO DO:
 // SEE ALSO: https://docs.google.com/document/d/1H0KmYf405QS2ECozHpmAFsLz2MbXd_3qLKXBmLFCoJc/edit?usp=sharing
