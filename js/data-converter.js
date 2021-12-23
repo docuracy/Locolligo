@@ -434,6 +434,9 @@ $( document ).ready(function() {
     }
 	
 	// Apply jquery-ui styling
+	$('#choose_input').selectmenu().on('selectmenuchange',function () {
+		$('#inputs').removeClass().addClass($('#choose_input option:selected').val());
+	});
 	$('#expression').after('<button onclick="convert();" title="Convert uploaded dataset using chosen type">Convert</button><button onclick="$(\'#modal\').dialog(\'open\')"  title="Paste new JSONata expression to be used for this conversion type">Edit JSONata</button><button onclick="download(mappings,\'mappings.json\');" title="Download all conversion definitions to local filesystem">Download mappings.json</button>');
 	$('button,input:file').button();
 	$('#datafile_url').addClass('ui-button ui-corner-all ui-widget datafile_url');
@@ -512,6 +515,8 @@ $( document ).ready(function() {
     		input = JSON.parse(filecontent);
     		input_truncated = input; // TO DO: Find generic method for truncation, to avoid browser overload on expansion of large arrays.
     	}
+    	$('#source_block').appendTo('#darkroom');
+    	$('#conversions').insertBefore('.arrow');
     	input_formatter = new JSONFormatter(input_truncated,1,{theme:'dark'});
 		renderJSON($('#source'),input_formatter,input);
     	identifyType(input);		
