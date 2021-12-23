@@ -22,6 +22,8 @@ body {
     font-size: 0.7em;
     text-align: right;
     color: var(--op-color);
+    opacity: .3;
+    margin-right: 3px;
 }
 #footer a{
 	color: var(--op-color);
