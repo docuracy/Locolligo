@@ -5,7 +5,7 @@
 # ***Locolligo***: Historical Geodata Curator
 (**Latin**: *loco\[s co\]lligo* &#8776; 'I link places')
 <p align="right" width="100%">
-    <img src="/images/colligo.jpg" />
+    <img src="/images/colligo.png" />
 </p>
 
 *Locolligo* is a single-page, browser-based javascript application \[*in the early stages of development*\] to facilitate the formatting, linking, and geolocation of datasets, with a particular focus on Cultural Heritage. It employs standards developed by the [Pelagios Network](https://pelagios.org/), and will (for example) conform datasets for use in the Network's *Peripleo* map visualisation and [*Recogito*](https://recogito.pelagios.org/) annotation software, and generate metadata for the submission of datasets to the Network's historical geodata Registry. It can be downloaded and run on a standalone PC, tablet, or smartphone, without any dependency on a database or other server infrastructure; basic features will even run without an internet connection.
