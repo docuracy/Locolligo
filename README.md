@@ -67,7 +67,7 @@ Thanks to various project partners and others, who may retain copyright in their
 * [Viae Regiae](https://viaeregiae.org/) - a volunteer-driven member project of the Pelagios Network
 
 ## Other Acknowledgements
-Much of the functionality of this software is provided through the use of pre-existing JavaScript libraries, notably:
+Much of the functionality of this software is provided through the use of pre-existing JavaScript libraries, notably the following:
 
 * **JQuery** simplifies cross-browser implementation of HTML document traversal and manipulation, event handling, animation, and Ajax: https://jquery.com/
 * **JSONata** is a query and transformation language for [JavaScript Object Notation](https://en.wikipedia.org/wiki/JSON) (JSON) datasets: https://jsonata.org/
@@ -79,7 +79,6 @@ Much of the functionality of this software is provided through the use of pre-ex
 * **Proj4js** transforms point coordinates from one system to another: https://github.com/proj4js/proj4js
 
 ## Licence
-
 All original work within this software is offered under the terms of the **CC-BY 4.0 International** licence detailed [here](./LICENSE.md).
 
 ## Suggestions / Contact
