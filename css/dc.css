@@ -1,3 +1,8 @@
+@keyframes flash-background {
+    0%   { background-color: white }
+    90%  { background-color: white }
+    100% { background-color: red }
+}
 :root {
   --ip-color: darkslategrey;
   --op-color: #520303;
@@ -40,6 +45,7 @@ span.initial{
 }
 .ui-button, .ui-selectmenu-button {
 	font-size: .8em!important;
+	padding: 0.5em 1em;
 }
 #logo {
 	font-family: 'Montserrat', sans-serif;
@@ -52,6 +58,10 @@ span.initial{
 }
 #logo span{
 	color: var(--op-color);
+}
+.throb {
+	transition: all 1s;
+    animation: flash-background 2s infinite;
 }
 #inputs.upload, #inputs.fetch, #inputs.sample {
 	display: inline-block;
