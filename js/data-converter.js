@@ -233,6 +233,7 @@ function renderJSON(target,object,data){
 		clipButton.button().click(function(){drawMap($(this));});
 		$('<button id="PASButton" class="APIButton" title="Link PAS records within '+radius+'km">PAS</button>').prependTo(target);
 		$('<button id="WDButton" class="APIButton" title="Link Wikidata records within '+radius+'km">Wikidata</button>').prependTo(target);
+		$('<button id="LinkButton" class="APIButton" title="NOT YET AVAILABLE: Link and/or georeference records" disabled="true" style="pointer-events: auto;">Link/Georeference</button>').prependTo(target);
 		$('.APIButton').button().click(function(){addAPIdata($(this));});
 	}
 	if(Array.isArray(data.errors) && data.errors.length>0){ // Warn of errors found when parsing uploaded file
