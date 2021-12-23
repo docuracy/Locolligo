@@ -436,8 +436,10 @@ $( document ).ready(function() {
 	
 	// Apply jquery-ui styling
 	$('#choose_input').selectmenu().on('selectmenuchange',function () {
+		$('#choose_input-button').removeClass('throb');
 		$('#inputs').removeClass().addClass($('#choose_input option:selected').val());
 	});
+	$('#choose_input-button').addClass('throb');
 	$('#expression').after('<button onclick="convert();" title="Convert uploaded dataset using chosen type">Convert</button><button onclick="$(\'#modal\').dialog(\'open\')"  title="Paste new JSONata expression to be used for this conversion type">Edit JSONata</button><button onclick="download(mappings,\'mappings.json\');" title="Download all conversion definitions to local filesystem">Download mappings.json</button>');
 	$('button,input:file').button();
 	$('#datafile_url').addClass('ui-button ui-corner-all ui-widget datafile_url');
