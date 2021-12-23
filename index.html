@@ -34,20 +34,42 @@ For details see https://github.com/docuracy/Locolligo/blob/main/LICENSE.md
 <body>
 	<div id="header">
 		<a id="logo" aria-label="Locolligo" title="About Locolligo: Historical Geodata Curator" href="https://github.com/docuracy/Locolligo/blob/main/README.md">{Lo<span>co:lligo</span>}</a>
-		<label for="file_source">Choose a data file:</label>
-		<input type="file" id="file_source" name="file_source" title="Delimited text filenames must end with .csv or .tsv"> 
-		<label for="datafile_url">or fetch from URL: </label><input type="text" id="datafile_url" title="Delimited text filenames must end with .csv or .tsv" placeholder="Datafile URL (JSON/CSV/TSV)"/><button id="fetch">Fetch</button> 
-		<label for="examples">or load example: </label><select name="examples" id="examples"><option selected disabled="true">Select Example Dataset</option></select>
 	</div>
-	<div id="source" class="json-formatter"><span class="initial" title="Use the options above to Upload, Fetch, or Select an input dataset.">{input}</span><span class="bg-text">tsv kml json xml csv</span></div>
-	<div id="conversions">
-		<label for="expression">Conversion type:</label><select name="expression" id="expression"></select>
+	<div id="source" class="json-formatter">
+		<span id="source_block">
+			<span class="initial" title="Use the options above to Upload, Fetch, or Select an input dataset.">{input}</span>
+			<table>
+				<tr>
+					<td>
+						<select id="choose_input">
+							<option selected disabled="true">Choose Input</option>
+							<option value="upload">Upload</option>
+							<option value="fetch">Fetch from URL</option>
+							<option value="sample">Try Example</option>
+						</select>
+					</td>
+					<td>
+						<div id="inputs">
+							<input type="file" id="file_source" name="file_source" title="Delimited text filenames must end with .csv or .tsv"> 
+							<input type="text" id="datafile_url" title="Delimited text filenames must end with .csv or .tsv" placeholder="Datafile URL (JSON/CSV/TSV/XML/KML)"/><button id="fetch">Fetch</button> 
+							<select name="examples" id="examples"><option selected disabled="true">Select Example Dataset</option></select>
+						</div>
+					</td>
+				</tr>
+			</table>
+			<span class="bg-text">tsv kml json xml csv</span>
+		</span>
 	</div>
 	<div class="arrow"><div class="arrow__body"></div></div>
 	<div id="output" class="json-formatter"><span class="initial" title="After choosing an input dataset, select a conversion type and then click on [Convert]. Other configuration options are not yet available.">{output}</span><span class="bg-text">csv geoJSON-T JSON-LD</span></div>
 	<div id="footer">Copyright (C) 2021 Stephen Gadd - All Rights Reserved | Released under <a href="https://github.com/docuracy/Locolligo/blob/main/LICENSE.md">CC-BY 4.0 International Licence</a>.</div>
 	<div id="modal" title="JSONata Expression"><p>Paste unescaped JSONata expression here: converted code will be copied to the clipboard and temporarily assigned to the selected conversion type.</p><p>Afterwards, download and replace your mappings.json file to make the assigment permanent.</p><textarea id="JSONata_area" rows="5" cols="67"></textarea></div>
 	<div id="map"></div>
+	<div id="darkroom">
+		<div id="conversions">
+			<label for="expression">Conversion type:</label><select name="expression" id="expression"></select>
+		</div>
+	</div>
 	<script type="module">
         import OsGridRef from './js/geodesy/osgridref.js'; // From https://www.movable-type.co.uk/scripts/latlong-os-gridref.html
 		window.OsGridRef = OsGridRef;
