@@ -17,7 +17,6 @@ body {
 }
 #header {
 	height: 33px;
-	display: contents;
 }
 #footer{
     font-size: 0.7em;
@@ -52,25 +51,47 @@ span.initial{
 #logo span{
 	color: var(--op-color);
 }
+#inputs.upload, #inputs.fetch, #inputs.sample {
+	display: inline-block;
+}
+#source table {
+    position: absolute;
+    top: 12px;
+}
+#file_source {
+	padding: 3px;
+}
+#datafile_url, #examples-button {
+	width: 370px;
+}
+#choose_input, #file_source, #datafile_url, #fetch, #examples-button, #inputs input, #inputs select {
+	display: none;
+}
+#inputs.upload #file_source, #inputs.fetch #datafile_url, #inputs.fetch #fetch, #inputs.sample #examples-button {
+	display: inline-block;
+}
+.ui-menu-item {
+	font-size: .9em;
+}
 #source {
     background-image: linear-gradient(to top right, var(--ip-color) 70%, black);
-    position: relative;
 	color: var(--ip-color);
+	position: relative;
 }
 #output {
     background-image: linear-gradient(to top right, var(--op-color) 70%, black);
-    position: relative;
 	color: var(--op-color);
-	text-shadow: 0.07em 0.07em 0.15em rgb(10 10 10 / 45%);
 }
 #JSONata_area {
 	background-color: greenyellow;
 }
 .json-formatter {
+    position: relative;
 	padding: 10px 10px 18px 10px;
 	margin: 20px 0;
 	border-radius: 6px;
     box-shadow: 3px 3px 4px 2px rgb(10 10 10 / 45%);
+	opacity: 0.85;
 }
 .json-formatter button {
 	float:right;
@@ -181,4 +202,7 @@ a.popup_link.wikidata{
 	right: 8px;
 	overflow: hidden;
 	text-shadow: 0.03em 0.03em 0.1em var(--bg-color);
+}
+#darkroom {
+	display: none;
 }
