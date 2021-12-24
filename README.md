@@ -31,15 +31,17 @@ This software originates as an output of the AHRC-funded [**Locating a National 
 * [*Peripleo-Lite*](https://docuracy.github.io/LaNC-peripleo-lite/public/): a proof-of-concept prototype that will be developed by LaNC
 
 ## Feature development:
-- [x] Convert dataset to JSON
+- [x] Convert the following dataset types to JSON:
     - [x] CSV / TSV (from upload or URL)
     - [x] Google Sheets (from URL)
     - [x] XML (from upload or URL)
     - [x] Google Maps KML (from upload or URL; also convert to geoJSON)
-- [x] JSON conversion to Peripleo-LD
+- [x] Convert the following JSON types to Peripleo-LD:
     - [x] Recogito LD
     - [x] Uploaded datasets (JSONata configuration required, UI not yet built)
-- [x] Peripleo-LD conversion to geoJSON (and basic mapping)
+- [x] Convert Peripleo-LD to:
+    - [x] [geoJSON](https://geojson.org/) (with basic mapping)
+    - [ ] [Turtle](https://en.wikipedia.org/wiki/Turtle_(syntax)) RDF
 - [x] OSGB to WGS84 CRS conversion
 - [x] Standardisation of annotation fragment selectors (see [here](https://github.com/docuracy/LaNC/blob/main/Peripleo_Fragment_Selector_SVG.js))
 - [x] Implementation of [schema.org](https://schema.org/) vocabulary to facilitate dataset indexing and discovery
@@ -56,7 +58,7 @@ This software originates as an output of the AHRC-funded [**Locating a National 
     - [ ] Wikidata
     - [ ] Geonames
     - [ ] Google
-- [ ] Georeferencing of un-gazetteered places
+- [ ] Geocoding of un-gazetteered places using maps
 - [ ] Pelagios Registry metadata generation
 - [ ] Recogito meta-gazetteer generation
 - [ ] Facilitate contributions to Wikidata
