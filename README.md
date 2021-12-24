@@ -8,7 +8,16 @@
     <img src="/images/colligo.png" />
 </p>
 
-*Locolligo* is a single-page, browser-based javascript application \[*in the early stages of development*\] to facilitate the formatting, linking, and geolocation of datasets, with a particular focus on Cultural Heritage. It employs standards developed by the [Pelagios Network](https://pelagios.org/), and will (for example) conform datasets for use in the Network's *Peripleo* map visualisation and [*Recogito*](https://recogito.pelagios.org/) annotation software, and generate metadata for the submission of datasets to the Network's historical geodata Registry. It can be downloaded and run on a standalone PC, tablet, or smartphone, without any dependency on a database or other server infrastructure; basic features will even run without an internet connection.
+*Locolligo* is a single-page, browser-based javascript application \[*in the early stages of development*\] to facilitate the formatting, linking, and geolocation of datasets, with a particular focus on Cultural Heritage.
+
+>It will facilitate the linking of related records (*subjects* and *objects*) based on definable criteria (*predicates*):
+>* between datasets, 
+>* to points within existing gazetteers of places-names, and
+>* to coordinates picked on modern or historical maps.
+>
+>The [semantic triples](https://en.wikipedia.org/wiki/Semantic_triple) (the basis of [RDF](https://en.wikipedia.org/wiki/Resource_Description_Framework)) thereby created will facilitate the automated discovery of further links between data records.
+
+*Locolligo* employs standards developed by the [Pelagios Network](https://pelagios.org/), and will (for example) conform datasets for use in the Network's *Peripleo* map visualisation and [*Recogito*](https://recogito.pelagios.org/) annotation software, and generate metadata for the submission of datasets to the Network's historical geodata Registry. It can be downloaded and run on a standalone PC, tablet, or smartphone, without any dependency on a database or other server infrastructure; basic features will even run without an internet connection.
 
 This software originates as an output of the AHRC-funded [**Locating a National Collection**](https://www.nationalcollection.org.uk/Foundation-Projects#:~:text=Locating%20a%20National%20Collection) (LaNC) project. Based at the British Library in London, the project is part of the AHRC programme [Towards a National Collection: Opening UK Heritage to the World](https://www.nationalcollection.org.uk/). Initial development of *Locolligo* addresses the LaNC project's aim of helping cultural heritage organisations to use geospatial data, and together with development of *Peripleo* is a major step in scoping 'technical recommendations for the development of a national discovery system whereby objects about a topic of interest can be readily discovered from a variety of sources, represented in the context of their historic environment, and referenced in time and landscape'. 
 
