@@ -1,7 +1,7 @@
 @keyframes flash-background {
     0%   { background-color: white }
     90%  { background-color: white }
-    100% { background-color: red }
+    100% { background-color: greenyellow }
 }
 :root {
   --ip-color: darkslategrey;
