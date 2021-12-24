@@ -8,7 +8,7 @@
     <img src="/images/colligo.png" />
 </p>
 
-*Locolligo* is a single-page, browser-based javascript application \[*in the early stages of development*\] to facilitate the formatting, linking, and geolocation of datasets, with a particular focus on Cultural Heritage.
+***Locolligo* is a single-page, browser-based javascript application \[*in the early stages of development*\] to facilitate the formatting, linking, and geolocation of datasets, with a particular focus on Cultural Heritage.**
 
 >It will facilitate the linking of related records (*subjects* and *objects*) based on definable criteria (*predicates*):
 >* between datasets, 
