@@ -40,11 +40,12 @@ This software originates as an output of the AHRC-funded [**Locating a National 
     - [x] Recogito LD
     - [x] Uploaded datasets (JSONata configuration required, UI not yet built)
 - [x] Convert Peripleo-LD to:
-    - [x] [geoJSON](https://geojson.org/) (with basic mapping)
+    - [x] [geoJSON](https://geojson.org/) (with basic mapping; *geoWithin* properties not yet supported)
     - [ ] [Turtle](https://en.wikipedia.org/wiki/Turtle_(syntax)) RDF
 - [x] OSGB to WGS84 CRS conversion
 - [x] Standardisation of annotation fragment selectors (see [here](https://github.com/docuracy/LaNC/blob/main/Peripleo_Fragment_Selector_SVG.js))
 - [x] Implementation of [schema.org](https://schema.org/) vocabulary to facilitate dataset indexing and discovery
+- [ ] Location approximation: translation of text values to schema.org *geoRadius* values and *geoWithin* *geoCircle*s
 - [ ] UI for configuration of JSONata transformation of unrecognised data models
 - [ ] Facilitate editing of dataset metadata
 - [ ] Data Linking
