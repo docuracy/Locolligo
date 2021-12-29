@@ -183,6 +183,10 @@ a.popup_link.wikidata{
 	float: left;
 	display: flex;
 }
+#conversions label {
+    position: relative;
+	top: 5px;
+}
 .arrow {
   position: relative;
   z-index: 10;
@@ -217,4 +221,7 @@ a.popup_link.wikidata{
 }
 #darkroom {
 	display: none;
+}
+.json-formatter-string {
+	white-space: pre-wrap;
 }
