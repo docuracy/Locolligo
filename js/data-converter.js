@@ -32,6 +32,7 @@
 // TO DO:
 // SEE ALSO: https://docs.google.com/document/d/1H0KmYf405QS2ECozHpmAFsLz2MbXd_3qLKXBmLFCoJc/edit?usp=sharing
 // Genericise API query function using JSONata and an API-configurations file, to allow simple addition of further API endpoints.
+// Implement GeoWithin GeoCircle for approximation of location: see https://try.jsonata.org/iyQES5XVv
 // Implement geoJSON and map shapes (boxes and circles) for geoWithin objects
 // GeoNames for nearby Wikipedia urls, e.g. http://api.geonames.org/findNearbyWikipediaJSON?lat=51.0177369115508&lng=-1.92513942718506&radius=10&username=docuracy&maxRows=500
 // GeoNames reverse geocoding for nearby toponyms, e.g. http://api.geonames.org/findNearbyJSON?lat=51.0177369115508&lng=-1.92513942718506&radius=10&username=docuracy&maxRows=500
@@ -58,6 +59,7 @@
 
 // Global variables
 var mappings, 
+	fields,
 	input_formatter, 
 	input, 
 	output_formatter, 
@@ -249,7 +251,7 @@ function renderJSON(target,object,data){
 function identifyType(input){
 	if (input.hasOwnProperty('traces')){fields = JSON.stringify(['traces']);}
 	else if (input.hasOwnProperty('kml')){fields = JSON.stringify(['kml']);}
-	else if (input.hasOwnProperty('meta')){fields = JSON.stringify(input.meta.fields);}
+	else if (input.hasOwnProperty('meta')){fields = JSON.stringify(input.meta.fields); console.log(input.meta)} // Converted from delimited text
 	else if (input.constructor === Array && input[0].hasOwnProperty('@context') && input[0]['@context']=='http://www.w3.org/ns/anno.jsonld'){fields = JSON.stringify(['annotations']);}
 	else return;
 	$.each(mappings, function(key,value){
@@ -574,6 +576,7 @@ $( document ).ready(function() {
 		$('#JSONata_area').val(JSONata).select();
 		document.execCommand("copy");
 		mappings[$('#expression option:selected').val()].expression = JSONata;
+		mappings[$('#expression option:selected').val()].fields = fields;
 		$('#modal').dialog('close');
 	});   
 	
