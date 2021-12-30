@@ -42,6 +42,7 @@ This software originates as an output of the AHRC-funded [**Locating a National 
 - [x] Convert Peripleo-LD to:
     - [x] [geoJSON](https://geojson.org/) (with basic mapping; *geoWithin* properties not yet supported)
     - [ ] [Turtle](https://en.wikipedia.org/wiki/Turtle_(syntax)) RDF
+    - [ ] CSV for batch contribution to Wikidata via [*QuickStatements*](https://quickstatements.toolforge.org/)
 - [x] OSGB to WGS84 CRS conversion
 - [x] Standardisation of annotation fragment selectors (see [here](https://github.com/docuracy/LaNC/blob/main/Peripleo_Fragment_Selector_SVG.js))
 - [x] Implementation of [schema.org](https://schema.org/) vocabulary to facilitate dataset indexing and discovery
@@ -59,10 +60,11 @@ This software originates as an output of the AHRC-funded [**Locating a National 
     - [ ] Wikidata
     - [ ] Geonames
     - [ ] Google
-- [ ] Geocoding of un-gazetteered places using maps
+- [ ] Geocoding of un-gazetteered places
+    - [ ]  Use georeferenced historical basemaps as citable references
+    - [ ]  Create linked Wikidata item with geo-coordinates, using programmatically-submitted [*QuickStatements* batch jobs](https://quickstatements.toolforge.org/#/user) (default CORS policy prevents direct use of API)
 - [ ] Pelagios Registry metadata generation
 - [ ] Recogito meta-gazetteer generation
-- [ ] Facilitate contributions to Wikidata (default CORS policy prevents this)
 
 ## Limitations
 Dataset size is limited by local device memory. It may be possible to implement chunking to address this issue.
