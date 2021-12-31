@@ -28,11 +28,12 @@
 // Enabled XML to JSON conversion (see https://github.com/NaturalIntelligence/fast-xml-parser)
 // Enabled CSV download from Google Sheet URL
 // Enabled KML to geoJSON conversion from Google Maps URL: see https://try.jsonata.org/PLgXDO5Jm
+// Implemented GeoWithin GeoCircle and JSONata lookup table for approximation of location: see https://try.jsonata.org/rRwdGSt9S
 //
 // TO DO:
 // SEE ALSO: https://docs.google.com/document/d/1H0KmYf405QS2ECozHpmAFsLz2MbXd_3qLKXBmLFCoJc/edit?usp=sharing
+// Show IIIF fragments in Data Item Explorer overlay
 // Genericise API query function using JSONata and an API-configurations file, to allow simple addition of further API endpoints.
-// Implement GeoWithin GeoCircle for approximation of location: see https://try.jsonata.org/iyQES5XVv
 // Implement geoJSON and map shapes (boxes and circles) for geoWithin objects
 // GeoNames for nearby Wikipedia urls, e.g. http://api.geonames.org/findNearbyWikipediaJSON?lat=51.0177369115508&lng=-1.92513942718506&radius=10&username=docuracy&maxRows=500
 // GeoNames reverse geocoding for nearby toponyms, e.g. http://api.geonames.org/findNearbyJSON?lat=51.0177369115508&lng=-1.92513942718506&radius=10&username=docuracy&maxRows=500
@@ -235,8 +236,11 @@ function renderJSON(target,object,data){
 		clipButton.button().click(function(){drawMap($(this));});
 		$('<button id="PASButton" class="APIButton" title="Link PAS records within '+radius+'km">PAS</button>').prependTo(target);
 		$('<button id="WDButton" class="APIButton" title="Link Wikidata records within '+radius+'km">Wikidata</button>').prependTo(target);
-		$('<button id="LinkButton" class="APIButton" title="NOT YET AVAILABLE: Link and/or georeference records" disabled="true" style="pointer-events: auto;">Link/Georeference</button>').prependTo(target);
 		$('.APIButton').button().click(function(){addAPIdata($(this));});
+		$('<button id="LinkButton" title="Link and/or georeference records" style="pointer-events: auto;">Link/Georeference</button>')
+			.prependTo(target)
+			.button()
+			.click(function(){link($(this));});
 	}
 	if(Array.isArray(data.errors) && data.errors.length>0){ // Warn of errors found when parsing uploaded file
 		var errors = $('<div class="errors" />').prependTo(target);
@@ -280,7 +284,28 @@ function clipSample(el) {
 	$temp.remove();
 }
 
-// Show map for current dataset
+function showMap(onOff,bounds=false){
+	if(onOff) {
+		$('#map').css({'visibility':'hidden','display':'block'});
+		map.resize();
+	}
+	else{
+		$.each(markers, function(i,marker){ marker.remove(); });
+		$('#data-explorer').remove();
+	}
+	if(bounds) {
+		map.fitBounds(bounds, {
+			padding: 20,
+			duration: 0
+		});
+		var zoom = map.getZoom();
+		if (zoom>18) map.setZoom(12);
+	}
+	$('body').toggleClass('noscroll',onOff);
+	$('#map').css('visibility','visible').toggle(onOff);
+}
+
+// Draw map for current dataset
 function drawMap(el){
 	$('body').loadingModal({text: 'Processing...'});
 	var geoJSON;
@@ -319,12 +344,54 @@ function drawMap(el){
 			.addTo(map);
 		markers.push(marker);
 	}
-	map.fitBounds(bounds, {
-		padding: 20
-	});
-	$('#map').dialog('open');
-	map.resize();
+	showMap(true,bounds);
 	$('body').loadingModal('destroy');
+}
+
+// Add links to data items
+function link(el) {
+	var dataset = el.parent('div').data('data').traces;
+	var bounds = false;
+	function plotTrace(i){
+		$.each(dataset[i].body, function(j,body){
+			if(body.hasOwnProperty('geometry') && body.geometry['@type']=='GeoCoordinates'){
+				var coordinates = [body.geometry.longitude,body.geometry.latitude];
+				const el = document.createElement('div');
+				el.className = 'marker';
+				var marker = new mapboxgl.Marker(el)
+					.setLngLat(coordinates)
+					.addTo(map);
+				markers.push(marker);
+				if(bounds){
+					bounds.extend(coordinates);
+				}
+				else{
+					bounds = new mapboxgl.LngLatBounds(coordinates,coordinates);
+				}
+			}
+		});
+	}
+	trace_formatter = new JSONFormatter(dataset[0],10,{theme:'dark'});
+	$('<div>', { // Add Data Explorer to map
+	    id: 'data-explorer',
+	    class: 'ui-dialog ui-corner-all ui-widget ui-widget-content ui-front ui-draggable ui-resizable'
+	})
+		.resizable({ containment: "#map" })
+		.draggable({ containment: "#map", scroll: false })
+		.prepend($('.logo:first').clone())
+		// TO DO: Add navigation buttons and search box for traces
+		.prepend($('<div>',{
+			id: 'navigation',
+			html: '*Not yet functional'
+		}))
+		.append($('<div>',{
+			id: 'trace',
+			class: '.ui-widget.ui-widget-content',
+			html: trace_formatter.render()
+		}))
+		.appendTo('#map');
+	plotTrace(0);
+	showMap(true, bounds);
 }
 
 // Query API
@@ -436,6 +503,19 @@ $( document ).ready(function() {
         return;
     }
 	
+	// Ensure that map covers other window content
+	$(window).resize(function () {
+		map.resize();
+	}).resize();
+	$('<button>', { // Add close button to map controls
+	    class: 'mapboxgl-ctrl-close-map',
+	    title: 'Close map'
+	})
+		.button()
+		.click(function(){showMap(false);})
+		.prependTo('div.mapboxgl-ctrl-top-right div.mapboxgl-ctrl-group')
+		.append('<span class="mapboxgl-ctrl-icon"></span>');
+	
 	// Apply jquery-ui styling
 	$('#choose_input').selectmenu().on('selectmenuchange',function () {
 		$('#choose_input-button').removeClass('throb');
@@ -450,14 +530,6 @@ $( document ).ready(function() {
 		modal: true,
 		width: 600,
 		height: "auto"
-	});
-	$( "#map" ).dialog({
-		autoOpen: false,
-		modal: true,
-		width: 600,
-		height: 600,
-		resize: function(event, ui) { map.resize(); },
-		close: function(event, ui) { $.each(markers, function(i,marker){ marker.remove(); }) }
 	});
 	
 	// Populate Examples drop-down list
