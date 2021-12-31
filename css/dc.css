@@ -20,6 +20,9 @@ body {
     background-repeat: no-repeat;
     background-size: 1887px;
 }
+.noscroll {
+	overflow: hidden;
+}
 #header {
 	height: 33px;
 }
@@ -47,7 +50,7 @@ span.initial{
 	font-size: .8em!important;
 	padding: 0.5em 1em;
 }
-#logo {
+.logo {
 	font-family: 'Montserrat', sans-serif;
 	font-size: 2em;
     font-weight: bold;
@@ -56,7 +59,7 @@ span.initial{
 	float: right;
 	text-shadow: 0.07em 0.07em 0.15em rgb(10 10 10 / 45%);
 }
-#logo span{
+.logo span{
 	color: var(--op-color);
 }
 .throb {
@@ -121,8 +124,20 @@ div.errors {
 	display: none;
 }
 #map { 
-	height: 400px;
-	width: 600px;
+	top: 0;
+	left: 0;
+	height: 100vh;
+	width: 100vw;
+	position: absolute;
+    z-index: 100;
+}
+button.mapboxgl-ctrl-close-map span.mapboxgl-ctrl-icon{
+	transform: rotate(45deg);
+	background-image:url("data:image/svg+xml;charset=utf-8,%3Csvg width='29' height='29' viewBox='0 0 29 29' xmlns='http://www.w3.org/2000/svg' fill='%23333'%3E %3Cpath d='M14.5 8.5c-.75 0-1.5.75-1.5 1.5v3h-3c-.75 0-1.5.75-1.5 1.5S9.25 16 10 16h3v3c0 .75.75 1.5 1.5 1.5S16 19.75 16 19v-3h3c.75 0 1.5-.75 1.5-1.5S19.75 13 19 13h-3v-3c0-.75-.75-1.5-1.5-1.5z'/%3E %3C/svg%3E")	
+}
+.mapboxgl-canvas-container {
+	height: 100vh;
+	width: 100vw;
 }
 .marker {
 	background-color: red;
@@ -143,6 +158,47 @@ div.errors {
     background-position: center right;
     background-repeat: no-repeat;
     padding-right: 13px;
+}
+#data-explorer {
+	top: 2em;
+	left: 2em;
+	height: 50vh;
+	width: 30vw;
+    min-width: 200px;
+    min-height: 300px;
+	position: absolute!important;
+    z-index: 1;
+    background-image: linear-gradient(to top right, var(--bg-color) 70%, white);
+    opacity: 90%;
+    cursor: grab;
+    box-shadow: 3px 3px 4px 2px rgb(10 10 10 / 45%);
+}
+#data-explorer .logo {
+	top: 4px;
+    position: relative;
+}
+#data-explorer .ui-resizable-se {
+	height: 16px;
+    width: 16px;
+}
+#navigation {
+	float: left;
+    color: red;
+    font-size: 1.5em;
+    left: 4px;
+    top: 4px;
+    position: relative;
+}
+#trace {
+    overflow: auto;
+    clear: both;
+    height: calc(100% - 44px);
+    background-image: linear-gradient(to bottom left, var(--bg-color) 70%, white);
+    margin: 0 4px;
+    border: 1px solid #ddd;
+    border-radius: 3px;
+    top: 12px;
+    position: relative;
 }
 div.popup_links {
 	max-height: 300px;
@@ -223,5 +279,5 @@ a.popup_link.wikidata{
 	display: none;
 }
 .json-formatter-string {
-	white-space: pre-wrap;
+	white-space: break-spaces!important;
 }
