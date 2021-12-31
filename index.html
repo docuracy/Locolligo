@@ -33,7 +33,7 @@ For details see https://github.com/docuracy/Locolligo/blob/main/LICENSE.md
 </head>
 <body>
 	<div id="header">
-		<a id="logo" aria-label="Locolligo" title="About Locolligo: Historical Geodata Curator" href="https://github.com/docuracy/Locolligo/blob/main/README.md">{Lo<span>co:lligo</span>}</a>
+		<a class="logo" aria-label="Locolligo" title="About Locolligo: Historical Geodata Curator" href="https://github.com/docuracy/Locolligo/blob/main/README.md">{Lo<span>co:lligo</span>}</a>
 	</div>
 	<div id="source" class="json-formatter">
 		<span id="source_block">
@@ -84,8 +84,8 @@ For details see https://github.com/docuracy/Locolligo/blob/main/LICENSE.md
 		    zoom: 9 
 		});
 		map
-			.addControl(new mapboxgl.FullscreenControl())
-			.addControl(new mapboxgl.NavigationControl());
+			.addControl(new mapboxgl.NavigationControl())
+			.on('idle',function(){ map.resize(); });
 	</script>
 </body>
 </html>
