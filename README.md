@@ -43,7 +43,9 @@ This software originates as an output of the AHRC-funded [**Locating a National 
     - [x] [geoJSON](https://geojson.org/) (with basic mapping; *geoWithin* properties not yet supported)
     - [ ] [Turtle](https://en.wikipedia.org/wiki/Turtle_(syntax)) RDF
     - [ ] CSV for batch contribution to Wikidata via [*QuickStatements*](https://quickstatements.toolforge.org/)
-- [x] OSGB to WGS84 CRS conversion
+- [x] Conform geodata to [WGS84](https://en.wikipedia.org/wiki/World_Geodetic_System) from:
+    - [x] [OSGB](https://en.wikipedia.org/wiki/Ordnance_Survey_National_Grid) (Ordnance Survey of Great Britain)
+    - [ ] [What3Words](https://what3words.com/about)
 - [x] Standardisation of annotation fragment selectors (see [here](https://github.com/docuracy/LaNC/blob/main/Peripleo_Fragment_Selector_SVG.js))
 - [x] Implementation of [schema.org](https://schema.org/) vocabulary to facilitate dataset indexing and discovery
 - [ ] Location approximation: translation of text values to schema.org *geoRadius* values and *geoWithin* *geoCircle*s
