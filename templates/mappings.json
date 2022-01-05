@@ -8,7 +8,7 @@
 	},
 	{
 		"description":"Peripleo-LD to geoJSON-T",
-		"expression": "{ \"type\":\"FeatureCollection\", \"@context\": \"https://raw.githubusercontent.com/LinkedPasts/linked-places/master/linkedplaces-context-v1.jsonld\", \"features\":traces.body[additionalType=\"Place\" and $exists(geometry.longitude) and $exists(geometry.latitude)][].{ \"type\":\"Feature\", \"geometry\":{ \"type\":\"Point\", \"coordinates\":[ geometry.longitude, geometry.latitude ] }, \"properties\":{ \"name\":title, \"description\": %.target.description, \"url\": %.target.id, \"links\": [ $exists(id)?{ \"additionalType\": \"Place\",\"linkRelationship\": \"identifying\",\"lpo:type\": \"SpecificResource\",\"identifier\": id }, %.body[additionalType=\"LinkRole\"] ] }, \"when\": when }}",
+		"expression": "{ \"type\":\"FeatureCollection\", \"@context\": \"https://raw.githubusercontent.com/LinkedPasts/linked-places/master/linkedplaces-context-v1.jsonld\", \"features\":traces.body[additionalType=\"Place\" and $exists(geometry.longitude) and $exists(geometry.latitude)][].{ \"type\":\"Feature\", \"geometry\":{ \"type\":\"Point\", \"coordinates\":[ geometry.longitude, geometry.latitude ] }, \"properties\":{ \"name\":title, \"description\": %.target.description, \"url\": %.target.id, \"links\": [ $exists(id)?{ \"additionalType\": \"Place\", \"linkRelationship\": \"identifying\", \"lpo:type\": \"SpecificResource\", \"identifier\": id }, %.body[additionalType=\"LinkRole\"] ], \"annotation_id\": %.id }, \"when\": when }}",
 	    "mappings": {},
 	    "CRS_conversions": [],
 		"fields":["traces"]
