@@ -8,7 +8,7 @@
 // DONE:
 // UUIDs generated for all traces
 // Linking of PAS and Wikidata records within set radius
-// Mapping of Peripleo-LD by JSONata translation to geoJSON, with array of linked data. See https://try.jsonata.org/SAJMolM8A 
+// Mapping of Peripleo-LD by JSONata translation to geoJSON, with array of linked data and including annotation id. See https://try.jsonata.org/tqEFTp-pX 
 // Autodetect known conversion types
 // JSONata expression paste module
 // Enable URL input 
@@ -33,6 +33,7 @@
 // TO DO:
 // SEE ALSO: https://docs.google.com/document/d/1H0KmYf405QS2ECozHpmAFsLz2MbXd_3qLKXBmLFCoJc/edit?usp=sharing
 // Show IIIF fragments in Data Item Explorer overlay
+// Reset button to allow new input
 // Genericise API query function using JSONata and an API-configurations file, to allow simple addition of further API endpoints.
 // Implement geoJSON and map shapes (boxes and circles) for geoWithin objects
 // GeoNames for nearby Wikipedia urls, e.g. http://api.geonames.org/findNearbyWikipediaJSON?lat=51.0177369115508&lng=-1.92513942718506&radius=10&username=docuracy&maxRows=500
@@ -64,8 +65,12 @@ var mappings,
 	input_formatter, 
 	input, 
 	output_formatter, 
-	output, 
+	output,
+	activeDatasetEl,
+	filteredIndices=[],
+	selectedFilter=0,
 	markers=[], 
+	currentMarkers=[], 
 	radius=10, 
 	sparql_base, 
 	activeAjaxConnections = 0;
@@ -306,12 +311,11 @@ function showMap(onOff,bounds=false){
 }
 
 // Draw map for current dataset
-function drawMap(el){
+function drawMap(el,render=true){
 	$('body').loadingModal({text: 'Processing...'});
 	var geoJSON;
 	if(el.parent('div').data('data').hasOwnProperty('features')){
 		geoJSON = el.parent('div').data('data');
-		console.log(geoJSON);
 	}
 	else{
 		const jsonata_expression = jsonata( mappings[1].expression ); // Convert Peripleo-LD to geoJSON-T
@@ -319,79 +323,181 @@ function drawMap(el){
 	}
 	const bounds = new mapboxgl.LngLatBounds(geoJSON.features[0].geometry.coordinates,geoJSON.features[0].geometry.coordinates);
 	for (const feature of geoJSON.features) {
-		console.log(feature.geometry.coordinates);
 		bounds.extend(feature.geometry.coordinates);
 		const el = document.createElement('div');
 		el.className = 'marker';
-		var WikidataHTML = '';
-		var linkHTML = '';
-		$.each(feature.properties.links, function(i,link){
-			if(link.identifier.indexOf("wikidata")>-1){
-				WikidataHTML += '<a class="popup_link wikidata" href="'+link.identifier+'" title="'+link.description+' ('+link['lpo:type'][1]+')">'+link.name+'</a>';
-			}
-			if(link.identifier.indexOf("finds.org.uk")>-1){
-				if(link.image!==undefined) linkHTML += '<a class="popup_link PAS" href="'+link.identifier+'" title="'+link['lpo:type'][1]+'"><img src="'+link.image+'" /></a>';
-			}
-		});
-		var marker = new mapboxgl.Marker(el)
+		if(render){
+			var WikidataHTML = '';
+			var linkHTML = '';
+			$.each(feature.properties.links, function(i,link){
+				if(link.identifier.indexOf("wikidata")>-1){
+					WikidataHTML += '<a class="popup_link wikidata" href="'+link.identifier+'" title="'+link.description+' ('+link['lpo:type'][1]+')">'+link.name+'</a>';
+				}
+				if(link.identifier.indexOf("finds.org.uk")>-1){
+					if(link.image!==undefined) linkHTML += '<a class="popup_link PAS" href="'+link.identifier+'" title="'+link['lpo:type'][1]+'"><img src="'+link.image+'" /></a>';
+				}
+			});
+			var marker = new mapboxgl.Marker(el)
+				.setLngLat(feature.geometry.coordinates)
+				.setPopup(new mapboxgl.Popup({ offset: 25 }).setHTML(
+						'<h3><a href="'+feature.properties.url+'">'+feature.properties.name+'</a></h3>'+
+						'<p>'+feature.properties.description+'</p>'+
+						(WikidataHTML!=='' ? ('<div class="popup_links"><p>Closest 20 Wikidata Cultural Heritage sites within '+radius+'km:</p>'+WikidataHTML+'</div>') : '')+
+						(linkHTML!=='' ? ('<div class="popup_links"><p>Up to 20 PAS finds with images in '+radius+'km radius:</p>'+linkHTML+'</div>') : '')				
+					))
+				.addTo(map);
+		}
+		else{
+			$(el)
+			.attr('title','Click to examine this data point')
+			.data({'annotation_id':feature.properties.annotation_id})
+			.click(function(){
+				$('#filter').val(''); // Clear filter
+				updateFilter();
+				$.each(activeDatasetEl.data('data').traces, function(i,trace){
+					if(trace.id == feature.properties.annotation_id){
+						selectedFilter=i;
+						$('#index').change(); // Trigger updateTrace
+						return;
+					}
+				})
+			})
+			var marker = new mapboxgl.Marker(el)
 			.setLngLat(feature.geometry.coordinates)
-			.setPopup(new mapboxgl.Popup({ offset: 25 }).setHTML(
-					'<h3><a href="'+feature.properties.url+'">'+feature.properties.name+'</a></h3>'+
-					'<p>'+feature.properties.description+'</p>'+
-					(WikidataHTML!=='' ? ('<div class="popup_links"><p>Closest 20 Wikidata Cultural Heritage sites within '+radius+'km:</p>'+WikidataHTML+'</div>') : '')+
-					(linkHTML!=='' ? ('<div class="popup_links"><p>Up to 20 PAS finds with images in '+radius+'km radius:</p>'+linkHTML+'</div>') : '')				
-				))
-			.addTo(map);
+			.addTo(map);			
+		}
 		markers.push(marker);
 	}
-	showMap(true,bounds);
+	if(render) showMap(true,bounds);
 	$('body').loadingModal('destroy');
+}
+
+function updateTrace(dataset){
+	var bounds = false;
+	$.each(currentMarkers, function(i,marker){ marker.remove(); });
+	var index = $('#index').val()-1;
+	$.each(dataset[index].body, function(j,body){
+		if(body.hasOwnProperty('geometry') && body.geometry['@type']=='GeoCoordinates'){
+			var coordinates = [body.geometry.longitude,body.geometry.latitude];
+			const el = document.createElement('div');
+			el.className = 'marker currentmarker';
+			var marker = new mapboxgl.Marker(el)
+				.setLngLat(coordinates)
+				.addTo(map);
+			currentMarkers.push(marker);
+			if(bounds){
+				bounds.extend(coordinates);
+			}
+			else{
+				bounds = new mapboxgl.LngLatBounds(coordinates,coordinates);
+			}
+		}
+	});
+	trace_formatter = new JSONFormatter(dataset[index],10,{theme:'dark'});
+	$('#trace').html(trace_formatter.render());
+	showMap(true, bounds);
+}
+
+function updateFilter() {
+	if($('#navigation').hasClass('disabled')){
+		$('#navigation')
+			.removeClass('disabled')
+			.find('button,#index').prop('disabled',false);
+	}
+	var filter = $('#filter').val().toUpperCase();
+	if (filter=='') {
+		filteredIndices = Array(activeDatasetEl.data('data').traces.length).fill().map((item, index) => 1+index);
+		selectedFilter = $('#index').val()-1;
+		$('#filtered').html('');
+		$('#navigation').removeClass('filtered');
+		return;
+	}
+	$('#navigation').addClass('filtered');
+	filteredIndices=[];
+	$.each(activeDatasetEl.data('data').traces, function(i,trace){
+		var found = false;
+		found = trace.target.title.toUpperCase().indexOf(filter) > -1;
+		if (!found) {
+			$.each(trace.body,function(j,body){
+				found = body.title.toUpperCase().indexOf(filter) > -1;
+			})
+		}
+		if (found) filteredIndices.push(i+1);
+	});
+	$('#filtered').html('('+filteredIndices.length+')');
+	selectedFilter = 0;
+	if(filteredIndices.length>0){
+		$('#index').val(filteredIndices[selectedFilter]).change();
+	}
+	else{
+		$('#navigation')
+			.removeClass('filtered')
+			.addClass('disabled') // Hides trace using css
+			.find('button,#index').prop('disabled',true);
+	}
 }
 
 // Add links to data items
 function link(el) {
-	var dataset = el.parent('div').data('data').traces;
-	var bounds = false;
-	function plotTrace(i){
-		$.each(dataset[i].body, function(j,body){
-			if(body.hasOwnProperty('geometry') && body.geometry['@type']=='GeoCoordinates'){
-				var coordinates = [body.geometry.longitude,body.geometry.latitude];
-				const el = document.createElement('div');
-				el.className = 'marker';
-				var marker = new mapboxgl.Marker(el)
-					.setLngLat(coordinates)
-					.addTo(map);
-				markers.push(marker);
-				if(bounds){
-					bounds.extend(coordinates);
-				}
-				else{
-					bounds = new mapboxgl.LngLatBounds(coordinates,coordinates);
-				}
-			}
-		});
-	}
-	trace_formatter = new JSONFormatter(dataset[0],10,{theme:'dark'});
+	drawMap(el,false);
+	activeDatasetEl = el.parent('div');
 	$('<div>', { // Add Data Explorer to map
 	    id: 'data-explorer',
 	    class: 'ui-dialog ui-corner-all ui-widget ui-widget-content ui-front ui-draggable ui-resizable'
 	})
 		.resizable({ containment: "#map" })
 		.draggable({ containment: "#map", scroll: false })
-		.prepend($('.logo:first').clone())
-		// TO DO: Add navigation buttons and search box for traces
 		.prepend($('<div>',{
-			id: 'navigation',
-			html: '*Not yet functional'
+			id: 'navigation'
 		}))
 		.append($('<div>',{
 			id: 'trace',
-			class: '.ui-widget.ui-widget-content',
-			html: trace_formatter.render()
+			class: '.ui-widget.ui-widget-content'
 		}))
 		.appendTo('#map');
-	plotTrace(0);
-	showMap(true, bounds);
+	$('#navigation')
+		.append(new Array(10).join('<button></button>'))
+		.find('button')
+		.eq(0).button({icon:"ui-icon-seek-first",showlabel:false}).prop('title','First (filtered) item').click(function(){selectedFilter=0;$('#index').change()}).end()
+		.eq(1).button({icon:"ui-icon-seek-prev",showlabel:false}).prop('title','Previous (filtered) item').click(function(){selectedFilter=Math.max(0,selectedFilter-1);$('#index').change()}).end()
+		.eq(2).button({icon:"ui-icon-seek-next",showlabel:false}).prop('title','Next (filtered) item').click(function(){selectedFilter=Math.min(filteredIndices.length-1,selectedFilter+1);$('#index').change()}).end()
+		.eq(3).button({icon:"ui-icon-seek-end",showlabel:false}).prop('title','Last (filtered) item').click(function(){selectedFilter=filteredIndices.length-1;$('#index').change();}).end()
+		.eq(1).after($('<input id="index" />')
+			.val(1)
+			.button()
+			.change(function(){$('#index').val(filteredIndices[selectedFilter]); updateTrace(activeDatasetEl.data('data').traces)})
+		).end()
+		.eq(2).before('<span>/'+activeDatasetEl.data('data').traces.length+'</span>').end()
+		.eq(3)
+			.after('<span id="filtered" />')
+			.after(
+				$('<input id="filter" placeholder="Filter by Title" type="search" />')
+				.on('input',function(){updateFilter();})
+				.button()
+			)
+			.end()
+		.eq(4).button({icon:"ui-icon-pin-s",showlabel:false}).prop('title','Drop pin on map').click(function(){alert('Not yet implemented')}).end()
+		.eq(5).button({icon:"ui-icon-link",showlabel:false}).prop('title','Link').click(function(){alert('Not yet implemented')}).end()
+		.eq(6).button({icon:"ui-icon-image",showlabel:false}).prop('title','Fetch IIIF image fragments').click(function(){alert('Not yet implemented')}).end()
+		.eq(7).button({icon:"ui-icon-circle-arrow-s",showlabel:false}).prop('title','Download/Save edited dataset').click(function(){alert('Not yet implemented')}).end()
+		.eq(8).button({icon:"ui-icon-trash",showlabel:false}).prop({'title':'Delete this item','id':'delete'}).click(function(){
+			if (confirm('Delete this item?')){
+				$.each(markers, function(i,marker){ // Delete markers by annotation_id
+					if(activeDatasetEl.data('data').traces[$('#index').val()-1].id == $(marker.getElement()).data('annotation_id')){
+						marker.remove();
+					}
+				});
+				$.each(currentMarkers, function(i,marker){ marker.remove(); }); // Delete current markers
+				// TO DO
+				// Delete from filter list
+				// Delete data item
+				// Move to next filtered item
+			}
+		}).end()
+		.slice(-5).insertAfter($('#navigation')).wrapAll('<div id="edit"/>');
+		;
+	updateFilter();
+	$('#index').change(); // Trigger updateTrace
 }
 
 // Query API
@@ -515,6 +621,13 @@ $( document ).ready(function() {
 		.click(function(){showMap(false);})
 		.prependTo('div.mapboxgl-ctrl-top-right div.mapboxgl-ctrl-group')
 		.append('<span class="mapboxgl-ctrl-icon"></span>');
+	$('.mapboxgl-ctrl-top-right')
+		.prepend(
+			$('<input id="geocode" class="mapboxgl-ctrl" title="Not yet implemented" placeholder="Find" type="find" />')
+			.on('keyup',function(){})
+			.button()
+		)
+		.prepend($('.logo:first').clone());
 	
 	// Apply jquery-ui styling
 	$('#choose_input').selectmenu().on('selectmenuchange',function () {
