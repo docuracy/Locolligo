@@ -140,11 +140,16 @@ button.mapboxgl-ctrl-close-map span.mapboxgl-ctrl-icon{
 	width: 100vw;
 }
 .marker {
-	background-color: red;
+	background-color: blue;
 	width: 15px;
 	height: 15px;
 	border-radius: 50%;
 	cursor: pointer;
+}
+.currentmarker {
+	background-color: red;
+	width: 9px;
+	height: 9px;
 }
 .mapboxgl-popup {
 	max-width: 200px;
@@ -158,6 +163,19 @@ button.mapboxgl-ctrl-close-map span.mapboxgl-ctrl-icon{
     background-position: center right;
     background-repeat: no-repeat;
     padding-right: 13px;
+}
+#geocode {
+	font-size: 1em!important;
+    outline: none;
+    cursor: text;
+    margin-bottom: -5px;
+    width: 180px;
+    height: 30px;
+    background-image: url(./images/search.svg);
+    background-position: right 5px center;
+    background-repeat: no-repeat;
+    background-size: 20px;
+    padding-right: 30px;
 }
 #data-explorer {
 	top: 2em;
@@ -173,9 +191,12 @@ button.mapboxgl-ctrl-close-map span.mapboxgl-ctrl-icon{
     cursor: grab;
     box-shadow: 3px 3px 4px 2px rgb(10 10 10 / 45%);
 }
-#data-explorer .logo {
-	top: 4px;
-    position: relative;
+.mapboxgl-ctrl-top-right .logo {
+	top: -22px;
+    right: 8px;
+    z-index: -1;
+    position: absolute;
+    background-color: rgb(255 255 255 / 45%);
 }
 #data-explorer .ui-resizable-se {
 	height: 16px;
@@ -183,16 +204,56 @@ button.mapboxgl-ctrl-close-map span.mapboxgl-ctrl-icon{
 }
 #navigation {
 	float: left;
-    color: red;
-    font-size: 1.5em;
+    font-size: 1.2em;
     left: 4px;
-    top: 4px;
+    top: 3px;
     position: relative;
+}
+#edit {
+	clear: both;
+    top: 7px;
+    position: relative;
+    margin: 4px!important;
+}
+#navigation button {
+	padding: 4px;
+    font-size: 1.5em;
+}
+#navigation input {
+	padding: 3px;
+    font-size: 1em!important;
+	text-align: center;
+	outline: none;
+	cursor: text;
+    margin-left: 5px;
+	width: 120px;
+}
+#navigation input:first-of-type {
+	width: 26px;
+}
+#navigation > span {
+	position: relative;
+	top: 1px;
+    margin-right: 5px;
+}
+#navigation.filtered button:nth-of-type(-n+6), #navigation.filtered input, #navigation.disabled #filter {
+	background-color: #ff00008a;
+	border-color: yellow;
+}
+#navigation.disabled ~ div#trace {
+	display: none;
+}
+#edit #delete {
+	margin-left: 10px;
+    background-color: orange;
+}
+#filtered {
+    color: red;
 }
 #trace {
     overflow: auto;
     clear: both;
-    height: calc(100% - 44px);
+    height: calc(100% - 76px);
     background-image: linear-gradient(to bottom left, var(--bg-color) 70%, white);
     margin: 0 4px;
     border: 1px solid #ddd;
@@ -211,6 +272,9 @@ a.popup_link.wikidata{
 }
 .popup_link img {
 	height: 40px;	
+}
+.mapboxgl-ctrl-top-right {
+    top: 30px!important;
 }
 .mapboxgl-popup-close-button {
 	font-size: 2em!important;
