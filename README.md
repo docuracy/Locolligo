@@ -58,6 +58,9 @@ This software originates as an output of the AHRC-funded [**Locating a National 
     - [ ] Wikipedia articles: GeoNames API
     - [ ] Historical Plaques: OpenPlaques.org API (or data dump converted to Peripleo-LD)
     - [ ] Curated interlinking of Peripleo-LD datasets
+- [ ] Data Checking
+    - [ ] Sanity checking
+    - [ ] Add confirmation flags for checked data
 - [ ] Geocoding of place-names
     - [ ] [World Historical Gazetteer](https://whgazetteer.org/)
     - [ ] Wikidata
