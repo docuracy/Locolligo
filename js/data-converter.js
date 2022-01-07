@@ -29,16 +29,18 @@
 // Enabled CSV download from Google Sheet URL
 // Enabled KML to geoJSON conversion from Google Maps URL: see https://try.jsonata.org/PLgXDO5Jm
 // Implemented GeoWithin GeoCircle and JSONata lookup table for approximation of location: see https://try.jsonata.org/rRwdGSt9S
+// Reset button to allow new input
+// GeoNames for nearby Wikipedia urls, e.g. http://api.geonames.org/findNearbyWikipediaJSON?lat=51.0177369115508&lng=-1.92513942718506&radius=10&username=docuracy&maxRows=500
+// GeoNames reverse geocoding for nearby toponyms, e.g. http://api.geonames.org/findNearbyJSON?lat=51.0177369115508&lng=-1.92513942718506&radius=10&username=docuracy&maxRows=500
 //
 // TO DO:
 // SEE ALSO: https://docs.google.com/document/d/1H0KmYf405QS2ECozHpmAFsLz2MbXd_3qLKXBmLFCoJc/edit?usp=sharing
 // Show IIIF fragments in Data Item Explorer overlay
-// Reset button to allow new input
+// Manage marker collisions
 // Genericise API query function using JSONata and an API-configurations file, to allow simple addition of further API endpoints.
 // Implement geoJSON and map shapes (boxes and circles) for geoWithin objects
-// GeoNames for nearby Wikipedia urls, e.g. http://api.geonames.org/findNearbyWikipediaJSON?lat=51.0177369115508&lng=-1.92513942718506&radius=10&username=docuracy&maxRows=500
-// GeoNames reverse geocoding for nearby toponyms, e.g. http://api.geonames.org/findNearbyJSON?lat=51.0177369115508&lng=-1.92513942718506&radius=10&username=docuracy&maxRows=500
-// GeoNames Points of Interest from OSM, e.g. http://api.geonames.org/findNearbyPOIsOSMJSON?lat=51.0177369115508&lng=-1.92513942718506&radius=1&username=docuracy&maxRows=50
+// Overpass query for Points of Interest from OSM, see https://overpass-turbo.eu/
+// Overpass query for Open Historical Map, see https://wiki.openstreetmap.org/wiki/Open_Historical_Map#Using_the_data
 // Find places (and photos) by name using Google Places API, e.g. https://maps.googleapis.com/maps/api/place/findplacefromtext/json?fields=formatted_address,photo%2Cgeometry&locationbias=circle%3A678000%40-5.734863,55.813629&input=British%20Library&inputtype=textquery&key=AIzaSyAk3AdLLz8XoOwLD1NtwFGypLyh77vtw-k
 // Request API endpoint and specification for History of English Places (VCH) - and/or get permission to convert dataset to Peripleo-LD (includes links to BHO URLs)?
 // OpenPlaques.org has an API (e.g. http://openplaques.org/plaques.csv?box=[55.0473,-1.757],[54.9161,-1.474]), and also a dump which could be converted to Peripleo-LD and used for distance matching. Some linking might be possible through NER on the inscription field.
@@ -59,6 +61,10 @@
 // Check https://search.google.com/search-console/inspect?resource_id=https%3A%2F%2Fdescartes.emew.io%2FLaNC%2F&id=_OBiiM9Efsxpyod913oLcg&alt_id=XIs1hg9P665fjH4fvp6fGA
 // ===========================================================
 
+// User variables
+//var geoNamesID = 'locolligo';
+var geoNamesID = 'docuracy'; // TO DO - REMOVE THIS AND UNCOMMENT LINE ABOVE
+
 // Global variables
 var mappings, 
 	fields,
@@ -66,11 +72,14 @@ var mappings,
 	input, 
 	output_formatter, 
 	output,
+	trace_formatter,
 	activeDatasetEl,
 	filteredIndices=[],
 	selectedFilter=0,
 	markers=[], 
 	currentMarkers=[], 
+	linkMarkers={},
+	linkMarkerPopup,
 	radius=10, 
 	sparql_base, 
 	activeAjaxConnections = 0;
@@ -173,7 +182,7 @@ function OSGB_WGS84(input){
 // Perform dataset conversion
 function convert(){
 	input_formatter.openAtDepth(0); // Close input JSON
-	$.each($('#source').data('data').data,function(j,item){
+	if($('#source').data('data').hasOwnProperty('data')) $.each($('#source').data('data').data,function(j,item){
 		$('#source').data('data').data[j].geoWithins = [];
 		$.each(mappings[$('#expression option:selected').val()].CRS_conversions, function(i,conversion){
 			input=[];
@@ -224,6 +233,7 @@ function renderJSON(target,object,data){
 	target
 		.data('data',data)
 		.html(object.render());
+	$('<button class="dataButton clear" title="Clear this dataset">Clear</button>').prependTo(target).button().click(function(){location.reload();});
 	var downloadButton = $('<button class="dataButton" title="Download this dataset to local filesystem">Download</button>').prependTo(target); // Create button for downloading JSON dataset
 	downloadButton.button().click(function(){download($(this).parent('div').data('data'));});
 	if(Array.isArray(data.data) || data.hasOwnProperty('traces')){ // Create button for copying sample JSON to clipboard
@@ -245,7 +255,7 @@ function renderJSON(target,object,data){
 		$('<button id="LinkButton" title="Link and/or georeference records" style="pointer-events: auto;">Link/Georeference</button>')
 			.prependTo(target)
 			.button()
-			.click(function(){link($(this));});
+			.click(function(){explore($(this));});
 	}
 	if(Array.isArray(data.errors) && data.errors.length>0){ // Warn of errors found when parsing uploaded file
 		var errors = $('<div class="errors" />').prependTo(target);
@@ -372,9 +382,153 @@ function drawMap(el,render=true){
 	$('body').loadingModal('destroy');
 }
 
+function updateLinkMarkers(root=$('#layerSelector')){
+	function linkMarker(newbody,type,colour,coordinates){
+		if(!newbody.hasOwnProperty('geoWithin')) newbody.geometry = {
+				"@type": "GeoCoordinates",
+				"addressCountry": "GB",
+				"longitude": coordinates[0],
+				"latitude": coordinates[1]
+			}
+		const el = document.createElement('div');
+		$(el)
+			.data({'newbody': newbody,'coordinates':coordinates})
+			.html(type)
+			.css({'background-color': colour, 'color': 'white'});
+		el.className = 'linkmarker';
+		var marker = new mapboxgl.Marker(el)
+			.setLngLat(coordinates)
+			.addTo(map);
+		linkMarkers[type].push(marker);		
+	}
+	var input = root.find('input');
+	if (input.length == 1 && !input.prop('checked')){ // Remove markers for this layer only
+		$.each(linkMarkers[input.val()],function(i,marker){marker.remove()});
+		root.removeClass('loading');
+	}
+	const mapCentre = map.getCenter();
+	var settings = {
+		headers: { Accept: 'application/sparql-results+json' }
+    };	
+	$.each(input.filter(':checked'),function(i,layer){
+		// Add markers for these layers		
+		var type = $(layer).val();
+		linkMarkers[type] = [];
+		switch(type) {
+		case 'GT': // Query GeoNames for Toponyms
+			$(layer).closest('.layer').addClass('loading');
+			settings.url = 'https://secure.geonames.org/findNearbyJSON?lat='+mapCentre.lat+'&lng='+mapCentre.lng+'&radius='+radius+'&username='+geoNamesID+'&maxRows=50';
+			$.ajax(settings).then(function(data){
+				$.each(data.geonames, function(i,feature){
+					var newbody = {
+							"additionalType": "LinkRole",
+							"linkRelationship": "Toponym found nearby",
+							"lpo:type": ['seeAlso',feature.fclName],
+							"id": "https://secure.geonames.org/get?geonameId="+feature.geonameId+"&username="+geoNamesID+"&style=full",
+							"title": feature.toponymName,
+							"description": '',
+							"distance": feature.distance 
+					}
+					var coordinates = [feature.lng,feature.lat];
+					linkMarker(newbody,type,'rgb(126 126 0 / 45%)',coordinates);
+				});
+				$(layer).closest('.layer').removeClass('loading');
+			});
+			break;
+		case 'WP': // Query GeoNames for Wikipedia
+			$(layer).closest('.layer').addClass('loading');
+			settings.url = 'https://secure.geonames.org/findNearbyWikipediaJSON?lat='+mapCentre.lat+'&lng='+mapCentre.lng+'&radius='+radius+'&username='+geoNamesID+'&maxRows=50';
+			$.ajax(settings).then(function(data){
+				$.each(data.geonames, function(i,feature){
+					var newbody = {
+							"additionalType": "LinkRole",
+							"linkRelationship": "Wikipedia Article linked nearby",
+							"lpo:type": ['seeAlso',feature.feature],
+							"id": "https://"+feature.wikipediaUrl,
+							"title": feature.title,
+							"description": feature.summary,
+							"distance": feature.distance 
+					}
+					var coordinates = [feature.lng,feature.lat];
+					linkMarker(newbody,type,'rgb(126 0 126 / 45%)',coordinates);
+				});
+				$(layer).closest('.layer').removeClass('loading');
+			});
+			break;
+		case 'WD': // Query Wikidata for Cultural Heritage Sites
+			$(layer).closest('.layer').addClass('loading');
+			var sparql = sparql_base;
+			settings.url = 'https://query.wikidata.org/sparql';
+			settings.data = { query: sparql.replace('%%%lng%%%',mapCentre.lng).replace('%%%lat%%%',mapCentre.lat).replace('%%%radius%%%',radius) }
+			$.ajax(settings).then(function(data){
+				$.each(data.results.bindings, function(i,feature){
+					var newbody = {
+							"additionalType": "LinkRole",
+							"linkRelationship": "Cultural heritage site found nearby",
+							"lpo:type": ['seeAlso',feature.classLabel.value],
+							"id": feature.site.value,
+							"title": feature.siteLabel.value,
+							"description": feature.hasOwnProperty('siteDescription') ? feature.siteDescription.value : '',
+							"distance": feature.distance.value 
+					}
+					var coordinates = feature.geo.value.match(/-?\d+\.\d+/g);
+					linkMarker(newbody,type,'rgb(0 255 0 / 45%)',coordinates);
+				});
+				$(layer).closest('.layer').removeClass('loading');
+			});
+			break;
+		case 'PA':// Query Portable Antiquities Scheme database
+			$(layer).closest('.layer').addClass('loading');
+			function processPage(page){
+				settings.url = 'https://finds.org.uk/database/search/results/lat/'+mapCentre.lat+'/lon/'+mapCentre.lng+'/d/'+radius+'/format/geojson/page/'+page;
+				$.ajax(settings).then(function(data){
+					$.each(data.features, function(i,feature){
+						newbody = {
+								"additionalType": "LinkRole",
+								"linkRelationship": "Artefact found nearby",
+								"lpo:type": ['seeAlso',feature.properties.objecttype],
+								"id": feature.properties.url,
+								"title": feature.properties.description.slice(0,60)+'...',
+								"description": feature.properties.description,
+								"image": feature.properties.thumbnail
+						}
+						if(feature.geometry.coordinates[0]!==null){
+							// Note: 'findspot to 1km grid square level and slight obfuscation of findspot by randomised subtraction/addition of 10ths of a degree to the degraded findspot'
+							newbody.distance = distance([mapCentre.lng,mapCentre.lat],feature.geometry.coordinates,0); // 0 places = nearest kilometre
+							newbody.geoWithin = OSGB_WGS84(feature.properties.fourFigure)[2].geoWithin;
+//							var coordinates = feature.geometry.coordinates;
+							var coordinates = [feature.geometry.coordinates[0]+((Math.random()-.5)/5),feature.geometry.coordinates[1]+((Math.random()-.5)/5)]; // Obfuscate by up to a tenth of a degree in case not implemented on API
+							linkMarker(newbody,type,'rgb(126 126 0 / 45%)',coordinates);
+						}
+					});		
+					if(page < Math.min( 1+Math.floor((data.meta.totalResults-1)/data.meta.resultsPerPage), 10 )) { // Limit to maximum of 10 pages of results (=200 items)
+						processPage(page+1);
+					}
+					else{
+						$(layer).closest('.layer').removeClass('loading');
+					}
+				});
+			}
+			processPage(1);
+			break;
+		case 'other': // ****************** TO DO - generic added geoJSON or shapefiles
+			break;
+		default:
+			break;
+		}	
+	});
+}
+
+function removeLinkMarkers(){
+	$.each($('#layerSelector input:checked'),function(i,layer){
+		$.each(linkMarkers[$(layer).val()], function(i,marker){ marker.remove(); });
+	});
+}
+
 function updateTrace(dataset){
 	var bounds = false;
 	$.each(currentMarkers, function(i,marker){ marker.remove(); });
+	removeLinkMarkers();
 	var index = $('#index').val()-1;
 	$.each(dataset[index].body, function(j,body){
 		if(body.hasOwnProperty('geometry') && body.geometry['@type']=='GeoCoordinates'){
@@ -393,9 +547,10 @@ function updateTrace(dataset){
 			}
 		}
 	});
-	trace_formatter = new JSONFormatter(dataset[index],10,{theme:'dark'});
+	trace_formatter = new JSONFormatter(dataset[index],3,{theme:'light'});
 	$('#trace').html(trace_formatter.render());
 	showMap(true, bounds);
+	updateLinkMarkers();
 }
 
 function updateFilter() {
@@ -437,8 +592,8 @@ function updateFilter() {
 	}
 }
 
-// Add links to data items
-function link(el) {
+// Build data trace explorer
+function explore(el) {
 	drawMap(el,false);
 	activeDatasetEl = el.parent('div');
 	$('<div>', { // Add Data Explorer to map
@@ -479,19 +634,24 @@ function link(el) {
 		.eq(4).button({icon:"ui-icon-pin-s",showlabel:false}).prop('title','Drop pin on map').click(function(){alert('Not yet implemented')}).end()
 		.eq(5).button({icon:"ui-icon-link",showlabel:false}).prop('title','Link').click(function(){alert('Not yet implemented')}).end()
 		.eq(6).button({icon:"ui-icon-image",showlabel:false}).prop('title','Fetch IIIF image fragments').click(function(){alert('Not yet implemented')}).end()
-		.eq(7).button({icon:"ui-icon-circle-arrow-s",showlabel:false}).prop('title','Download/Save edited dataset').click(function(){alert('Not yet implemented')}).end()
+		.eq(7).button({icon:"ui-icon-circle-arrow-s",showlabel:false}).prop('title','Download/Save edited dataset').click(function(){download(activeDatasetEl.data('data'));}).end()
 		.eq(8).button({icon:"ui-icon-trash",showlabel:false}).prop({'title':'Delete this item','id':'delete'}).click(function(){
 			if (confirm('Delete this item?')){
-				$.each(markers, function(i,marker){ // Delete markers by annotation_id
+				$.each(markers, function(i,marker){
 					if(activeDatasetEl.data('data').traces[$('#index').val()-1].id == $(marker.getElement()).data('annotation_id')){
 						marker.remove();
 					}
 				});
-				$.each(currentMarkers, function(i,marker){ marker.remove(); }); // Delete current markers
-				// TO DO
-				// Delete from filter list
-				// Delete data item
-				// Move to next filtered item
+				$.each(currentMarkers, function(i,marker){ marker.remove(); });
+				filteredIndices.splice(selectedFilter,1);
+				$.each(filteredIndices, function(i,index){
+					if(i>=selectedFilter) filteredIndices[i]-=1;
+				});
+				$('#filtered').html('('+filteredIndices.length+')');
+				activeDatasetEl.data('data').traces.splice($('#index').val()-1,1);
+				$('#index')
+					.change()
+					.next('span').html('/'+activeDatasetEl.data('data').traces.length);
 			}
 		}).end()
 		.slice(-5).insertAfter($('#navigation')).wrapAll('<div id="edit"/>');
@@ -622,12 +782,33 @@ $( document ).ready(function() {
 		.prependTo('div.mapboxgl-ctrl-top-right div.mapboxgl-ctrl-group')
 		.append('<span class="mapboxgl-ctrl-icon"></span>');
 	$('.mapboxgl-ctrl-top-right')
-		.prepend(
-			$('<input id="geocode" class="mapboxgl-ctrl" title="Not yet implemented" placeholder="Find" type="find" />')
-			.on('keyup',function(){})
-			.button()
-		)
-		.prepend($('.logo:first').clone());
+		.prepend($('.logo:first').clone())
+		.append($('#geocodeWrapper').addClass('mapboxgl-ctrl').on('keyup',function(){}).button())
+		.append($('#layerSelector').addClass('mapboxgl-ctrl').button());
+	$('#layerSelector').on('click','label',function(e){
+		var checkbox = $(e.target).prev('input');
+		checkbox.prop('checked',!checkbox.prop('checked'));
+	});
+	$('#layerSelector').on('click','.layer',function(e){
+		updateLinkMarkers($(e.target.closest('.layer')))
+	});
+	linkMarkerPopup = new mapboxgl.Popup({
+		closeButton: false,
+		closeOnClick: false
+	});
+	$('#map')
+		.on('mouseenter','.linkmarker',function(e){
+			linkMarkerPopup.setLngLat($(e.target).data('coordinates')).setHTML($(e.target).data('newbody').title).addTo(map);
+		})
+		.on('mouseleave','.linkmarker',function(e){
+			linkMarkerPopup.remove();
+		})
+		.on('click','.linkmarker',function(e){
+			if(confirm('Add to current trace bodies?')){
+				activeDatasetEl.data('data').traces[filteredIndices[selectedFilter]-1].body.push($(e.target).data('newbody'));
+				$('#trace').html(trace_formatter.render());
+			}
+		});
 	
 	// Apply jquery-ui styling
 	$('#choose_input').selectmenu().on('selectmenuchange',function () {
@@ -670,7 +851,6 @@ $( document ).ready(function() {
 		});
 	});
 	
-	
 	// Populate JSONata expressions drop-down list
 	$.get('./templates/mappings.json?'+Date.now(), function(data) { // Do not use any cached file
 		mappings = data;
@@ -679,6 +859,14 @@ $( document ).ready(function() {
 		});
 		$('select#expression').selectmenu().on('selectmenuchange',function () {console.log(mappings[$('#expression option:selected').val()].expression)});
 	},'json');
+	
+	// Populate link layer options
+	$.get('./templates/APIs.json?'+Date.now(), function(data) { // Do not use any cached file
+		$.each(data, function(key,value) {
+			$('#layerSelector').append('<span class="layer" title="'+(value.label.startsWith('*')?'Not yet implemented':value.title)+'"><input '+(value.label.startsWith('*')?'disabled ':'')+'type="checkbox" name="'+value.type+'" value="'+value.type+'"><label for="'+value.type+'">'+value.label+'</label></span>');
+		});
+	},'json');
+	$('#layerSelector span.fence').attr('title','Click to refresh any selected layers, based on current map centre').click(function(){removeLinkMarkers();updateLinkMarkers();});
 	
 	// Load base Wikidata SPARQL query
 	$.get('./templates/wikidata_heritage_sites.sparql', function(data) {
@@ -748,7 +936,6 @@ $( document ).ready(function() {
     	else{
     		var filetype = $('#datafile_url').val().split('\\').pop().split('/').pop();
     	}
-    	console.log('Fetch '+url);
 		$.get(url, function(data) {
 			parse_file(filetype,data);
 		}, 'text').always(function() {
