@@ -69,6 +69,12 @@ For details see https://github.com/docuracy/Locolligo/blob/main/LICENSE.md
 		<div id="conversions">
 			<label for="expression">Conversion type:</label><select name="expression" id="expression"></select>
 		</div>
+		<div id="layerSelector" class="expandingButton">
+			<span class="fence"></span>
+		</div>
+		<div id="geocodeWrapper" class="expandingButton">
+			<input id="geocode" class="mapboxgl-ctrl" title="Not yet implemented" placeholder="Find" type="find" />
+		</div>
 	</div>
 	<script type="module">
         import OsGridRef from './js/geodesy/osgridref.js'; // From https://www.movable-type.co.uk/scripts/latlong-os-gridref.html
