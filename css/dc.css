@@ -3,6 +3,11 @@
     90%  { background-color: white }
     100% { background-color: greenyellow }
 }
+@keyframes loading-background {
+    0%   { background-color: red }
+    50%  { background-color: orange }
+    100% { background-color: red }
+}
 :root {
   --ip-color: darkslategrey;
   --op-color: #520303;
@@ -72,6 +77,9 @@ span.initial{
 #source table {
     position: absolute;
     top: 12px;
+}
+#output .clear{
+	display: none;
 }
 #file_source {
 	padding: 3px;
@@ -145,14 +153,26 @@ button.mapboxgl-ctrl-close-map span.mapboxgl-ctrl-icon{
 	height: 15px;
 	border-radius: 50%;
 	cursor: pointer;
+    z-index: 2;
 }
 .currentmarker {
 	background-color: red;
 	width: 9px;
 	height: 9px;
+    z-index: 3;
+}
+.linkmarker {
+	width: 20px;
+	height: 20px;
+	border: 1px var(--op-color) solid;
+	border-radius: 50%;
+	cursor: pointer;
+    text-align: center;
+    z-index: 1;
 }
 .mapboxgl-popup {
 	max-width: 200px;
+    z-index: 4;
 }
 .mapboxgl-popup-content {
 	text-align: left;
@@ -164,28 +184,72 @@ button.mapboxgl-ctrl-close-map span.mapboxgl-ctrl-icon{
     background-repeat: no-repeat;
     padding-right: 13px;
 }
+.mapboxgl-ctrl-group {
+    border-radius: 3px;
+}
+.mapboxgl-ctrl-group:not(:empty) {
+    box-shadow: 0 0 0 1px rgb(0 0 0 / 10%)!important;
+}
+.expandingButton {
+    font-size: 1em!important;
+    background-position: right 5px top 5px!important;
+    background-repeat: no-repeat!important;
+    background-size: 20px!important;
+    padding: 0 3px 3px 0;
+    max-width: 30px;
+    max-height: 30px;
+    width: auto;
+    height: auto;
+    overflow: hidden;
+  	transition: max-height 0.5s, max-width 0.5s;
+}
+.expandingButton:hover, .expandingButton.pinned {
+    max-width: 25vw;
+    max-height: 50vh;
+}
+.fence {
+    width: 30px;
+    height: 30px;
+	float: right;
+}
+#layerSelector {
+    background-image: url(./images/layers.svg);
+    padding: 2px;
+}
+#layerSelector label {
+	vertical-align: 2px;
+}
+.mapboxgl-ctrl-top-right .ui-button {
+    border: none!important;
+    box-shadow: 0 0 0 1px rgb(0 0 0 / 10%)!important;
+}
+.layer {
+    clear: left;
+    float: left;
+}
+.loading {
+	opacity: 50%;
+	animation: loading-background 2s infinite;
+}
+#geocodeWrapper {
+    background-image: url(./images/search.svg);
+}
 #geocode {
-	font-size: 1em!important;
+	font-size: 1.4em!important;
     outline: none;
     cursor: text;
-    margin-bottom: -5px;
-    width: 180px;
-    height: 30px;
-    background-image: url(./images/search.svg);
-    background-position: right 5px center;
-    background-repeat: no-repeat;
-    background-size: 20px;
-    padding-right: 30px;
+    margin: 2px 30px 0px 2px;
+    width: 191px;
+    height: 25px;
 }
 #data-explorer {
 	top: 2em;
 	left: 2em;
-	height: 50vh;
+	height: auto!important;
 	width: 30vw;
-    min-width: 200px;
-    min-height: 300px;
+    min-width: 313px;
 	position: absolute!important;
-    z-index: 1;
+    z-index: 10;
     background-image: linear-gradient(to top right, var(--bg-color) 70%, white);
     opacity: 90%;
     cursor: grab;
@@ -253,13 +317,11 @@ button.mapboxgl-ctrl-close-map span.mapboxgl-ctrl-icon{
 #trace {
     overflow: auto;
     clear: both;
-    height: calc(100% - 76px);
+    max-height: 70vh;
     background-image: linear-gradient(to bottom left, var(--bg-color) 70%, white);
-    margin: 0 4px;
-    border: 1px solid #ddd;
+    margin: 10px 4px;
+    border: 1px solid var(--op-color);
     border-radius: 3px;
-    top: 12px;
-    position: relative;
 }
 div.popup_links {
 	max-height: 300px;
