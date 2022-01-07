@@ -53,11 +53,16 @@ This software originates as an output of the AHRC-funded [**Locating a National 
 - [ ] UI for configuration of JSONata transformation of unrecognised data models
 - [ ] Facilitate editing of dataset metadata
 - [ ] Data Linking
-    - [x] Archaeological finds within radius: [PAS](https://finds.org.uk/) API
-    - [x] Cultural Heritage sites within radius: [Wikidata](https://www.wikidata.org/)
-    - [ ] Wikipedia articles: GeoNames API
-    - [ ] Historical Plaques: OpenPlaques.org API (or data dump converted to Peripleo-LD)
     - [ ] Curated interlinking of Peripleo-LD datasets
+    - [ ] Uploaded geoJSON / zipped shapefiles
+    - [x] Cultural Heritage sites within radius: [Wikidata](https://www.wikidata.org/)
+    - [x] GeoNames toponyms
+    - [ ] Open Street Map Points of Interest
+    - [ ] Open Historical Map
+    - [x] Wikipedia articles: GeoNames API
+    - [x] Archaeological finds within radius: [PAS](https://finds.org.uk/) API
+    - [ ] Topographical Dictionary of England, 1848
+    - [ ] Historical Plaques: OpenPlaques.org API (or data dump converted to Peripleo-LD)
 - [ ] Data Checking
     - [ ] Sanity checking
     - [ ] Add confirmation flags for checked data
