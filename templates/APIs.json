@@ -1,0 +1,11 @@
+[
+	{"label": "GeoNames Toponyms","type": "GT", "title": "Toponyms from the GeoNames database"},
+	{"label": "Wikipedia (from GeoNames)","type": "WP", "title": "Wikipedia articles linked from the GeoNames database"},
+	{"label": "*Open Street Map Points of Interest","type": "OS", "title": ""},
+	{"label": "*Open Historical Map","type": "OH", "title": ""},
+	{"label": "Wikidata Cultural Heritage","type": "WD", "title": "Cultural Heritage sites identified in Wikidata"},
+	{"label": "Portable Antiquities","type": "PA", "title": "Archaeological finds from the Portable Antiquities Scheme (PAS) database"},
+	{"label": "*Upload Peripleo-LD","type": "PL", "title": ""},
+	{"label": "*Topographical Dictionary of England, 1848","type": "TD", "title": ""},
+	{"label": "*Upload geoJSON / zipped shapefiles","type": "XX", "title": ""}
+]
