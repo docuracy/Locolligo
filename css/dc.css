@@ -242,6 +242,16 @@ button.mapboxgl-ctrl-close-map span.mapboxgl-ctrl-icon{
     width: 191px;
     height: 25px;
 }
+#geoResults span {
+	background-color: var(--op-color);
+    color: white;
+    padding: 2px;
+    clear: both;
+    float: left;
+    margin: 1px 2px;
+    border-radius: 4px;
+    padding: 3px 5px;
+}
 #data-explorer {
 	top: 2em;
 	left: 2em;
