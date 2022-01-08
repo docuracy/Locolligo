@@ -82,7 +82,10 @@ var mappings,
 	linkMarkerPopup,
 	radius=10, 
 	sparql_base, 
-	activeAjaxConnections = 0;
+	activeAjaxConnections = 0,
+	settings = {
+		headers: { Accept: 'application/sparql-results+json' }
+    };	
 
 //Download output as file
 function download(jsonobject,filename=false){
@@ -407,9 +410,6 @@ function updateLinkMarkers(root=$('#layerSelector')){
 		root.removeClass('loading');
 	}
 	const mapCentre = map.getCenter();
-	var settings = {
-		headers: { Accept: 'application/sparql-results+json' }
-    };	
 	$.each(input.filter(':checked'),function(i,layer){
 		// Add markers for these layers		
 		var type = $(layer).val();
@@ -660,8 +660,34 @@ function explore(el) {
 	$('#index').change(); // Trigger updateTrace
 }
 
+function geocode(){
+	var q=$('#geocode').val();
+	$('#geoResults').html('');
+	if (q.length < 3) return;
+	const bounds = map.getBounds();
+	settings.url = 'https://secure.geonames.org/searchJSON?name='+q+'&east='+bounds._ne.lng+'&west='+bounds._sw.lng+'&north='+bounds._ne.lat+'&south='+bounds._sw.lat+'&username='+geoNamesID+'&maxRows=10';
+	$.ajax(settings).then(function(data){
+		if(data.totalResultsCount==0){
+			$('#geoResults').html('<span>No results found</span>');
+		}
+		else{
+			$('#geoResults').html('');
+			$.each(data.geonames,function(i,geoname){
+				$("<span />", {"html": geoname.name})
+				.click(function(){
+					map.flyTo({center: [geoname.lng,geoname.lat], zoom: 13});
+					$('#geoResults').html('');
+					$('#geocode').val('');
+				})
+				.appendTo("#geoResults");
+			})
+		}
+	});
+	
+}
+
 // Query API
-// This function should be genericised using JSONata and an API-configurations file, to allow simple addition of further API endpoints.
+// This function and its trigger buttons should be removed in favour of the curated linking now provided 
 function addAPIdata(el){
 	var dataset = el.parent('div').data('data');
 	dataset.traces = dataset.traces.slice(0,25); // API limits concurrent(?) requests *** TO BE ADDRESSED
@@ -783,7 +809,7 @@ $( document ).ready(function() {
 		.append('<span class="mapboxgl-ctrl-icon"></span>');
 	$('.mapboxgl-ctrl-top-right')
 		.prepend($('.logo:first').clone())
-		.append($('#geocodeWrapper').addClass('mapboxgl-ctrl').on('keyup',function(){}).button())
+		.append($('#geocodeWrapper').addClass('mapboxgl-ctrl').on('keyup',function(){geocode();}).button())
 		.append($('#layerSelector').addClass('mapboxgl-ctrl').button());
 	$('#layerSelector').on('click','label',function(e){
 		var checkbox = $(e.target).prev('input');
@@ -866,7 +892,7 @@ $( document ).ready(function() {
 			$('#layerSelector').append('<span class="layer" title="'+(value.label.startsWith('*')?'Not yet implemented':value.title)+'"><input '+(value.label.startsWith('*')?'disabled ':'')+'type="checkbox" name="'+value.type+'" value="'+value.type+'"><label for="'+value.type+'">'+value.label+'</label></span>');
 		});
 	},'json');
-	$('#layerSelector span.fence').attr('title','Click to refresh any selected layers, based on current map centre').click(function(){removeLinkMarkers();updateLinkMarkers();});
+	$('#layerSelector span.fence').attr('title','Click here to refresh any selected layers, based on current map centre').click(function(){removeLinkMarkers();updateLinkMarkers();});
 	
 	// Load base Wikidata SPARQL query
 	$.get('./templates/wikidata_heritage_sites.sparql', function(data) {
