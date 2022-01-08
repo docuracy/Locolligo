@@ -242,9 +242,6 @@ button.mapboxgl-ctrl-close-map span.mapboxgl-ctrl-icon{
     width: 191px;
     height: 25px;
 }
-#geoResults {
-	margin-top: 30px;
-}
 #geoResults span {
 	background-color: var(--op-color);
     color: white;
