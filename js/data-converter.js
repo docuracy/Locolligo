@@ -35,6 +35,7 @@
 //
 // TO DO:
 // SEE ALSO: https://docs.google.com/document/d/1H0KmYf405QS2ECozHpmAFsLz2MbXd_3qLKXBmLFCoJc/edit?usp=sharing
+// Require default relation definition on adding dataset to Geodata Library
 // Show IIIF fragments in Data Item Explorer overlay
 // Manage marker collisions
 // Genericise API query function using JSONata and an API-configurations file, to allow simple addition of further API endpoints.
@@ -85,7 +86,7 @@ var mappings,
 	activeAjaxConnections = 0,
 	settings = {
 		headers: { Accept: 'application/sparql-results+json' }
-    };	
+    };	 
 
 //Download output as file
 function download(jsonobject,filename=false){
@@ -231,6 +232,88 @@ function distance(from,to,places) {
 	return Math.round((distance + Number.EPSILON) * 10**places) / 10**places;
 }
 
+function addLibraryItem(name, label){
+	$('#datastore')
+	.append('<span class="libraryItem"><input type="radio" id="'+name+'" name="datastore" value="'+name+'">&nbsp;<label for="'+name+'">'+label+'</label><button class="libraryDelete" title="Remove from Library"><span class="ui-icon ui-icon-trash"></span></button></span>')
+	.find('.libraryDelete')
+	.button()
+	.click(function(){
+		indexedDB.deleteDatabase($(this).siblings('input').attr('id'));
+		$(this).parents('.libraryItem').remove();
+		$('#layerSelector input[name="'+name+'"]').parents('.layer').remove();
+	});
+	$('#layerSelector .layerGroup:nth-of-type(2)').append('<span class="layer"><input type="checkbox" name="'+name+'" value="'+name+'"><label for="'+name+'">'+label+'</label></span>');
+}
+
+function library(el){
+	$('#datastore').dialog({
+		modal: true,
+		width: 'auto',
+		buttons: {
+			"Update Library": function() {
+				
+				var oldDB = $('input[name="datastore"]:checked').val();
+				if(oldDB == 'new') {
+					if ($('#newDatastoreName').val() == '') {
+						alert('Cannot update without a selected name');
+						return;
+					}
+				}
+				else{
+					indexedDB.deleteDatabase(oldDB);
+					$('#newDatastoreName').val($('input[name="datastore"]:checked').siblings('label').text());
+					$('input[name="datastore"]:checked').siblings('.libraryDelete').click();
+				}
+				var dataset = el.parent('div').data('data');
+				var newDB = Date.now();
+				var open = indexedDB.open(newDB);
+				open.onupgradeneeded = function() {
+					var db = open.result;
+					var dbname = db.createObjectStore("dataname", { keyPath: "name" });
+					var namerequest = dbname.put({'name':$('#newDatastoreName').val()});
+					var store = db.createObjectStore('dataset', {autoIncrement: true});
+					store.createIndex('coordinates', ['_longitude','_latitude'], {unique: false});
+					addLibraryItem(newDB, $('#newDatastoreName').val() );
+					if(dataset.hasOwnProperty('traces')){
+						$.each(dataset.traces,function(i,trace){
+							$.each(trace.body,function(j,body){
+								if(body.relation=='georeferencing' && body.hasOwnProperty('geometry') && body.geometry['@type']=='GeoCoordinates'){
+									trace._longitude = body.geometry.longitude;
+									trace._latitude = body.geometry.latitude;
+									store.put(trace);
+									return;
+								}
+							});
+						});	
+						
+					}
+					else{ // TO DO: HANDLE GEOJSON FEATURES
+						
+					}
+				}
+				open.onsuccess = function(){ // TEST STORAGE
+					$('#newDatastoreName').val('');
+					console.log('Starting test');
+					var db = open.result;
+					var tx = db.transaction('dataset');
+					var index = tx.objectStore('dataset').index('coordinates');
+					select(index, [IDBKeyRange.bound(-.9, 0),IDBKeyRange.bound(50, 52)], function(value){
+						console.log(value._longitude,value._latitude);
+					}, function(){
+						console.log('Index retrieval complete');
+					});
+				}	
+				$('input[name="datastore"]:first').prop('checked', true);
+				$( this ).dialog( "close" );
+			},
+			Cancel: function() {
+				$('input[name="datastore"]:first').prop('checked', true);
+				$( this ).dialog( "close" );
+			}
+		}
+	});
+}
+
 // Render JSON display
 function renderJSON(target,object,data){
 	target
@@ -249,12 +332,11 @@ function renderJSON(target,object,data){
 		var mapButton = $('<button class="mapButton" title="Visualise dataset on a map">Map</button>').prependTo(target);
 		mapButton.button().click(function(){drawMap($(this));});
 	}
-	if(data.hasOwnProperty('traces')){ // Create buttons for viewing map and adding data from PAS API
-		var clipButton = $('<button class="mapButton" title="Visualise dataset on a map">Map</button>').prependTo(target);
-		clipButton.button().click(function(){drawMap($(this));});
-		$('<button id="PASButton" class="APIButton" title="Link PAS records within '+radius+'km">PAS</button>').prependTo(target);
-		$('<button id="WDButton" class="APIButton" title="Link Wikidata records within '+radius+'km">Wikidata</button>').prependTo(target);
-		$('.APIButton').button().click(function(){addAPIdata($(this));});
+	if(data.hasOwnProperty('features') || data.hasOwnProperty('traces')){
+		var indexButton = $('<button class="indexButton" title="Add dataset to local geo-library (for later linking).">Library</button>').prependTo(target);
+		indexButton.button().click(function(){library($(this));});
+	}
+	if(data.hasOwnProperty('traces')){ 
 		$('<button id="LinkButton" title="Link and/or georeference records" style="pointer-events: auto;">Link/Georeference</button>')
 			.prependTo(target)
 			.button()
@@ -386,7 +468,7 @@ function drawMap(el,render=true){
 }
 
 function updateLinkMarkers(root=$('#layerSelector')){
-	function linkMarker(newbody,type,colour,coordinates){
+	function linkMarker(newbody,type,colour,coordinates,name=false){
 		if(!newbody.hasOwnProperty('geoWithin')) newbody.geometry = {
 				"@type": "GeoCoordinates",
 				"addressCountry": "GB",
@@ -396,7 +478,7 @@ function updateLinkMarkers(root=$('#layerSelector')){
 		const el = document.createElement('div');
 		$(el)
 			.data({'newbody': newbody,'coordinates':coordinates})
-			.html(type)
+			.html(name?name.slice(0,2):type)
 			.css({'background-color': colour, 'color': 'white'});
 		el.className = 'linkmarker';
 		var marker = new mapboxgl.Marker(el)
@@ -413,6 +495,7 @@ function updateLinkMarkers(root=$('#layerSelector')){
 	$.each(input.filter(':checked'),function(i,layer){
 		// Add markers for these layers		
 		var type = $(layer).val();
+		var colour = 'rgba('+Math.floor(Math.random()*255)+','+Math.floor(Math.random()*255)+','+Math.floor(Math.random()*255)+',0.45)';
 		linkMarkers[type] = [];
 		switch(type) {
 		case 'GT': // Query GeoNames for Toponyms
@@ -430,7 +513,7 @@ function updateLinkMarkers(root=$('#layerSelector')){
 							"distance": feature.distance 
 					}
 					var coordinates = [feature.lng,feature.lat];
-					linkMarker(newbody,type,'rgb(126 126 0 / 45%)',coordinates);
+					linkMarker(newbody,type,colour,coordinates);
 				});
 				$(layer).closest('.layer').removeClass('loading');
 			});
@@ -450,7 +533,7 @@ function updateLinkMarkers(root=$('#layerSelector')){
 							"distance": feature.distance 
 					}
 					var coordinates = [feature.lng,feature.lat];
-					linkMarker(newbody,type,'rgb(126 0 126 / 45%)',coordinates);
+					linkMarker(newbody,type,colour,coordinates);
 				});
 				$(layer).closest('.layer').removeClass('loading');
 			});
@@ -472,7 +555,7 @@ function updateLinkMarkers(root=$('#layerSelector')){
 							"distance": feature.distance.value 
 					}
 					var coordinates = feature.geo.value.match(/-?\d+\.\d+/g);
-					linkMarker(newbody,type,'rgb(0 255 0 / 45%)',coordinates);
+					linkMarker(newbody,type,colour,coordinates);
 				});
 				$(layer).closest('.layer').removeClass('loading');
 			});
@@ -498,7 +581,7 @@ function updateLinkMarkers(root=$('#layerSelector')){
 							newbody.geoWithin = OSGB_WGS84(feature.properties.fourFigure)[2].geoWithin;
 //							var coordinates = feature.geometry.coordinates;
 							var coordinates = [feature.geometry.coordinates[0]+((Math.random()-.5)/5),feature.geometry.coordinates[1]+((Math.random()-.5)/5)]; // Obfuscate by up to a tenth of a degree in case not implemented on API
-							linkMarker(newbody,type,'rgb(126 126 0 / 45%)',coordinates);
+							linkMarker(newbody,type,colour,coordinates);
 						}
 					});		
 					if(page < Math.min( 1+Math.floor((data.meta.totalResults-1)/data.meta.resultsPerPage), 10 )) { // Limit to maximum of 10 pages of results (=200 items)
@@ -513,7 +596,24 @@ function updateLinkMarkers(root=$('#layerSelector')){
 			break;
 		case 'other': // ****************** TO DO - generic added geoJSON or shapefiles
 			break;
-		default:
+		default: // GeoData Library
+//			$(layer).closest('.layer').addClass('loading');
+			const bounds = map.getBounds();
+			var open = indexedDB.open(type);
+			open.onsuccess = function(){
+				var db = open.result;
+				var tx = db.transaction('dataset');
+				var index = tx.objectStore('dataset').index('coordinates');
+				select(index, [IDBKeyRange.bound(bounds._sw.lng, bounds._ne.lng),IDBKeyRange.bound(bounds._sw.lat, bounds._ne.lat)], function(value){
+					var newbody = value.target;
+					var coordinates = [value._longitude,value._latitude];
+					linkMarker(newbody,type,colour,coordinates,$(layer).siblings('label').text());
+					
+				}, function(){
+					console.log('Index retrieval complete');
+				});
+			}
+		
 			break;
 		}	
 	});
@@ -686,107 +786,6 @@ function geocode(){
 	
 }
 
-// Query API
-// This function and its trigger buttons should be removed in favour of the curated linking now provided 
-function addAPIdata(el){
-	var dataset = el.parent('div').data('data');
-	dataset.traces = dataset.traces.slice(0,25); // API limits concurrent(?) requests *** TO BE ADDRESSED
-	var count = 0;
-	el.append('<span> [Wait: <span class="count">'+count+'</span>/'+dataset.traces.length+']</span>');
-	var counter = el.find('span.count');
-	function checkAjaxConnections(){
-		if (0 == activeAjaxConnections){
-			dataset_formatter = new JSONFormatter(dataset,1,{theme:'dark'});
-			renderJSON(el.parent('div'),dataset_formatter,dataset);
-			console.log('API requests completed.');
-		}
-	}
-	$.each(dataset.traces, function(tracekey,trace){
-		$.each(trace.body, function(bodykey,body){
-		if(body.additionalType=="Place" && body.hasOwnProperty('geometry') && body.geometry.hasOwnProperty('latitude') && body.geometry.hasOwnProperty('longitude') ){
-				var settings = {
-						beforeSend: function(xhr) {activeAjaxConnections++;},
-						error: function(xhr) {
-							activeAjaxConnections--;
-							checkAjaxConnections();
-						},
-						headers: { Accept: 'application/sparql-results+json' }
-				    };				
-				switch(el.attr('id')){
-				case "WDButton": // Query Wikidata for Cultural Heritage Sites based on location
-					var sparql = sparql_base;
-					settings.data = { query: sparql.replace('%%%lng%%%',body.geometry.longitude).replace('%%%lat%%%',body.geometry.latitude).replace('%%%radius%%%',radius) }
-					$.ajax('https://query.wikidata.org/sparql',settings).then(function(data){
-						$.each(data.results.bindings, function(i,feature){
-							var newbody = {
-									"additionalType": "LinkRole",
-									"linkRelationship": "Cultural heritage site found nearby",
-									"lpo:type": ['seeAlso',feature.classLabel.value],
-									"identifier": feature.site.value,
-									"name": feature.siteLabel.value,
-									"description": feature.hasOwnProperty('siteDescription') ? feature.siteDescription.value : '',
-									"distance": feature.distance.value 
-							}
-							var coordinates = feature.geo.value.match(/-?\d+\.\d+/g);
-							newbody.geometry = {
-								"@type": "GeoCoordinates",
-								"addressCountry": "GB",
-								"longitude": coordinates[0],
-								"latitude": coordinates[1]
-							}
-							dataset.traces[tracekey].body.push(newbody);
-						});
-						count++;
-						counter.html(count);
-						activeAjaxConnections--;
-						checkAjaxConnections();
-					});
-					break;
-				case "PASButton": // Query Portable Antiquities Scheme API for linked data based on location
-					// Note that some results lack coordinate data
-					function processPage(page){
-						settings.url = 'https://finds.org.uk/database/search/results/lat/'+body.geometry.latitude+'/lon/'+body.geometry.longitude+'/d/'+radius+'/format/geojson/page/'+page;
-						$.ajax(settings).then(function(data){
-							$.each(data.features, function(i,feature){
-								newbody = {
-										"additionalType": "LinkRole",
-										"linkRelationship": "Artefact found nearby",
-										"lpo:type": ['seeAlso',feature.properties.objecttype],
-										"identifier": feature.properties.url,
-										"image": feature.properties.thumbnail
-								}
-								if(feature.geometry.coordinates[0]!==null){
-									// Note: 'findspot to 1km grid square level and slight obfuscation of findspot by randomised subtraction/addition of 10ths of a degree to the degraded findspot'
-									newbody.distance = distance([body.geometry.longitude,body.geometry.latitude],feature.geometry.coordinates,0); // 0 places = nearest kilometre
-									newbody.geoWithin = OSGB_WGS84(feature.properties.fourFigure)[2].geoWithin;
-//									newbody.geometry = { // The API currently returns precise, unobfuscated coordinates, which in the interest of find-site security must not be publicised
-//										"@type": "GeoCoordinates",
-//										"addressCountry": "GB",
-//										"longitude": feature.geometry.coordinates[0],
-//										"latitude": feature.geometry.coordinates[1]
-//									}
-								}
-								dataset.traces[tracekey].body.push(newbody);
-							});		
-							if(page < Math.min( 1+Math.floor((data.meta.totalResults-1)/data.meta.resultsPerPage), 10 )) { // Limit to maximum of 10 pages of results (=200 items)
-								processPage(page+1);
-							}
-							else{
-								count++;
-								counter.html(count);
-							}
-							activeAjaxConnections--;
-							checkAjaxConnections();
-						});
-					}
-					processPage(1);
-					break;
-				}
-			}
-		})
-	});	
-}
-
 $( document ).ready(function() {
 	
 	// Check browser file upload capability
@@ -889,7 +888,7 @@ $( document ).ready(function() {
 	// Populate link layer options
 	$.get('./templates/APIs.json?'+Date.now(), function(data) { // Do not use any cached file
 		$.each(data, function(key,value) {
-			$('#layerSelector').append('<span class="layer" title="'+(value.label.startsWith('*')?'Not yet implemented':value.title)+'"><input '+(value.label.startsWith('*')?'disabled ':'')+'type="checkbox" name="'+value.type+'" value="'+value.type+'"><label for="'+value.type+'">'+value.label+'</label></span>');
+			$('#layerSelector .layerGroup:nth-of-type(1)').append('<span class="layer" title="'+(value.label.startsWith('*')?'Not yet implemented':value.title)+'"><input '+(value.label.startsWith('*')?'disabled ':'')+'type="checkbox" name="'+value.type+'" value="'+value.type+'"><label for="'+value.type+'">'+value.label+'</label></span>');
 		});
 	},'json');
 	$('#layerSelector span.fence').attr('title','Click here to refresh any selected layers, based on current map centre').click(function(){removeLinkMarkers();updateLinkMarkers();});
@@ -977,5 +976,23 @@ $( document ).ready(function() {
 		mappings[$('#expression option:selected').val()].fields = fields;
 		$('#modal').dialog('close');
 	});   
+	
+	// Prepare dataset library catalogue
+	const db_promise = indexedDB.databases()
+	db_promise.then(databases => {
+		console.log(databases)
+		$.each(databases,function(i,database){
+			var open = indexedDB.open(database.name);
+			open.onsuccess = function(){
+				var db = open.result;
+				var tx = db.transaction("dataname");
+				var objectStore = tx.objectStore("dataname");
+				var request = objectStore.getAll();
+				request.onsuccess = function(event) {
+					addLibraryItem(database.name, request.result[0].name);
+				}
+			};
+		});
+	})
 	
 });
