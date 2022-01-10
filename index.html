@@ -20,6 +20,7 @@ For details see https://github.com/docuracy/Locolligo/blob/main/LICENSE.md
 	<script src="./js/proj4.js">// From https://github.com/proj4js/proj4js</script>
 	<script src="./js/fxparser.min.js">// https://github.com/NaturalIntelligence/fast-xml-parser</script>
 	<script src="./js/jquery.loadingModal.min.js">// From https://github.com/do-web/jquery-loadingModal</script>
+	<script src="./js/spatial-select.js">// From https://gist.github.com/inexorabletash/8e1341083cd1009c0bfb6b4637f699d4</script>
 	<script src="./js/data-converter.js"></script>
 	<link rel="stylesheet" href="./css/jquery-ui.min.css">
 	<link rel="stylesheet" href="./css/jquery-ui.theme.min.css">
@@ -71,10 +72,17 @@ For details see https://github.com/docuracy/Locolligo/blob/main/LICENSE.md
 		</div>
 		<div id="layerSelector" class="expandingButton">
 			<span class="fence"></span>
+			<div class="layerGroup"></div>
+			<div class="layerGroup"></div>
 		</div>
 		<div id="geocodeWrapper" class="expandingButton">
 			<input id="geocode" class="mapboxgl-ctrl" title="First set the search bounds by zooming and panning map, then begin typing." placeholder="Find within map bounds" type="find" />
-			<div id="geoResults" />
+			<div id="geoResults"></div>
+		</div>
+		<div id="datastore" title="Local Geodata Library">
+			<input type="radio" id="newDatastore" name="datastore" value="new" checked>
+			<input id="newDatastoreName" title="Enter a distinctive name for this new datastore." placeholder="New dataset name" />
+			<br/>
 		</div>
 	</div>
 	<script type="module">
