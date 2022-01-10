@@ -53,7 +53,7 @@ This software originates as an output of the AHRC-funded [**Locating a National 
 - [ ] UI for configuration of JSONata transformation of unrecognised data models
 - [ ] Facilitate editing of dataset metadata
 - [ ] Data Linking
-    - [ ] Curated interlinking of Peripleo-LD datasets
+    - [x] Curated interlinking of Peripleo-LD datasets (GeoData Library user-built in local indexedDB store)
     - [ ] Uploaded geoJSON / zipped shapefiles
     - [x] Cultural Heritage sites within radius: [Wikidata](https://www.wikidata.org/)
     - [x] GeoNames toponyms
