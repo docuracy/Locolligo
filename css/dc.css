@@ -219,6 +219,13 @@ button.mapboxgl-ctrl-close-map span.mapboxgl-ctrl-icon{
 #layerSelector label {
 	vertical-align: 2px;
 }
+.layerGroup:not(:first-of-type):before {
+    display: inline-block;
+    content: "";
+    border-top: 2px solid var(--op-color);
+    width: 100%;
+    margin: -2px 0 2px;
+}
 .mapboxgl-ctrl-top-right .ui-button {
     border: none!important;
     box-shadow: 0 0 0 1px rgb(0 0 0 / 10%)!important;
@@ -422,4 +429,16 @@ a.popup_link.wikidata{
 }
 .json-formatter-string {
 	white-space: break-spaces!important;
+}
+.libraryItem {
+	position: relative;
+    top: 4px;
+    float: left;
+    clear: both;
+}
+.libraryDelete {
+	padding: 2px;
+    position: relative;
+    top: -2px;
+    margin-left: 3px;
 }
