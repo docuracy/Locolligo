@@ -52,8 +52,9 @@ This software originates as an output of the AHRC-funded [**Locating a National 
 - [ ] Location approximation: translation of text values to schema.org *geoRadius* values and *geoWithin* *geoCircle*s
 - [ ] UI for configuration of JSONata transformation of unrecognised data models
 - [ ] Facilitate editing of dataset metadata
+- [x] Add Peripleo-LD and geoJSON datasets to user's local **GeoData Library** (indexedDB store)
 - [ ] Data Linking
-    - [x] Curated interlinking of Peripleo-LD datasets (GeoData Library user-built in local indexedDB store)
+    - [x] Curated interlinking of Peripleo-LD datasets (using GeoData Library)
     - [x] Uploaded geoJSON
     - [x] Uploaded zipped shapefiles
     - [x] Cultural Heritage sites within radius: [Wikidata](https://www.wikidata.org/)
