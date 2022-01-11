@@ -54,15 +54,17 @@ This software originates as an output of the AHRC-funded [**Locating a National 
 - [ ] Facilitate editing of dataset metadata
 - [ ] Data Linking
     - [x] Curated interlinking of Peripleo-LD datasets (GeoData Library user-built in local indexedDB store)
-    - [ ] Uploaded geoJSON / zipped shapefiles
+    - [x] Uploaded geoJSON
+    - [ ] Uploaded zipped shapefiles
     - [x] Cultural Heritage sites within radius: [Wikidata](https://www.wikidata.org/)
     - [x] GeoNames toponyms
     - [ ] Open Street Map Points of Interest
-    - [ ] Open Historical Map
+    - [ ] [Open Historical Map](https://wiki.openstreetmap.org/wiki/Open_Historical_Map)
+    - [ ] [GB1900](http://www.visionofbritain.org.uk/)
     - [x] Wikipedia articles: GeoNames API
     - [x] Archaeological finds within radius: [PAS](https://finds.org.uk/) API
-    - [ ] Topographical Dictionary of England, 1848
-    - [ ] Historical Plaques: OpenPlaques.org API (or data dump converted to Peripleo-LD)
+    - [ ] [Topographical Dictionary of England, 1848](https://www.british-history.ac.uk/topographical-dict/england)
+    - [ ] Historical Plaques: [OpenPlaques.org](https://openplaques.org/) API (or data dump converted to Peripleo-LD)
 - [ ] Data Checking
     - [ ] Sanity checking
     - [ ] Add confirmation flags for checked data
@@ -74,7 +76,7 @@ This software originates as an output of the AHRC-funded [**Locating a National 
 - [ ] Geocoding of un-gazetteered places
     - [ ]  Use georeferenced historical basemaps as citable references
     - [ ]  Create linked Wikidata item with geo-coordinates, using programmatically-submitted [*QuickStatements* batch jobs](https://quickstatements.toolforge.org/#/user) (default CORS policy prevents direct use of API)
-- [ ] Pelagios Registry metadata generation
+- [ ] [Pelagios Registry](https://pelagios.org/activities/registry/) metadata generation
 - [ ] Recogito meta-gazetteer generation
 
 ## Limitations
