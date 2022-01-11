@@ -80,7 +80,7 @@ This software originates as an output of the AHRC-funded [**Locating a National 
 - [ ] Recogito meta-gazetteer generation
 
 ## Limitations
-Dataset size is limited by local device memory, although a PC with 16GB of memory easily copes with 25,000 records in a 12-field csv input file. It may be possible to implement chunking if necessary for larger files.
+Dataset size is limited by local device memory, although a PC with 16GB of memory easily copes with 25,000 records in a 12-field csv input file. It may be possible to implement chunking if necessary for larger files. Memory use is mitigated by use of a spatially-indexed IndexedDB store for a GeoData Library.
 
 ## LaNC Project Partners
 Thanks to various project partners and others, who may retain copyright in their respective sample datasets used in this software:
