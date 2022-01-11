@@ -49,10 +49,11 @@ This software originates as an output of the AHRC-funded [**Locating a National 
     - [ ] [What3Words](https://what3words.com/about)
 - [x] Standardisation of annotation fragment selectors (see [here](https://github.com/docuracy/LaNC/blob/main/Peripleo_Fragment_Selector_SVG.js))
 - [x] Implementation of [schema.org](https://schema.org/) vocabulary to facilitate dataset indexing and discovery
-- [ ] Location approximation: translation of text values to schema.org *geoRadius* values and *geoWithin* *geoCircle*s
+- [x] Location approximation: translation of text values to schema.org *geoRadius* values and *geoWithin* *geoCircle*s
 - [ ] UI for configuration of JSONata transformation of unrecognised data models
 - [ ] Facilitate editing of dataset metadata
 - [x] Add Peripleo-LD and geoJSON datasets to user's local **GeoData Library** (indexedDB store)
+- [x] Find places in map view (using GeoNames API)
 - [ ] Data Linking
     - [x] Curated interlinking of Peripleo-LD datasets (using GeoData Library)
     - [x] Uploaded geoJSON
