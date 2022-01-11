@@ -276,14 +276,28 @@ function library(el){
 					addLibraryItem(newDB, $('#newDatastoreName').val() );
 					if(dataset.hasOwnProperty('traces')){
 						$.each(dataset.traces,function(i,trace){
+							var foundGeometry = false;
 							$.each(trace.body,function(j,body){
 								if(body.relation=='georeferencing' && body.hasOwnProperty('geometry') && body.geometry['@type']=='GeoCoordinates'){
 									trace._longitude = body.geometry.longitude;
 									trace._latitude = body.geometry.latitude;
+									foundGeometry = true;
 									store.put(trace);
 									return;
 								}
 							});
+							if(!foundGeometry){ // This process is a little unreliable as (unlike 'georeferencing' relations) it will take coordinates from linked places that might not be coincident with the target 
+								$.each(trace.body,function(j,body){
+									if(body.hasOwnProperty('geoWithin') && body.geoWithin.hasOwnProperty('geometry') && body.geoWithin.geometry['@type']=='GeoCoordinates'){
+										trace._longitude = body.geoWithin.geometry.longitude;
+										trace._latitude = body.geoWithin.geometry.latitude;
+										trace.target.geoWithin = body.geoWithin;
+										foundGeometry = true;
+										store.put(trace);
+										return;
+									}
+								});
+							}
 						});	
 					}
 					else{ // geoJSON (including Linked Places format): construct a pseudo-trace with a target that can be indexed and linked in the same way as real trace data
@@ -302,9 +316,9 @@ function library(el){
 								"_latitude": feature.geometry.coordinates[1]
 							}
 							trace.target = {
-								"title": findProperty(['name','title','toponym']),
+								"title": findProperty(['name','title','toponym','LOCATION']),
 								"additionalType": "Place",
-								"type": findProperty(['types']),
+								"type": findProperty(['types','X_TYPE']),
 								"relation": "linking",
 								"id": findProperty(['url','@id']),
 								"description": findProperty(['description','descriptions']),
@@ -928,21 +942,26 @@ $( document ).ready(function() {
 	function parse_file(filename,filecontent){
     	const delimited = ['csv','tsv'];
     	const xml = ['xml','kml'];
-    	if(delimited.includes(filename.split('.').pop())){ // Delimited text input
+    	const fileExtension = filename.split(/[#?]/)[0].split('.').pop().trim();
+    	if(delimited.includes(fileExtension)){ // Delimited text input
     		input = Papa.parse(filecontent.replace(/[{}]/g, '_'),{header:true,dynamicTyping:true,skipEmptyLines:true}); // Replace curly braces, which break JSONata when used in column headers
     		$.each(input.data, function(key,value){ // Create uuid for each item/Trace
     			input.data[key].uuid = uuidv4();
     		});
     		input_truncated = input.data.slice(0,5000); // Truncated to avoid browser overload on expansion of large arrays.
     	}
-    	else if(xml.includes(filename.split('.').pop())){
+    	else if(xml.includes(fileExtension)){
     		const parser = new fxparser.XMLParser();
     		input = parser.parse(filecontent);
     		input_truncated = input; // TO DO: Find generic method for truncation, to avoid browser overload on expansion of large arrays.
     	}
+    	else if(typeof filecontent != 'string'){ // Might be object returned from shapefile conversion
+    		input = filecontent;
+    		input_truncated = input; // TO DO: Find generic method for truncation, to avoid browser overload on expansion of large arrays.
+    	}
     	else{ // Assume JSON input
     		input = JSON.parse(filecontent);
-    		input_truncated = input; // TO DO: Find generic method for truncation, to avoid browser overload on expansion of large arrays.
+    		input_truncated = input; // TO DO: Find generic method for truncation, to avoid browser overload on expansion of large arrays; could easily be fixed for geoJSON.
     	}
     	$('#source_block').appendTo('#darkroom');
     	$('#conversions').insertBefore('.arrow');
@@ -954,19 +973,59 @@ $( document ).ready(function() {
 	// Process uploaded file
 	$('#file_source').on('change', function () {
 		var file = this.files[0];
-        var fr = new FileReader();
-        fr.onloadstart = function(){
-    		$('body').loadingModal({text: 'Processing...'});        	
-        }
-        fr.onerror = function(){
-        	$('body').loadingModal('destroy');       	
-        }
-        fr.onload = function(){
-			parse_file(file.name,fr.result);
-        	$('body').loadingModal('destroy');
-        }
-        fr.readAsText(file);	
+		if(file.name.split(/[#?]/)[0].split('.').pop().trim() == 'zip'){ // Assume zipped shapefile - see shp2geojson-preview-v2.js
+    		$('body').loadingModal({text: 'Processing...'});
+			loadshp({url: file, encoding: 'utf-8'}, function(geojson) {
+				console.log(geojson);
+				parse_file(file.name,geojson);
+	        	$('body').loadingModal('destroy');
+			});
+		}
+		else{
+	        var fr = new FileReader();
+	        fr.onloadstart = function(){
+	    		$('body').loadingModal({text: 'Processing...'});        	
+	        }
+	        fr.onerror = function(){
+	        	$('body').loadingModal('destroy');       	
+	        }
+	        fr.onloadend = function(){
+	        	if(file.name.split(/[#?]/)[0].split('.').pop().trim() == 'zip'){
+	        	}
+	        	else{
+					parse_file(file.name,fr.result);
+		        	$('body').loadingModal('destroy');
+	        	}
+	        }
+	        fr.readAsText(file);			
+		}
 	});
+	
+//	// Process uploaded file
+//	$('#file_source').on('change', function () {
+//		var file = this.files[0];
+//		if(file.name.split(/[#?]/)[0].split('.').pop().trim() == 'zip'){ // Assume zipped shapefile - see shp2geojson-preview-v2.js
+//    		$('body').loadingModal({text: 'Processing...'});
+//			loadshp({url: file}, function(geojson) {
+//				parse_file(file.name,geojson);
+//	        	$('body').loadingModal('destroy');
+//			});
+//		}
+//		else{
+//	        var fr = new FileReader();
+//	        fr.onloadstart = function(){
+//	    		$('body').loadingModal({text: 'Processing...'});        	
+//	        }
+//	        fr.onerror = function(){
+//	        	$('body').loadingModal('destroy');       	
+//	        }
+//	        fr.onload = function(){
+//				parse_file(file.name,fr.result);
+//	        	$('body').loadingModal('destroy');
+//	        }
+//	        fr.readAsText(file);			
+//		}	
+//	});
 	
 	// Process fetched file
 	$('#fetch').on('click', function () {
