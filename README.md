@@ -36,7 +36,7 @@ This software originates as an output of the AHRC-funded [**Locating a National 
     - [x] Google Sheets (from URL)
     - [x] XML (from upload or URL)
     - [x] Google Maps KML (from upload or URL; also convert to geoJSON)
-    - [ ] Zipped Shapefile (from upload, to geoJSON)
+    - [x] Zipped Shapefile (from upload, to geoJSON)
 - [x] Convert the following JSON types to Peripleo-LD:
     - [x] Recogito LD
     - [x] Uploaded datasets (JSONata configuration required, UI not yet built)
@@ -52,12 +52,10 @@ This software originates as an output of the AHRC-funded [**Locating a National 
 - [x] Location approximation: translation of text values to schema.org *geoRadius* values and *geoWithin* *geoCircle*s
 - [ ] UI for configuration of JSONata transformation of unrecognised data models
 - [ ] Facilitate editing of dataset metadata
-- [x] Add Peripleo-LD and geoJSON datasets to user's local **GeoData Library** (indexedDB store)
+- [x] Add Peripleo-LD, shapefile, and geoJSON datasets to user's local **GeoData Library** ([indexedDB](https://developer.mozilla.org/en-US/docs/Web/API/IndexedDB_API) store)
 - [x] Find places in map view (using GeoNames API)
 - [ ] Data Linking
-    - [x] Curated interlinking of Peripleo-LD datasets (using GeoData Library)
-    - [x] Uploaded geoJSON
-    - [x] Uploaded zipped shapefiles
+    - [x] Curated interlinking of Peripleo-LD datasets (using **GeoData Library**)
     - [x] Cultural Heritage sites within radius: [Wikidata](https://www.wikidata.org/)
     - [x] [GeoNames toponyms](https://www.geonames.org/export/web-services.html#findNearby)
     - [ ] [Open Street Map Points of Interest](https://wiki.openstreetmap.org/wiki/Points_of_interest)
