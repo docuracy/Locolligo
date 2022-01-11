@@ -57,11 +57,11 @@ This software originates as an output of the AHRC-funded [**Locating a National 
     - [x] Uploaded geoJSON
     - [ ] Uploaded zipped shapefiles
     - [x] Cultural Heritage sites within radius: [Wikidata](https://www.wikidata.org/)
-    - [x] GeoNames toponyms
-    - [ ] Open Street Map Points of Interest
+    - [x] [GeoNames toponyms](https://www.geonames.org/export/web-services.html#findNearby)
+    - [ ] [Open Street Map Points of Interest](https://wiki.openstreetmap.org/wiki/Points_of_interest)
     - [ ] [Open Historical Map](https://wiki.openstreetmap.org/wiki/Open_Historical_Map)
     - [ ] [GB1900](http://www.visionofbritain.org.uk/)
-    - [x] Wikipedia articles: GeoNames API
+    - [x] Wikipedia articles: [GeoNames API](https://www.geonames.org/export/wikipedia-webservice.html#findNearbyWikipedia)
     - [x] Archaeological finds within radius: [PAS](https://finds.org.uk/) API
     - [ ] [Topographical Dictionary of England, 1848](https://www.british-history.ac.uk/topographical-dict/england)
     - [ ] Historical Plaques: [OpenPlaques.org](https://openplaques.org/) API (or data dump converted to Peripleo-LD)
