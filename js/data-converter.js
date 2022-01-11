@@ -285,10 +285,38 @@ function library(el){
 								}
 							});
 						});	
-						
 					}
-					else{ // TO DO: HANDLE GEOJSON FEATURES
-						
+					else{ // geoJSON (including Linked Places format): construct a pseudo-trace with a target that can be indexed and linked in the same way as real trace data
+						$.each(dataset.features,function(i,feature){
+							function findProperty(options){
+								var result = '';
+								$.each(options, function(i,option){
+									if (feature.hasOwnProperty(option)) {result = feature[option]; return};
+									if (feature.properties.hasOwnProperty(option)) {result = feature.properties[option]; return};
+									if (option=='toponym' && feature.hasOwnProperty('names')) {result = feature.names[0][option]; return};
+								});
+								return result;
+							}
+							var trace = {
+								"_longitude": feature.geometry.coordinates[0],
+								"_latitude": feature.geometry.coordinates[1]
+							}
+							trace.target = {
+								"title": findProperty(['name','title','toponym']),
+								"additionalType": "Place",
+								"type": findProperty(['types']),
+								"relation": "linking",
+								"id": findProperty(['url','@id']),
+								"description": findProperty(['description','descriptions']),
+								"when": findProperty(['when'])
+							}
+							trace.target.geometry = {
+								"@type": "GeoCoordinates",
+								"longitude": feature.geometry.coordinates[0],
+								"latitude": feature.geometry.coordinates[1]
+							}
+							store.put(trace);
+						});	
 					}
 				}
 				open.onsuccess = function(){ // TEST STORAGE
@@ -597,7 +625,6 @@ function updateLinkMarkers(root=$('#layerSelector')){
 		case 'other': // ****************** TO DO - generic added geoJSON or shapefiles
 			break;
 		default: // GeoData Library
-//			$(layer).closest('.layer').addClass('loading');
 			const bounds = map.getBounds();
 			var open = indexedDB.open(type);
 			open.onsuccess = function(){
@@ -711,7 +738,7 @@ function explore(el) {
 		}))
 		.appendTo('#map');
 	$('#navigation')
-		.append(new Array(10).join('<button></button>'))
+		.append(new Array(9).join('<button></button>'))
 		.find('button')
 		.eq(0).button({icon:"ui-icon-seek-first",showlabel:false}).prop('title','First (filtered) item').click(function(){selectedFilter=0;$('#index').change()}).end()
 		.eq(1).button({icon:"ui-icon-seek-prev",showlabel:false}).prop('title','Previous (filtered) item').click(function(){selectedFilter=Math.max(0,selectedFilter-1);$('#index').change()}).end()
@@ -732,10 +759,9 @@ function explore(el) {
 			)
 			.end()
 		.eq(4).button({icon:"ui-icon-pin-s",showlabel:false}).prop('title','Drop pin on map').click(function(){alert('Not yet implemented')}).end()
-		.eq(5).button({icon:"ui-icon-link",showlabel:false}).prop('title','Link').click(function(){alert('Not yet implemented')}).end()
-		.eq(6).button({icon:"ui-icon-image",showlabel:false}).prop('title','Fetch IIIF image fragments').click(function(){alert('Not yet implemented')}).end()
-		.eq(7).button({icon:"ui-icon-circle-arrow-s",showlabel:false}).prop('title','Download/Save edited dataset').click(function(){download(activeDatasetEl.data('data'));}).end()
-		.eq(8).button({icon:"ui-icon-trash",showlabel:false}).prop({'title':'Delete this item','id':'delete'}).click(function(){
+		.eq(5).button({icon:"ui-icon-image",showlabel:false}).prop('title','Fetch IIIF image fragments').click(function(){alert('Not yet implemented')}).end()
+		.eq(6).button({icon:"ui-icon-circle-arrow-s",showlabel:false}).prop('title','Download/Save edited dataset').click(function(){download(activeDatasetEl.data('data'));}).end()
+		.eq(7).button({icon:"ui-icon-trash",showlabel:false}).prop({'title':'Delete this item','id':'delete'}).click(function(){
 			if (confirm('Delete this item?')){
 				$.each(markers, function(i,marker){
 					if(activeDatasetEl.data('data').traces[$('#index').val()-1].id == $(marker.getElement()).data('annotation_id')){
@@ -754,7 +780,7 @@ function explore(el) {
 					.next('span').html('/'+activeDatasetEl.data('data').traces.length);
 			}
 		}).end()
-		.slice(-5).insertAfter($('#navigation')).wrapAll('<div id="edit"/>');
+		.slice(-4).insertAfter($('#navigation')).wrapAll('<div id="edit"/>');
 		;
 	updateFilter();
 	$('#index').change(); // Trigger updateTrace
