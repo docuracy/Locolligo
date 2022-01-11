@@ -55,7 +55,7 @@ This software originates as an output of the AHRC-funded [**Locating a National 
 - [ ] Data Linking
     - [x] Curated interlinking of Peripleo-LD datasets (GeoData Library user-built in local indexedDB store)
     - [x] Uploaded geoJSON
-    - [ ] Uploaded zipped shapefiles
+    - [x] Uploaded zipped shapefiles
     - [x] Cultural Heritage sites within radius: [Wikidata](https://www.wikidata.org/)
     - [x] [GeoNames toponyms](https://www.geonames.org/export/web-services.html#findNearby)
     - [ ] [Open Street Map Points of Interest](https://wiki.openstreetmap.org/wiki/Points_of_interest)
