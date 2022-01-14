@@ -47,7 +47,7 @@ This software originates as an output of the AHRC-funded [**Locating a National 
 - [x] Conform geodata to [WGS84](https://en.wikipedia.org/wiki/World_Geodetic_System) from:
     - [x] [OSGB](https://en.wikipedia.org/wiki/Ordnance_Survey_National_Grid) (Ordnance Survey of Great Britain)
     - [ ] [What3Words](https://what3words.com/about)
-- [x] Standardisation of annotation fragment selectors (see [here](https://github.com/docuracy/LaNC/blob/main/Peripleo_Fragment_Selector_SVG.js))
+- [x] Standardisation of annotation fragment selectors (see [here](https://github.com/docuracy/LaNC/blob/main/Peripleo_Fragment_Selector_SVG.js)). Useful for display of IIIF fragments (not yet implemented).
 - [x] Implementation of [schema.org](https://schema.org/) vocabulary to facilitate dataset indexing and discovery
 - [x] Location approximation: translation of text values to schema.org *geoRadius* values and *geoWithin* *geoCircle*s
 - [ ] UI for configuration of JSONata transformation of unrecognised data models
