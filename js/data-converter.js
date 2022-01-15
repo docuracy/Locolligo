@@ -13,9 +13,9 @@
 // JSONata expression paste module
 // Enable URL input 
 // Conversion for Recogito LD download
-// Fixed JSONata for geoJSON conversion from Peripleo-LD with multiple Places per trace body: https://try.jsonata.org/uFtDQQtG1
+// Fixed JSONata for geoJSON conversion from Peripleo-LD with multiple Places per trace body: https://try.jsonata.org/79tc-dKqM
 // Included Wikidata identifiers for tags: https://try.jsonata.org/H1xppiTyx
-// CSV to Peripleo-LD JSONata example at https://try.jsonata.org/AiLGV4yn2
+// CSV to Peripleo-LD JSONata examples at https://try.jsonata.org/AiLGV4yn2; https://try.jsonata.org/5Qs2VD7K6
 // CSV to Peripleo-LD JSONata CRS-conversion example at https://try.jsonata.org/XU6jC_uwd
 // Included gazetteer in geoJSON links
 // Standardised fragment selectors  
@@ -81,8 +81,8 @@ var mappings,
 	currentMarkers=[], 
 	linkMarkers={},
 	linkMarkerPopup,
-	radius=10, 
-	sparql_base, 
+	radius=15, 
+	sparql_heritage_sites, 
 	activeAjaxConnections = 0,
 	settings = {
 		headers: { Accept: 'application/sparql-results+json' }
@@ -379,6 +379,10 @@ function renderJSON(target,object,data){
 		indexButton.button().click(function(){library($(this));});
 	}
 	if(data.hasOwnProperty('traces')){ 
+		$('<button id="WDSettlements" class="APIButton" title="Link Wikidata settlements within '+radius+'km, based on best text match (Levenshtein distance algorithm).">WD</button>')
+			.prependTo(target)
+			.button()
+			.click(function(){WDSettlements($(this));});
 		$('<button id="LinkButton" title="Link and/or georeference records" style="pointer-events: auto;">Link/Georeference</button>')
 			.prependTo(target)
 			.button()
@@ -580,21 +584,40 @@ function updateLinkMarkers(root=$('#layerSelector')){
 				$(layer).closest('.layer').removeClass('loading');
 			});
 			break;
-		case 'WD': // Query Wikidata for Cultural Heritage Sites
+		case 'WS': // Query Wikidata for Settlements
 			$(layer).closest('.layer').addClass('loading');
-			var sparql = sparql_base;
+			var sparql = sparql_nearby_settlements;
 			settings.url = 'https://query.wikidata.org/sparql';
 			settings.data = { query: sparql.replace('%%%lng%%%',mapCentre.lng).replace('%%%lat%%%',mapCentre.lat).replace('%%%radius%%%',radius) }
 			$.ajax(settings).then(function(data){
 				$.each(data.results.bindings, function(i,feature){
 					var newbody = {
-							"additionalType": "LinkRole",
-							"linkRelationship": "Cultural heritage site found nearby",
-							"lpo:type": ['seeAlso',feature.classLabel.value],
-							"id": feature.site.value,
-							"title": feature.siteLabel.value,
-							"description": feature.hasOwnProperty('siteDescription') ? feature.siteDescription.value : '',
-							"distance": feature.distance.value 
+						"additionalType": "LinkRole",
+						"linkRelationship": "Corresponding Wikidata Item",
+						"id": feature.place.value,
+						"name": feature.placeLabel.value 
+					}
+					var coordinates = feature.geo.value.match(/-?\d+\.\d+/g);
+					linkMarker(newbody,type,colour,coordinates);
+				});
+				$(layer).closest('.layer').removeClass('loading');
+			});
+			break;
+		case 'WC': // Query Wikidata for Cultural Heritage Sites
+			$(layer).closest('.layer').addClass('loading');
+			var sparql = sparql_heritage_sites;
+			settings.url = 'https://query.wikidata.org/sparql';
+			settings.data = { query: sparql.replace('%%%lng%%%',mapCentre.lng).replace('%%%lat%%%',mapCentre.lat).replace('%%%radius%%%',radius) }
+			$.ajax(settings).then(function(data){
+				$.each(data.results.bindings, function(i,feature){
+					var newbody = {
+						"additionalType": "LinkRole",
+						"linkRelationship": "Cultural heritage site found nearby",
+						"lpo:type": ['seeAlso',feature.classLabel.value],
+						"id": feature.site.value,
+						"title": feature.siteLabel.value,
+						"description": feature.hasOwnProperty('siteDescription') ? feature.siteDescription.value : '',
+						"distance": feature.distance.value 
 					}
 					var coordinates = feature.geo.value.match(/-?\d+\.\d+/g);
 					linkMarker(newbody,type,colour,coordinates);
@@ -649,7 +672,6 @@ function updateLinkMarkers(root=$('#layerSelector')){
 					var newbody = value.target;
 					var coordinates = [value._longitude,value._latitude];
 					linkMarker(newbody,type,colour,coordinates,$(layer).siblings('label').text());
-					
 				}, function(){
 					console.log('Index retrieval complete');
 				});
@@ -715,7 +737,7 @@ function updateFilter() {
 		found = trace.target.title.toUpperCase().indexOf(filter) > -1;
 		if (!found) {
 			$.each(trace.body,function(j,body){
-				found = body.title.toUpperCase().indexOf(filter) > -1;
+				if(body.hasOwnProperty('title')) found = body.title.toUpperCase().indexOf(filter) > -1;
 			})
 		}
 		if (found) filteredIndices.push(i+1);
@@ -826,6 +848,235 @@ function geocode(){
 	
 }
 
+// Match Wikidata settlements with text and location
+function WDSettlements(el){
+	function levenshtein(r,e){if(r===e)return 0;var t=r.length,o=e.length;if(0===t||0===o)return t+o;var a,h,n,c,f,A,d,C,v=0,i=new Array(t);for(a=0;a<t;)i[a]=++a;for(;v+3<o;v+=4){var u=e.charCodeAt(v),l=e.charCodeAt(v+1),g=e.charCodeAt(v+2),s=e.charCodeAt(v+3);for(c=v,n=v+1,f=v+2,A=v+3,d=v+4,a=0;a<t;a++)C=r.charCodeAt(a),(h=i[a])<c||n<c?c=h>n?n+1:h+1:u!==C&&c++,c<n||f<n?n=c>f?f+1:c+1:l!==C&&n++,n<f||A<f?f=n>A?A+1:n+1:g!==C&&f++,f<A||d<A?A=f>d?d+1:f+1:s!==C&&A++,i[a]=d=A,A=f,f=n,n=c,c=h}for(;v<o;){var w=e.charCodeAt(v);for(c=v,f=++v,a=0;a<t;a++)f=(h=i[a])<c||f<c?h>f?f+1:h+1:w!==r.charCodeAt(a)?c+1:c,i[a]=f,c=h;d=f}return d}
+	var traces = el.parent('div').data('data').traces,
+		sparql = sparql_nearby_settlements,
+		traceIndex = 0,
+		retryAfter = 0,
+		settings = {
+			url: 'https://query.wikidata.org/sparql',
+			beforeSend: function(xhr) {
+				// Haven't yet found a way to get the Retry-After headers exposed. Wikidata *does* send them.
+//				xhr.setRequestHeader('Access-Control-Allow-Headers', 'Access-Control-Expose-Headers');
+//				xhr.setRequestHeader('Access-Control-Expose-Headers', 'Retry-After');
+				activeAjaxConnections++;
+				if(activeAjaxConnections<5){
+					traceIndex++;
+					if(traceIndex<traces.length) setTimeout(matchTrace(traceIndex),retryAfter);
+				}
+			},
+			error: function(jqXHR,msg1,msg2) {
+				console.log(jqXHR,msg1,msg2,jqXHR.getAllResponseHeaders());
+				if(jqXHR.status===429){
+					activeAjaxConnections--;
+//					retryAfter = jqXHR.getResponseHeader('Retry-After');
+//					retryAfter = retryAfter.replace( /^\D+/g, '');
+					retryAfter = 30; // 
+					console.log('Over limit, waiting '+retryAfter+' seconds.');
+					retryAfter = parseInt(retryAfter)*1000; // convert to milliseconds
+					setTimeout(matchTrace(i),retryAfter);
+				}
+			},
+			headers: { 
+				'Accept': 'application/sparql-results+json'
+			}
+	    };
+	el.append('<span> [Wait: <span class="count">0</span>/'+traces.length+']</span>');
+	var counter = el.find('span.count');
+	function matchTrace(i){
+		counter.html(i+1);
+		retryAfter = 0;
+		var placename = traces[i].target.title.split(',')[0];
+		const wgs84 = new LatLon(traces[i].body[0].geometry.latitude, traces[i].body[0].geometry.longitude);
+		try {
+			const gridref = wgs84.toOsGrid();
+			traces[i].body[0].properties.OS_gridref = gridref.toString();
+		}
+		catch(err) {
+			traces[i].body[0].properties.OS_gridref = '(outside geographic scope)';
+			console.log('OS_gridref failed for '+i+' ('+placename+')');
+		}
+		if(traces[i].body.length>1 && traces[i].body[1].linkRelationship=='Corresponding Wikidata Item'){
+			traces[i].body[1].linkCertainty = Math.max(0,(10-levenshtein(placename,traces[i].body[1].name.toUpperCase())))/10
+			traceIndex++;
+			if(traceIndex<traces.length){
+				setTimeout(matchTrace(traceIndex),retryAfter);
+			}
+			return;
+		}
+		var body = traces[i].body[0];
+		settings.data = { query: sparql.replace('%%%lng%%%',body.geometry.longitude).replace('%%%lat%%%',body.geometry.latitude).replace('%%%radius%%%',radius) }
+		$.ajax(settings)
+			.done(function(data){
+				scores=[];
+				$.each(data.results.bindings, function(i,settlement){
+					scores.push(levenshtein(placename,settlement.placeLabel.value.toUpperCase()));
+				})
+				var indexMin = scores.indexOf(Math.min(...scores));
+				var newbody = {
+					"additionalType": "LinkRole",
+					"linkRelationship": "Corresponding Wikidata Item",
+					"linkCertainty": Math.max(0,(10-scores[indexMin]))/10, // Convert to range 0 to 1, rejecting any score > 10
+					"id": data.results.bindings[indexMin].place.value,
+					"name": data.results.bindings[indexMin].placeLabel.value 
+				}
+				traces[i].body.push(newbody);
+				traceIndex++;
+				if(traceIndex<traces.length){
+					setTimeout(matchTrace(traceIndex),retryAfter);
+				}
+			})
+			.always(function(){
+				activeAjaxConnections--;
+				if(0 == activeAjaxConnections && traceIndex>(traces.length-1)){
+					if(el.parent('div').data('data').hasOwnProperty('check_Wikidata')) delete el.parent('div').data('data').check_Wikidata;
+					dataset_formatter = new JSONFormatter(el.parent('div').data('data'),1,{theme:'dark'});
+					renderJSON(el.parent('div'),dataset_formatter,el.parent('div').data('data'));
+					console.log('API requests completed.');
+				}
+			});
+	}
+	matchTrace(traceIndex);
+}
+
+//Query API
+//This function should be genericised using JSONata and an API-configurations file, to allow simple addition of further API endpoints.
+function addAPIdata(el){
+	var dataset = el.parent('div').data('data');
+	dataset.traces = dataset.traces.slice(0,5); // API limits concurrent(?) requests *** TO BE ADDRESSED
+	var count = 0;
+	el.append('<span> [Wait: <span class="count">'+count+'</span>/'+dataset.traces.length+']</span>');
+	var counter = el.find('span.count');
+	function checkAjaxConnections(){
+		if (0 == activeAjaxConnections){
+			dataset_formatter = new JSONFormatter(dataset,1,{theme:'dark'});
+			renderJSON(el.parent('div'),dataset_formatter,dataset);
+			console.log('API requests completed.');
+		}
+	}
+	$.each(dataset.traces, function(tracekey,trace){
+		$.each(trace.body, function(bodykey,body){
+		if(body.additionalType=="Place" && body.hasOwnProperty('geometry') && body.geometry.hasOwnProperty('latitude') && body.geometry.hasOwnProperty('longitude') ){
+				var settings = {
+						beforeSend: function(xhr) {
+							activeAjaxConnections++;
+							// TO DO: Wait until less than 5
+						},
+						error: function(xhr) {
+							activeAjaxConnections--;
+							checkAjaxConnections();
+						},
+						headers: { Accept: 'application/sparql-results+json' },
+						statusCode: {
+							429: function() {
+								// TO DO: Cease requests for specified period, and resume with this one. Flag completion of each item? Or implement with a while false loop?
+						    }
+						}
+				    };				
+				switch(el.attr('id')){
+				case "WDButton": // Query Wikidata for Cultural Heritage Sites based on location
+					var sparql = sparql_base;
+					settings.data = { query: sparql.replace('%%%lng%%%',body.geometry.longitude).replace('%%%lat%%%',body.geometry.latitude).replace('%%%radius%%%',radius) }
+					$.ajax('https://query.wikidata.org/sparql',settings).then(function(data){
+						$.each(data.results.bindings, function(i,feature){
+							var newbody = {
+									"additionalType": "LinkRole",
+									"linkRelationship": "Cultural heritage site found nearby",
+									"lpo:type": ['seeAlso',feature.classLabel.value],
+									"identifier": feature.site.value,
+									"name": feature.siteLabel.value,
+									"description": feature.hasOwnProperty('siteDescription') ? feature.siteDescription.value : '',
+									"distance": feature.distance.value 
+							}
+							var coordinates = feature.geo.value.match(/-?\d+\.\d+/g);
+							newbody.geometry = {
+								"@type": "GeoCoordinates",
+								"addressCountry": "GB",
+								"longitude": coordinates[0],
+								"latitude": coordinates[1]
+							}
+							dataset.traces[tracekey].body.push(newbody);
+						});
+						count++;
+						counter.html(count);
+						activeAjaxConnections--;
+						checkAjaxConnections();
+					});
+					break;
+				case "WDSettlements": // Query Wikidata for Settlement names based on location
+					function levenshtein(r,e){if(r===e)return 0;var t=r.length,o=e.length;if(0===t||0===o)return t+o;var a,h,n,c,f,A,d,C,v=0,i=new Array(t);for(a=0;a<t;)i[a]=++a;for(;v+3<o;v+=4){var u=e.charCodeAt(v),l=e.charCodeAt(v+1),g=e.charCodeAt(v+2),s=e.charCodeAt(v+3);for(c=v,n=v+1,f=v+2,A=v+3,d=v+4,a=0;a<t;a++)C=r.charCodeAt(a),(h=i[a])<c||n<c?c=h>n?n+1:h+1:u!==C&&c++,c<n||f<n?n=c>f?f+1:c+1:l!==C&&n++,n<f||A<f?f=n>A?A+1:n+1:g!==C&&f++,f<A||d<A?A=f>d?d+1:f+1:s!==C&&A++,i[a]=d=A,A=f,f=n,n=c,c=h}for(;v<o;){var w=e.charCodeAt(v);for(c=v,f=++v,a=0;a<t;a++)f=(h=i[a])<c||f<c?h>f?f+1:h+1:w!==r.charCodeAt(a)?c+1:c,i[a]=f,c=h;d=f}return d}
+					var sparql = sparql_nearby_settlements;
+					settings.data = { query: sparql.replace('%%%lng%%%',body.geometry.longitude).replace('%%%lat%%%',body.geometry.latitude).replace('%%%radius%%%',radius) }
+					var placename = body.title.split('.')[1];
+					// TO DO: Limit to 5 concurrent requests, and wait after a 429 / Retry-After response
+					$.ajax('https://query.wikidata.org/sparql',settings).then(
+						function(data,textStatus,jqXHR){
+							scores=[];
+							$.each(data.results.bindings, function(i,settlement){
+								scores.push(levenshtein(placename,settlement.placeLabel.value));
+							})
+							var indexMin = scores.indexOf(Math.min(...scores));
+							var newbody = {
+								"additionalType": "LinkRole",
+								"linkRelationship": "Corresponding Wikidata Item",
+								"id": data.results.bindings[indexMin].place.value,
+								"name": data.results.bindings[indexMin].placeLabel.value 
+							}
+							dataset.traces[tracekey].body.push(newbody);
+							count++;
+							counter.html(count);
+							activeAjaxConnections--;
+							checkAjaxConnections();
+						}
+					);
+					break;
+				case "PASButton": // Query Portable Antiquities Scheme API for linked data based on location
+					// Note that some results lack coordinate data
+					function processPage(page){
+						settings.url = 'https://finds.org.uk/database/search/results/lat/'+body.geometry.latitude+'/lon/'+body.geometry.longitude+'/d/'+radius+'/format/geojson/page/'+page;
+						$.ajax(settings).then(function(data){
+							$.each(data.features, function(i,feature){
+								newbody = {
+										"additionalType": "LinkRole",
+										"linkRelationship": "Artefact found nearby",
+										"lpo:type": ['seeAlso',feature.properties.objecttype],
+										"identifier": feature.properties.url,
+										"image": feature.properties.thumbnail
+								}
+								if(feature.geometry.coordinates[0]!==null){
+									// Note: 'findspot to 1km grid square level and slight obfuscation of findspot by randomised subtraction/addition of 10ths of a degree to the degraded findspot'
+									newbody.distance = distance([body.geometry.longitude,body.geometry.latitude],feature.geometry.coordinates,0); // 0 places = nearest kilometre
+									newbody.geoWithin = OSGB_WGS84(feature.properties.fourFigure)[2].geoWithin;
+//									newbody.geometry = { // The API currently returns precise, unobfuscated coordinates, which in the interest of find-site security must not be publicised
+//										"@type": "GeoCoordinates",
+//										"addressCountry": "GB",
+//										"longitude": feature.geometry.coordinates[0],
+//										"latitude": feature.geometry.coordinates[1]
+//									}
+								}
+								dataset.traces[tracekey].body.push(newbody);
+							});		
+							if(page < Math.min( 1+Math.floor((data.meta.totalResults-1)/data.meta.resultsPerPage), 10 )) { // Limit to maximum of 10 pages of results (=200 items)
+								processPage(page+1);
+							}
+							else{
+								count++;
+								counter.html(count);
+							}
+							activeAjaxConnections--;
+							checkAjaxConnections();
+						});
+					}
+					processPage(1);
+					break;
+				}
+			}
+		})
+	});	
+}
+
 $( document ).ready(function() {
 	
 	// Check browser file upload capability
@@ -863,7 +1114,8 @@ $( document ).ready(function() {
 	});
 	$('#map')
 		.on('mouseenter','.linkmarker',function(e){
-			linkMarkerPopup.setLngLat($(e.target).data('coordinates')).setHTML($(e.target).data('newbody').title).addTo(map);
+			var text = $(e.target).data('newbody').hasOwnProperty('title') ? $(e.target).data('newbody').title : $(e.target).data('newbody').name;
+			linkMarkerPopup.setLngLat($(e.target).data('coordinates')).setHTML(text).addTo(map);
 		})
 		.on('mouseleave','.linkmarker',function(e){
 			linkMarkerPopup.remove();
@@ -881,7 +1133,7 @@ $( document ).ready(function() {
 		$('#inputs').removeClass().addClass($('#choose_input option:selected').val());
 	});
 	$('#choose_input-button').addClass('throb');
-	$('#expression').after('<button onclick="convert();" title="Convert uploaded dataset using chosen type">Convert</button><button onclick="$(\'#modal\').dialog(\'open\')"  title="Paste new JSONata expression to be used for this conversion type">Edit JSONata</button><button onclick="download(mappings,\'mappings.json\');" title="Download all conversion definitions to local filesystem">Download mappings.json</button>');
+	$('#expression').after('<button onclick="convert();" title="Convert uploaded dataset using chosen type">Convert</button><button onclick="$(\'#datafields\').text(fields);$(\'#modal\').dialog(\'open\')"  title="Paste new JSONata expression to be used for this conversion type">Edit JSONata</button><button onclick="download(mappings,\'mappings.json\');" title="Download all conversion definitions to local filesystem">Download mappings.json</button>');
 	$('button,input:file').button();
 	$('#datafile_url').addClass('ui-button ui-corner-all ui-widget datafile_url');
 	$( "#modal" ).dialog({
@@ -932,10 +1184,15 @@ $( document ).ready(function() {
 		});
 	},'json');
 	$('#layerSelector span.fence').attr('title','Click here to refresh any selected layers, based on current map centre').click(function(){removeLinkMarkers();updateLinkMarkers();});
-	
-	// Load base Wikidata SPARQL query
+
+	// Load Heritage Sites Wikidata SPARQL query
 	$.get('./templates/wikidata_heritage_sites.sparql', function(data) {
-		sparql_base = data.replace(/\#.*\r/g,''); // Remove comments, which would break the urlencoded query
+		sparql_heritage_sites = data.replace(/\#.*\r/g,''); // Remove comments, which would break the urlencoded query
+	},'text');
+
+	// Load Settlements Wikidata SPARQL query
+	$.get('./templates/wikidata_nearby_settlements.sparql', function(data) {
+		sparql_nearby_settlements = data.replace(/\#.*\r/g,''); // Remove comments, which would break the urlencoded query
 	},'text');
 	
 	// Parse file
