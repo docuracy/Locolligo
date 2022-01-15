@@ -1,0 +1,13 @@
+SELECT DISTINCT ?place ?placeLabel ?geo
+WHERE {
+  ?place wdt:P31/wdt:P279* wd:Q486972 .
+  # Search by Nearest
+  SERVICE wikibase:around { 
+    ?place wdt:P625 ?geo . 
+    bd:serviceParam wikibase:center "Point(%%%lng%%% %%%lat%%%)"^^geo:wktLiteral .
+    bd:serviceParam wikibase:radius "%%%radius%%%" . 
+    bd:serviceParam wikibase:distance ?distance
+  }
+  SERVICE wikibase:label { bd:serviceParam wikibase:language "en" }
+}
+Order by  ?distance
