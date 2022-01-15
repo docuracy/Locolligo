@@ -56,6 +56,7 @@ This software originates as an output of the AHRC-funded [**Locating a National 
 - [x] Find places in map view (using GeoNames API)
 - [ ] Data Linking
     - [x] Curated interlinking of Peripleo-LD datasets (using **GeoData Library**)
+    - [x] Programmatic linking of Wikidata settlements (best text match within 15km, using Levenshtein algorithm)
     - [x] Cultural Heritage sites within radius: [Wikidata](https://www.wikidata.org/)
     - [x] [GeoNames toponyms](https://www.geonames.org/export/web-services.html#findNearby)
     - [ ] [Open Street Map Points of Interest](https://wiki.openstreetmap.org/wiki/Points_of_interest)
