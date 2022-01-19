@@ -81,8 +81,9 @@ var mappings,
 	currentMarkers=[], 
 	linkMarkers={},
 	linkMarkerPopup,
-	radius=15, 
+	radius=5, 
 	sparql_heritage_sites, 
+	timeout,
 	activeAjaxConnections = 0,
 	settings = {
 		headers: { Accept: 'application/sparql-results+json' }
@@ -187,7 +188,6 @@ function OSGB_WGS84(input){
 function convert(){
 	input_formatter.openAtDepth(0); // Close input JSON
 	if($('#source').data('data').hasOwnProperty('data')) $.each($('#source').data('data').data,function(j,item){
-		$('#source').data('data').data[j].geoWithins = [];
 		$.each(mappings[$('#expression option:selected').val()].CRS_conversions, function(i,conversion){
 			input=[];
 			$.each(conversion[0],function(k,input_part){
@@ -196,6 +196,7 @@ function convert(){
 			const result = eval(conversion[2].replace('%%%','"'+input.join(',')+'"'));
 			eval("$('#source').data('data').data[j]."+conversion[1][0]+" = parseFloat(result[0])");
 			eval("$('#source').data('data').data[j]."+conversion[1][1]+" = parseFloat(result[1])");
+			if(!$('#source').data('data').data[j].hasOwnProperty('geoWithins')) $('#source').data('data').data[j].geoWithins =[];
 			$('#source').data('data').data[j].geoWithins.push(result[2]);
 		});
 	});
@@ -373,16 +374,16 @@ function renderJSON(target,object,data){
 		csvButton.button().click(function(){downloadCSV($(this).parent('div').data('data').features);});
 		var mapButton = $('<button class="mapButton" title="Visualise dataset on a map">Map</button>').prependTo(target);
 		mapButton.button().click(function(){drawMap($(this));});
+		$('<button id="WDLP" class="APIButton" title="Link Wikidata settlements within '+radius+'km, based on best text match (Levenshtein distance algorithm).">WD</button>')
+			.prependTo(target)
+			.button()
+			.click(function(){WDLP($(this));});
 	}
 	if(data.hasOwnProperty('features') || data.hasOwnProperty('traces')){
 		var indexButton = $('<button class="indexButton" title="Add dataset to local geo-library (for later linking).">Library</button>').prependTo(target);
 		indexButton.button().click(function(){library($(this));});
 	}
 	if(data.hasOwnProperty('traces')){ 
-		$('<button id="WDSettlements" class="APIButton" title="Link Wikidata settlements within '+radius+'km, based on best text match (Levenshtein distance algorithm).">WD</button>')
-			.prependTo(target)
-			.button()
-			.click(function(){WDSettlements($(this));});
 		$('<button id="LinkButton" title="Link and/or georeference records" style="pointer-events: auto;">Link/Georeference</button>')
 			.prependTo(target)
 			.button()
@@ -400,6 +401,7 @@ function renderJSON(target,object,data){
 // Try to recognise type of uploaded file; perform conversion if found
 function identifyType(input){
 	if (input.hasOwnProperty('traces')){fields = JSON.stringify(['traces']);}
+	else if (input.hasOwnProperty('type') && input.type=='lp'){fields = JSON.stringify(['lp']);}
 	else if (input.hasOwnProperty('kml')){fields = JSON.stringify(['kml']);}
 	else if (input.hasOwnProperty('meta')){fields = JSON.stringify(input.meta.fields); console.log(input.meta)} // Converted from delimited text
 	else if (input.constructor === Array && input[0].hasOwnProperty('@context') && input[0]['@context']=='http://www.w3.org/ns/anno.jsonld'){fields = JSON.stringify(['annotations']);}
@@ -848,7 +850,7 @@ function geocode(){
 	
 }
 
-// Match Wikidata settlements with text and location
+//Match Wikidata settlements with text and location
 function WDSettlements(el){
 	function levenshtein(r,e){if(r===e)return 0;var t=r.length,o=e.length;if(0===t||0===o)return t+o;var a,h,n,c,f,A,d,C,v=0,i=new Array(t);for(a=0;a<t;)i[a]=++a;for(;v+3<o;v+=4){var u=e.charCodeAt(v),l=e.charCodeAt(v+1),g=e.charCodeAt(v+2),s=e.charCodeAt(v+3);for(c=v,n=v+1,f=v+2,A=v+3,d=v+4,a=0;a<t;a++)C=r.charCodeAt(a),(h=i[a])<c||n<c?c=h>n?n+1:h+1:u!==C&&c++,c<n||f<n?n=c>f?f+1:c+1:l!==C&&n++,n<f||A<f?f=n>A?A+1:n+1:g!==C&&f++,f<A||d<A?A=f>d?d+1:f+1:s!==C&&A++,i[a]=d=A,A=f,f=n,n=c,c=h}for(;v<o;){var w=e.charCodeAt(v);for(c=v,f=++v,a=0;a<t;a++)f=(h=i[a])<c||f<c?h>f?f+1:h+1:w!==r.charCodeAt(a)?c+1:c,i[a]=f,c=h;d=f}return d}
 	var traces = el.parent('div').data('data').traces,
@@ -857,10 +859,11 @@ function WDSettlements(el){
 		retryAfter = 0,
 		settings = {
 			url: 'https://query.wikidata.org/sparql',
-			beforeSend: function(xhr) {
+			beforeSend: function(jqXHR) {
 				// Haven't yet found a way to get the Retry-After headers exposed. Wikidata *does* send them.
-//				xhr.setRequestHeader('Access-Control-Allow-Headers', 'Access-Control-Expose-Headers');
-//				xhr.setRequestHeader('Access-Control-Expose-Headers', 'Retry-After');
+//				jqXHR.setRequestHeader('Access-Control-Allow-Headers', 'Access-Control-Expose-Headers');
+//				jqXHR.setRequestHeader('Access-Control-Expose-Headers', 'Retry-After');
+				jqXHR.i = settings.data.i;
 				activeAjaxConnections++;
 				if(activeAjaxConnections<5){
 					traceIndex++;
@@ -868,15 +871,18 @@ function WDSettlements(el){
 				}
 			},
 			error: function(jqXHR,msg1,msg2) {
+				activeAjaxConnections--;
 				console.log(jqXHR,msg1,msg2,jqXHR.getAllResponseHeaders());
 				if(jqXHR.status===429){
 					activeAjaxConnections--;
 //					retryAfter = jqXHR.getResponseHeader('Retry-After');
 //					retryAfter = retryAfter.replace( /^\D+/g, '');
 					retryAfter = 30; // 
-					console.log('Over limit, waiting '+retryAfter+' seconds.');
+					console.log('Over limit attempting #'+jqXHR.i+', waiting '+retryAfter+' seconds.');
 					retryAfter = parseInt(retryAfter)*1000; // convert to milliseconds
-					setTimeout(matchTrace(i),retryAfter);
+					clearTimeout(timeout);
+					timeout = setTimeout(function(){retryAfter=0},retryAfter);
+					setTimeout(matchItem(jqXHR.i),retryAfter);
 				}
 			},
 			headers: { 
@@ -887,7 +893,11 @@ function WDSettlements(el){
 	var counter = el.find('span.count');
 	function matchTrace(i){
 		counter.html(i+1);
-		retryAfter = 0;
+		if(items[i].hasOwnProperty('names') && items[i].names[0].hasOwnProperty('citations') && items[i].names[0].citations[0].label=='Wikidata'){ // Used when retrying after failed attempt to populate dataset
+			itemIndex++;
+			setTimeout(matchItem(itemIndex),retryAfter);
+			return;
+		}
 		var placename = traces[i].target.title.split(',')[0];
 		const wgs84 = new LatLon(traces[i].body[0].geometry.latitude, traces[i].body[0].geometry.longitude);
 		try {
@@ -907,7 +917,7 @@ function WDSettlements(el){
 			return;
 		}
 		var body = traces[i].body[0];
-		settings.data = { query: sparql.replace('%%%lng%%%',body.geometry.longitude).replace('%%%lat%%%',body.geometry.latitude).replace('%%%radius%%%',radius) }
+		settings.data = { i:i, query: sparql.replace('%%%lng%%%',body.geometry.longitude).replace('%%%lat%%%',body.geometry.latitude).replace('%%%radius%%%',radius) }
 		$.ajax(settings)
 			.done(function(data){
 				scores=[];
@@ -927,11 +937,7 @@ function WDSettlements(el){
 				if(traceIndex<traces.length){
 					setTimeout(matchTrace(traceIndex),retryAfter);
 				}
-			})
-			.always(function(){
-				activeAjaxConnections--;
-				if(0 == activeAjaxConnections && traceIndex>(traces.length-1)){
-					if(el.parent('div').data('data').hasOwnProperty('check_Wikidata')) delete el.parent('div').data('data').check_Wikidata;
+				else if(0 == activeAjaxConnections){
 					dataset_formatter = new JSONFormatter(el.parent('div').data('data'),1,{theme:'dark'});
 					renderJSON(el.parent('div'),dataset_formatter,el.parent('div').data('data'));
 					console.log('API requests completed.');
@@ -939,6 +945,90 @@ function WDSettlements(el){
 			});
 	}
 	matchTrace(traceIndex);
+}
+
+//Match Linked Places with Wikidata settlements with text and location
+function WDLP(el){
+	function levenshtein(r,e){if(r===e)return 0;var t=r.length,o=e.length;if(0===t||0===o)return t+o;var a,h,n,c,f,A,d,C,v=0,i=new Array(t);for(a=0;a<t;)i[a]=++a;for(;v+3<o;v+=4){var u=e.charCodeAt(v),l=e.charCodeAt(v+1),g=e.charCodeAt(v+2),s=e.charCodeAt(v+3);for(c=v,n=v+1,f=v+2,A=v+3,d=v+4,a=0;a<t;a++)C=r.charCodeAt(a),(h=i[a])<c||n<c?c=h>n?n+1:h+1:u!==C&&c++,c<n||f<n?n=c>f?f+1:c+1:l!==C&&n++,n<f||A<f?f=n>A?A+1:n+1:g!==C&&f++,f<A||d<A?A=f>d?d+1:f+1:s!==C&&A++,i[a]=d=A,A=f,f=n,n=c,c=h}for(;v<o;){var w=e.charCodeAt(v);for(c=v,f=++v,a=0;a<t;a++)f=(h=i[a])<c||f<c?h>f?f+1:h+1:w!==r.charCodeAt(a)?c+1:c,i[a]=f,c=h;d=f}return d}
+	var items = el.parent('div').data('data').features,
+		sparql = sparql_nearby_settlements,
+		itemIndex = 0,
+		retryAfter = 0,
+		settings = {
+			url: 'https://query.wikidata.org/sparql',
+			beforeSend: function(jqXHR) {
+				// Haven't yet found a way to get the Retry-After headers exposed. Wikidata *does* send them.
+//				jqXHR.setRequestHeader('Access-Control-Allow-Headers', 'Access-Control-Expose-Headers');
+//				jqXHR.setRequestHeader('Access-Control-Expose-Headers', 'Retry-After');
+				jqXHR.i = settings.data.i;
+				activeAjaxConnections++;
+				if(activeAjaxConnections<5){
+					itemIndex++;
+					if(itemIndex<items.length) setTimeout(matchItem(itemIndex),retryAfter);
+				}
+			},
+			error: function(jqXHR,msg1,msg2) {
+				activeAjaxConnections--;
+				console.log(jqXHR,msg1,msg2,jqXHR.getAllResponseHeaders());
+				if(jqXHR.status===429){
+//					retryAfter = jqXHR.getResponseHeader('Retry-After');
+//					retryAfter = retryAfter.replace( /^\D+/g, '');
+					retryAfter = 30; // 
+					console.log('Over limit attempting #'+jqXHR.i+', waiting '+retryAfter+' seconds.');
+					retryAfter = parseInt(retryAfter)*1000; // convert to milliseconds
+					clearTimeout(timeout);
+					timeout = setTimeout(function(){retryAfter=0},retryAfter);
+					setTimeout(matchItem(jqXHR.i),retryAfter);
+				}
+			},
+			headers: { 
+				'Accept': 'application/sparql-results+json'
+			}
+	    };
+//	items = items.slice(0,20); // For testing - comment out for production
+	el.append('<span> [Wait: <span class="count">0</span>/'+items.length+']</span>');
+	var counter = el.find('span.count');
+	function matchItem(i){
+		counter.html(i+1);
+		if(items[i].hasOwnProperty('names') && items[i].names[0].hasOwnProperty('citations') && items[i].names[0].citations[0].label=='Wikidata'){ // Used when retrying after failed attempt to populate dataset
+			itemIndex++;
+			setTimeout(matchItem(itemIndex),retryAfter);
+			return;
+		}
+		var placename = items[i].properties.title.split(',')[0];
+		settings.data = { i: i, query: sparql.replace('%%%lng%%%',items[i].geometry.coordinates[0]).replace('%%%lat%%%',items[i].geometry.coordinates[1]).replace('%%%radius%%%',radius) }
+		$.ajax(settings)
+			.done(function(data){
+				activeAjaxConnections--;
+				scores=[];
+				$.each(data.results.bindings, function(i,settlement){
+					scores.push(levenshtein(settlement.placeLabel.value.toUpperCase(),placename));
+				})
+				var indexMin = scores.indexOf(Math.min(...scores));
+				var linkCertainty = Math.max(0,(10-scores[indexMin]))/10; // Convert to range 0 to 1, rejecting any score > 10
+				
+				console.log(i,placename,data.results.bindings[indexMin].placeLabel.value,linkCertainty,activeAjaxConnections);
+				
+				if(!items[i].hasOwnProperty('names')) items[i].names = [];
+				items[i].names.push({'toponym':data.results.bindings[indexMin].placeLabel.value,'citations':[{'label':'Wikidata','@id':data.results.bindings[indexMin].place.value}],'certainty':linkCertainty});
+				if(!items[i].hasOwnProperty('links')) items[i].links = [];
+				items[i].links.push({'type':linkCertainty==1?'exactMatch':'closeMatch','identifier':data.results.bindings[indexMin].place.value,'certainty':linkCertainty,'distance':parseFloat(data.results.bindings[indexMin].distance.value)});
+				if(!items[i].hasOwnProperty('types')) items[i].types = [];
+				items[i].types.push({'identifier':'aat:300008375','label':'town'});
+				items[i].types.push({'identifier':'https://www.wikidata.org/wiki/Q486972','label':'human settlement'});
+				
+				itemIndex++;
+				if(itemIndex<items.length){
+					setTimeout(matchItem(itemIndex),retryAfter);
+				}
+				else if(0 == activeAjaxConnections){
+					dataset_formatter = new JSONFormatter(el.parent('div').data('data'),1,{theme:'dark'});
+					renderJSON(el.parent('div'),dataset_formatter,el.parent('div').data('data'));
+					console.log('API requests completed.');
+				}
+			});
+	}
+	matchItem(itemIndex);
 }
 
 //Query API
@@ -1199,13 +1289,94 @@ $( document ).ready(function() {
 	function parse_file(filename,filecontent){
     	const delimited = ['csv','tsv'];
     	const xml = ['xml','kml'];
-    	const fileExtension = filename.split(/[#?]/)[0].split('.').pop().trim();
+		var fileparts = filename.split(/[#?]/)[0].split('.');
+    	const fileExtension = fileparts.pop().trim();
     	if(delimited.includes(fileExtension)){ // Delimited text input
-    		input = Papa.parse(filecontent.replace(/[{}]/g, '_'),{header:true,dynamicTyping:true,skipEmptyLines:true}); // Replace curly braces, which break JSONata when used in column headers
-    		$.each(input.data, function(key,value){ // Create uuid for each item/Trace
-    			input.data[key].uuid = uuidv4();
-    		});
-    		input_truncated = input.data.slice(0,5000); // Truncated to avoid browser overload on expansion of large arrays.
+    		if(fileparts.pop().trim()=='lp'){ // Convert to Linked Places format (geoJSON-T)
+    			function transformHeader(header,i){
+        			var newHeader = /\{(.*?)\}/.exec(header);
+        			return newHeader===null ? null : newHeader[1];
+        		}
+        		input = Papa.parse(filecontent,{header:true,transformHeader:transformHeader,dynamicTyping:true,skipEmptyLines:true});
+        		input.data.forEach(function(feature,i){
+        			delete feature.null
+        			Object.keys(feature).forEach(function(key) {
+        				var keyParts = key.split('=');
+        				if (keyParts.length>1){
+        					if (key.indexOf('="')>-1){ // Fill with string value
+        						if(!input.hasOwnProperty('citation') && keyParts[0]=='citation'){
+        			    			const {Cite} = require('citation-js');
+        			    			const citation = new Cite(keyParts[1].replace(/["]+/g, ''));
+        			    			input.citation = citation.get()[0];
+        			    			input.citation.type = 'dataset'; // Incorrectly identifies as 'book'
+        			    			if(input.citation.hasOwnProperty('author') && Array.isArray(input.citation.author)){
+        			    				input.citation.author.forEach(function(author){
+        			    					if(author.hasOwnProperty('_orcid')){
+        			    						author.orcid = author._orcid;
+        			    						delete author._orcid;        			    						
+        			    					}
+        			    				});
+        			    			}
+        			    			delete input.citation._cff_mainReference;
+        			    			delete input.citation._graph;
+        			    			delete input.citation.id;
+        						}
+        						else if(keyParts[0]=='citation'){
+        							delete feature.citation;
+        						}
+        						else{
+        							if(keyParts[1].trim().length > 0) feature[keyParts[0]] = keyParts[1].replace(/["]+/g, '');
+        						}
+        					}
+        					else switch(keyParts[1]){ // Transformation required
+        						case "OSGB":
+	        						try {
+	        							const wgs84 = new LatLon(feature.latitude, feature.longitude);
+	        							const gridref = wgs84.toOsGrid();
+	        							feature[keyParts[0]] = gridref.toString();
+	        						}
+	        						catch(err) {
+	        							feature[keyParts[0]] = '(transformation to OSGB not possible)';
+	        						}
+	        						break;
+        					}
+        					delete feature[key];
+        				}
+        				else{
+        					if(feature[key]==null || feature[key]==' ') delete feature[key];
+        				}
+        			});
+    				feature.geometry = {"type": "Point", "coordinates": [feature.longitude,feature.latitude], 'certainty': 'certain'};
+    				delete feature.longitude;
+    				delete feature.latitude;
+        			Object.keys(feature).forEach(function(property) {
+        				var properties = property.split('.');
+        				if(properties.length>1){
+            				var root = feature;
+            				properties.forEach(function(property){
+            					if(!root.hasOwnProperty(property)) root[property] = {};
+            					root = root[property];
+            				});
+            				eval('feature.'+property+'=feature[property]');
+            				delete feature[property];
+        				}
+        			});
+        			if(feature.hasOwnProperty('relations')){ // Convert relations object to array; assume it is a historic county and add appropriate {when} and {ccodes} attributes
+        				feature.relations.when = {"timespans":[{"start":{"latest":"1540"},"end":{"earliest":"1974"}}]};
+        				feature.relations = [feature.relations];
+        				feature.properties.ccodes = ["GB"];
+        			}
+        		});
+        		input.type="lp";
+        		input_truncated = input; // (Not truncated)
+    		}
+    		else{ // Regular delimited text
+    			input = Papa.parse(filecontent.replace(/[{}]/g, '_'),{header:true,dynamicTyping:true,skipEmptyLines:true}); // Replace curly braces, which break JSONata when used in column headers
+        		$.each(input.data, function(key,value){ // Create uuid for each item/Trace
+        			input.data[key].uuid = uuidv4();
+        		});
+        		input_truncated = input.data.slice(0,5000); // Truncated to avoid browser overload on expansion of large arrays.
+    		}
     	}
     	else if(xml.includes(fileExtension)){
     		const parser = new fxparser.XMLParser();
@@ -1335,6 +1506,6 @@ $( document ).ready(function() {
 				}
 			};
 		});
-	})
+	});
 	
 });
