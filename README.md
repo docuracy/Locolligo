@@ -105,7 +105,7 @@ Much of the functionality of this software is provided through the use of pre-ex
 * **Movable Type Scripts** convert between latitude/longitude & OS National Grid References: https://www.movable-type.co.uk/scripts/latlong-os-gridref.html
 * **Proj4js** transforms point coordinates from one system to another: https://github.com/proj4js/proj4js
 * **shp2geojson.js** converts zipped shapefiles to geoJSON: https://github.com/gipong/shp2geojson.js
-* **Citation.js** fetches citation data from a CITATION.cff file and converts it to CSL-JSON
+* **Citation.js** fetches citation data from a CITATION.cff file and converts it to CSL-JSON: https://github.com/citation-js
 
 ## Licence
 All original work within this software is offered under the terms of the **CC-BY 4.0 International** licence detailed [here](./LICENSE.md).
