@@ -8,14 +8,21 @@
 	},
 	{
 		"description":"Peripleo-LD to geoJSON-T",
-		"expression": "{ \"name\": name, \"description\": description, \"created\": created, \"creator\": creator, \"isAccessibleForFree\": isAccessibleForFree, \"license\": license, \"@context\": \"https://raw.githubusercontent.com/LinkedPasts/linked-places/master/linkedplaces-context-v1.jsonld\", \"type\":\"FeatureCollection\", \"features\":traces.body[additionalType=\"Place\" and $exists(geometry.longitude) and $exists(geometry.latitude)][].{ \"type\":\"Feature\", \"geometry\":{ \"type\":\"Point\", \"coordinates\":[ geometry.longitude, geometry.latitude ] }, \"properties\":{ \"name\":%.target.title, \"uri\": title, \"url\": %.target.id, \"description\": %.target.description, \"feature_type\": properties.feature_type,\"feature_detail\": properties.feature_detail,\"geodata_source\": properties.geodata_source, \"OS_gridref\": properties.OS_gridref, \"links\": [ $exists(id)?{ \"additionalType\": \"Place\", \"linkRelationship\": \"identifying\", \"lpo:type\": \"SpecificResource\", \"identifier\": id }, %.body[ additionalType=\"LinkRole\" ] ] }, \"when\": when }}",
+		"expression": "{ \"name\": name, \"description\": description, \"created\": created, \"creator\": creator, \"isAccessibleForFree\": isAccessibleForFree, \"license\": license, \"@context\": \"https://raw.githubusercontent.com/LinkedPasts/linked-places/master/linkedplaces-context-v1.1.jsonld\", \"type\":\"FeatureCollection\", \"features\":traces.body[additionalType=\"Place\" and $exists(geometry.longitude) and $exists(geometry.latitude)][].{ \"type\":\"Feature\", \"geometry\":{ \"type\":\"Point\", \"coordinates\":[ geometry.longitude, geometry.latitude ] }, \"properties\":{ \"name\":%.target.title, \"uri\": title, \"url\": %.target.id, \"description\": %.target.description, \"feature_type\": properties.feature_type,\"feature_detail\": properties.feature_detail,\"geodata_source\": properties.geodata_source, \"OS_gridref\": properties.OS_gridref, \"links\": [ $exists(id)?{ \"additionalType\": \"Place\", \"linkRelationship\": \"identifying\", \"lpo:type\": \"SpecificResource\", \"identifier\": id }, %.body[ additionalType=\"LinkRole\" ] ] }, \"when\": when }}",
 	    "mappings": {},
 	    "CRS_conversions": [],
 		"fields":["traces"]
 	},
 	{
+		"description":"lp.csv to geoJSON-T",
+		"expression": "{ \"citation\":citation, \"type\":\"FeatureCollection\", \"@context\": \"https://raw.githubusercontent.com/LinkedPasts/linked-places/master/linkedplaces-context-v1.jsonld\", \"features\":data}",
+	    "mappings": {},
+	    "CRS_conversions": [],
+		"fields":["lp"]
+	},
+	{
 		"description":"KML to geoJSON-T",
-		"expression": "{ \"type\":\"FeatureCollection\", \"@context\": \"https://raw.githubusercontent.com/LinkedPasts/linked-places/master/linkedplaces-context-v1.jsonld\", \"features\":kml.Document.Folder.Placemark.{ \"properties\": $merge( $append( [{\"name\":name}], $map($split(description,\"<br>\"), function($v){( {$split($v,\": \")[0]: $split($v,\": \")[1]} )}) ) ), \"type\":\"Feature\", \"geometry\":{ \"type\":\"Point\", \"coordinates\":[$number($split(Point.coordinates,\",\")[0]),$number($split(Point.coordinates,\",\")[1])] }, \"when\": when }}",
+		"expression": "{ \"type\":\"FeatureCollection\", \"@context\": \"https://raw.githubusercontent.com/LinkedPasts/linked-places/master/linkedplaces-context-v1.1.jsonld\", \"features\":kml.Document.Folder.Placemark.{ \"properties\": $merge( $append( [{\"name\":name}], $map($split(description,\"<br>\"), function($v){( {$split($v,\": \")[0]: $split($v,\": \")[1]} )}) ) ), \"type\":\"Feature\", \"geometry\":{ \"type\":\"Point\", \"coordinates\":[$number($split(Point.coordinates,\",\")[0]),$number($split(Point.coordinates,\",\")[1])] }, \"when\": when }}",
 	    "mappings": {},
 	    "CRS_conversions": [],
 		"fields":["kml"]
