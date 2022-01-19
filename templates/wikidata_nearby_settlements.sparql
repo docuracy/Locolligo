@@ -1,4 +1,4 @@
-SELECT DISTINCT ?place ?placeLabel ?geo
+SELECT DISTINCT ?place ?placeLabel ?geo ?distance
 WHERE {
   ?place wdt:P31/wdt:P279* wd:Q486972 .
   # Search by Nearest
