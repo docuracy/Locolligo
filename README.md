@@ -51,6 +51,7 @@ This software originates as an output of the AHRC-funded [**Locating a National 
 - [x] Implementation of [schema.org](https://schema.org/) vocabulary to facilitate dataset indexing and discovery
 - [x] Location approximation: translation of text values to schema.org *geoRadius* values and *geoWithin* *geoCircle*s
 - [ ] UI for configuration of JSONata transformation of unrecognised data models
+- [x] Fetch CITATION.cff and incorporate in dataset as CSL-JSON
 - [ ] Facilitate editing of dataset metadata
 - [x] Add Peripleo-LD, shapefile, and geoJSON datasets to user's local **GeoData Library** ([indexedDB](https://developer.mozilla.org/en-US/docs/Web/API/IndexedDB_API) store)
 - [x] Find places in map view (using GeoNames API)
@@ -104,6 +105,7 @@ Much of the functionality of this software is provided through the use of pre-ex
 * **Movable Type Scripts** convert between latitude/longitude & OS National Grid References: https://www.movable-type.co.uk/scripts/latlong-os-gridref.html
 * **Proj4js** transforms point coordinates from one system to another: https://github.com/proj4js/proj4js
 * **shp2geojson.js** converts zipped shapefiles to geoJSON: https://github.com/gipong/shp2geojson.js
+* **Citation.js** fetches citation data from a CITATION.cff file and converts it to CSL-JSON
 
 ## Licence
 All original work within this software is offered under the terms of the **CC-BY 4.0 International** licence detailed [here](./LICENSE.md).
