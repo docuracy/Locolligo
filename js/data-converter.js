@@ -1301,6 +1301,7 @@ $( document ).ready(function() {
         			return newHeader===null ? null : newHeader[1];
         		}
         		input = Papa.parse(filecontent,{header:true,transformHeader:transformHeader,dynamicTyping:true,skipEmptyLines:true});
+        		input['@id'] = 'https://w3id.org/locolligo/'+uuidv4();
         		input.data.forEach(function(feature,i){
         			delete feature.null
         			Object.keys(feature).forEach(function(key) {
@@ -1349,9 +1350,18 @@ $( document ).ready(function() {
         					if(feature[key]==null || feature[key]==' ') delete feature[key];
         				}
         			});
-    				feature.geometry = {"type": "Point", "coordinates": [feature.longitude,feature.latitude], 'certainty': 'certain'};
-    				delete feature.longitude;
-    				delete feature.latitude;
+        			if(feature.hasOwnProperty('easting') && feature.hasOwnProperty('northing')){
+	        			const gridref = OsGridRef.parse([feature.easting,feature.northing]);
+	        			const wgs84 = gridref.toLatLon();
+        				feature.geometry = {"type": "Point", "coordinates": [wgs84._lon.toFixed(6),wgs84._lat.toFixed(6)], 'certainty': 'certain'};
+	    				delete feature.easting;
+	    				delete feature.northing;
+        			}
+        			else if(feature.hasOwnProperty('longitude') && feature.hasOwnProperty('latitude')){
+        				feature.geometry = {"type": "Point", "coordinates": [feature.longitude,feature.latitude], 'certainty': 'certain'};
+	    				delete feature.longitude;
+	    				delete feature.latitude;
+        			}
         			Object.keys(feature).forEach(function(property) {
         				var properties = property.split('.');
         				if(properties.length>1){
@@ -1369,18 +1379,22 @@ $( document ).ready(function() {
         				feature.relations = [feature.relations];
         				feature.properties.ccodes = ["GB"];
         			}
+        			if(!feature.hasOwnProperty('@id')){
+        				if(!feature.hasOwnProperty('uuid')) feature.uuid = uuidv4();
+            			feature['@id'] = input['@id']+'/'+feature.uuid;
+        			}
         		});
         		input.type="lp";
         		input_truncated = input; // (Not truncated)
     		}
     		else{ // Regular delimited text
     			input = Papa.parse(filecontent.replace(/[{}]/g, '_'),{header:true,dynamicTyping:true,skipEmptyLines:true}); // Replace curly braces, which break JSONata when used in column headers
-    			input.data['@id'] = 'https://w3id.org/locolligo/'+uuidv4(); // Create PID for dataset
+    			input['@id'] = 'https://w3id.org/locolligo/'+uuidv4(); // Create PID for dataset
     			$.each(input.data, function(key,value){ // Create uuid for each item/Trace
-        			input.data[key].uuid = uuidv4();
-        			if(!input.data[key].hasOwnProperty('@id')) input.data[key]['@id'] = input.data['@id']+'/'+input.data[key].uuid;
+    				if(!input.data[key].hasOwnProperty('uuid')) input.data[key].uuid = uuidv4();
+        			if(!input.data[key].hasOwnProperty('@id')) input.data[key]['@id'] = input['@id']+'/'+input.data[key].uuid;
         		});
-        		input_truncated = input.data.slice(0,5000); // Truncated to avoid browser overload on expansion of large arrays.
+        		input_truncated = input; //.data.slice(0,5000); // Truncated to avoid browser overload on expansion of large arrays.
     		}
     	}
     	else if(xml.includes(fileExtension)){
