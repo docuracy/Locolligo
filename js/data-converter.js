@@ -32,6 +32,7 @@
 // Reset button to allow new input
 // GeoNames for nearby Wikipedia urls, e.g. http://api.geonames.org/findNearbyWikipediaJSON?lat=51.0177369115508&lng=-1.92513942718506&radius=10&username=docuracy&maxRows=500
 // GeoNames reverse geocoding for nearby toponyms, e.g. http://api.geonames.org/findNearbyJSON?lat=51.0177369115508&lng=-1.92513942718506&radius=10&username=docuracy&maxRows=500
+// Added facility for fetching CITATION.cff and incorporating as CSL-JSON in a dataset
 //
 // TO DO:
 // SEE ALSO: https://docs.google.com/document/d/1H0KmYf405QS2ECozHpmAFsLz2MbXd_3qLKXBmLFCoJc/edit?usp=sharing
@@ -1289,10 +1290,12 @@ $( document ).ready(function() {
 	function parse_file(filename,filecontent){
     	const delimited = ['csv','tsv'];
     	const xml = ['xml','kml'];
+		console.log(filename,fileparts);
 		var fileparts = filename.split(/[#?]/)[0].split('.');
+		console.log(filename,fileparts);
     	const fileExtension = fileparts.pop().trim();
     	if(delimited.includes(fileExtension)){ // Delimited text input
-    		if(fileparts.pop().trim()=='lp'){ // Convert to Linked Places format (geoJSON-T)
+    		if(fileparts.length>1 && fileparts.pop().trim()=='lp'){ // Convert to Linked Places format (geoJSON-T)
     			function transformHeader(header,i){
         			var newHeader = /\{(.*?)\}/.exec(header);
         			return newHeader===null ? null : newHeader[1];
@@ -1372,8 +1375,10 @@ $( document ).ready(function() {
     		}
     		else{ // Regular delimited text
     			input = Papa.parse(filecontent.replace(/[{}]/g, '_'),{header:true,dynamicTyping:true,skipEmptyLines:true}); // Replace curly braces, which break JSONata when used in column headers
-        		$.each(input.data, function(key,value){ // Create uuid for each item/Trace
+    			input.data['@id'] = 'https://w3id.org/locolligo/'+uuidv4(); // Create PID for dataset
+    			$.each(input.data, function(key,value){ // Create uuid for each item/Trace
         			input.data[key].uuid = uuidv4();
+        			if(!input.data[key].hasOwnProperty('@id')) input.data[key]['@id'] = input.data['@id']+'/'+input.data[key].uuid;
         		});
         		input_truncated = input.data.slice(0,5000); // Truncated to avoid browser overload on expansion of large arrays.
     		}
@@ -1462,12 +1467,13 @@ $( document ).ready(function() {
     		url = $('#datafile_url').val();
     	if(url.startsWith('https://docs.google.com/spreadsheets/')){
     		filetype = 'csv';
-    		var gid = $('#datafile_url').val().split('gid=').pop();
+    		var gid = $('#datafile_url').val().split('gid=');
+    		gid = gid.length>1 ? '&gid='+gid.pop() : '';
     		url = url.split('/');
-    		url.splice(-1,1,'export?format=csv&gid='+gid);
+    		url.splice(-1,1,'export?format=csv'+gid);
     		url = url.join('/');
     	}
-    	else if(url.startsWith('https://www.google.co.uk/maps/d/')){
+    	else if(url.startsWith('https://www.google.co.uk/maps/d/') || url.startsWith('https://www.google.com/maps/d/')){
     		filetype = 'xml';
     		url = url.replace('/viewer?mid=','/kml?forcekml=1&mid=');
     	}
