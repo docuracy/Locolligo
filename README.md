@@ -46,6 +46,7 @@ This software originates as an output of the AHRC-funded [**Locating a National 
     - [ ] CSV for batch contribution to Wikidata via [*QuickStatements*](https://quickstatements.toolforge.org/)
 - [x] Conform geodata to [WGS84](https://en.wikipedia.org/wiki/World_Geodetic_System) from:
     - [x] [OSGB](https://en.wikipedia.org/wiki/Ordnance_Survey_National_Grid) (Ordnance Survey of Great Britain)
+    - [x] [EPSG:29900](https://en.wikipedia.org/wiki/Irish_grid_reference_system) (Irish Grid Eastings & Northings)
     - [ ] [What3Words](https://what3words.com/about)
 - [x] Standardisation of annotation fragment selectors (see [here](https://github.com/docuracy/LaNC/blob/main/Peripleo_Fragment_Selector_SVG.js)). Useful for display of IIIF fragments (not yet implemented).
 - [x] Implementation of [schema.org](https://schema.org/) vocabulary to facilitate dataset indexing and discovery
