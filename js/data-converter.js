@@ -1350,10 +1350,12 @@ $( document ).ready(function() {
         					if(feature[key]==null || feature[key]==' ') delete feature[key];
         				}
         			});
-        			if(feature.hasOwnProperty('easting') && feature.hasOwnProperty('northing')){
-	        			const gridref = OsGridRef.parse([feature.easting,feature.northing]);
-	        			const wgs84 = gridref.toLatLon();
-        				feature.geometry = {"type": "Point", "coordinates": [wgs84._lon.toFixed(6),wgs84._lat.toFixed(6)], 'certainty': 'certain'};
+        			if(feature.hasOwnProperty('easting_ni') && feature.hasOwnProperty('northing_ni')){
+        				// Projection definition from https://epsg.io/29900 (copy and paste Proj4js Definition)
+        				proj4.defs('EPSG:29900','+proj=tmerc +lat_0=53.5 +lon_0=-8 +k=1.000035 +x_0=200000 +y_0=250000 +ellps=mod_airy +towgs84=482.5,-130.6,564.6,-1.042,-0.214,-0.631,8.15 +units=m +no_defs');
+        				const wgs84 = proj4('EPSG:29900','WGS84',[feature.easting_ni,feature.northing_ni]);
+        				console.log(wgs84);
+        				feature.geometry = {"type": "Point", "coordinates": [wgs84[0].toFixed(6),wgs84[1].toFixed(6)], 'certainty': 'certain'};
 	    				delete feature.easting;
 	    				delete feature.northing;
         			}
