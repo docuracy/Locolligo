@@ -15,7 +15,7 @@
 	},
 	{
 		"description":"lp.csv to geoJSON-T",
-		"expression": "{ \"citation\":citation, \"type\":\"FeatureCollection\", \"@context\": \"https://raw.githubusercontent.com/LinkedPasts/linked-places/master/linkedplaces-context-v1.jsonld\", \"features\":data}",
+		"expression": "{ \"citation\":citation, \"@id\": `@id`, \"type\":\"FeatureCollection\", \"@context\": \"https://raw.githubusercontent.com/LinkedPasts/linked-places/master/linkedplaces-context-v1.jsonld\", \"features\":data}",
 	    "mappings": {},
 	    "CRS_conversions": [],
 		"fields":["lp"]
