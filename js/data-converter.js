@@ -1356,8 +1356,8 @@ $( document ).ready(function() {
         				const wgs84 = proj4('EPSG:29900','WGS84',[feature.easting_ni,feature.northing_ni]);
         				console.log(wgs84);
         				feature.geometry = {"type": "Point", "coordinates": [wgs84[0].toFixed(6),wgs84[1].toFixed(6)], 'certainty': 'certain'};
-	    				delete feature.easting;
-	    				delete feature.northing;
+	    				delete feature.easting_ni;
+	    				delete feature.northing_ni;
         			}
         			else if(feature.hasOwnProperty('longitude') && feature.hasOwnProperty('latitude')){
         				feature.geometry = {"type": "Point", "coordinates": [feature.longitude,feature.latitude], 'certainty': 'certain'};
