@@ -1,0 +1,846 @@
+// 20220120080530
+// https://raw.githubusercontent.com/docuracy/CAMPOP-Places/main/sample.lp.geo.json
+
+{
+  "citation": {
+    "abstract": "This dataset provides a means for geolocating historical places in England and Wales based on modern place-names and historical counties. Coordinate data are derived very largely from Satchell, M., Potter, E., Shaw-Taylor, L., Bogart, D., 'Candidate Towns of England and Wales, c.1563-1911', 2017. A description of that dataset can be found in M. Satchell, 'Candidate Towns of England and Wales, c.1563-1911 GIS shapefile' [http://www.geog.cam.ac.uk/research/projects/occupations/datasets/documentation.html]. Hyphens, apostrophes, and spaces are stripped from place-names and prefixed by a three-letter county code to form a Uniform Resource Identifier (URI) that can be referenced from other datasets. The county codes are primarily those defined by The Historic Counties Trust [http://historiccountiestrust.co.uk/standard]; Chapman Codes [https://en.wikipedia.org/wiki/Chapman_code] are used for the Channel Islands and Isle of Man. The method of digitising a point in the original Towns dataset was devised by Max Satchell and Ellen Potter. The idea was to establish an accurate and consistent set of town central points suitable for network analysis based on enduring features. Since some towns might not have a particular feature and some features are more desirable because they are more likely to be central and enduring, Satchell devised a hierarchy of features that could be regarded as the 'centre' of the settlement for the period c. 1680-1911. In descending order of desirability, the hierarchy used is:Marketplace or a market feature such as a market house, corn exchange etc.; Parish church; Inn; Post Office; Public House; Centre of the High Street. Subsequent additions to the dataset have occasionally been located by road intersections.",
+    "author": [
+      {
+        "family": "Satchell",
+        "given": "Max",
+        "orcid": "https://orcid.org/0000-0003-3340-9825"
+      },
+      {
+        "family": "Potter",
+        "given": "Ellen"
+      },
+      {
+        "family": "Shaw-Taylor",
+        "given": "Leigh",
+        "orcid": "https://orcid.org/0000-0002-3703-7689"
+      },
+      {
+        "family": "Bogart",
+        "given": "Dan",
+        "orcid": "https://orcid.org/0000-0002-0011-3190"
+      },
+      {
+        "family": "Alvarez-Palau",
+        "given": "Eduard J",
+        "orcid": "https://orcid.org/0000-0003-0368-9344"
+      },
+      {
+        "family": "O'Hanlon",
+        "given": "Bonney"
+      },
+      {
+        "family": "Gibbs",
+        "given": "Spike"
+      },
+      {
+        "family": "Keibek",
+        "given": "Sebastiaan",
+        "orcid": "https://orcid.org/0000-0002-6097-8196"
+      },
+      {
+        "family": "Rosevear",
+        "given": "Alan"
+      },
+      {
+        "family": "Litvine",
+        "given": "Alexis",
+        "orcid": "https://orcid.org/0000-0003-0082-1004"
+      },
+      {
+        "family": "Gadd",
+        "given": "Stephen James",
+        "orcid": "https://orcid.org/0000-0003-3060-0181"
+      }
+    ],
+    "DOI": "https://doi.org/10.5281/zenodo.5863155",
+    "keyword": "GIS,historical,england,wales,place-names,towns,markets,cities,parishes,villages",
+    "title": "CAMPOP Places GIS",
+    "URL": "https://www.campop.geog.cam.ac.uk/research/occupations/datasets/catalogues/documentation/candidatetownsofenglandandwales1563_1911.pdf",
+    "type": "dataset"
+  },
+  "type": "FeatureCollection",
+  "@context": "https://raw.githubusercontent.com/LinkedPasts/linked-places/master/linkedplaces-context-v1.jsonld",
+  "features": [
+    {
+      "@id": "https://docuracy.github.io/CAMPOP-Places/API/#AGY.Aberffraw",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -4.46618,
+          53.190689
+        ],
+        "certainty": "certain",
+        "when": {
+          "start": {
+            "latest": "1680"
+          },
+          "end": {
+            "earliest": "1911"
+          }
+        }
+      },
+      "properties": {
+        "title": "ABERFFRAW",
+        "uri": "AGY.Aberffraw",
+        "feature_type": "CHURCH",
+        "geodata_source": "OS25",
+        "description": "Arguably the centre of a town in England or Wales at some time between 1680 and 1911.",
+        "OS_gridref": "SH 35330 68796",
+        "ccodes": [
+          "GB"
+        ]
+      },
+      "relations": [
+        {
+          "relationTo": "https://www.wikidata.org/wiki/Q67283698",
+          "label": "Part of Anglesey (UK)",
+          "relationType": "gvp:broaderPartitive",
+          "when": {
+            "timespans": [
+              {
+                "start": {
+                  "latest": "1540"
+                },
+                "end": {
+                  "earliest": "1974"
+                }
+              }
+            ]
+          }
+        }
+      ],
+      "names": [
+        {
+          "toponym": "Aberffraw",
+          "citations": [
+            {
+              "label": "Wikidata",
+              "@id": "http://www.wikidata.org/entity/Q319576"
+            }
+          ],
+          "certainty": 1
+        }
+      ],
+      "links": [
+        {
+          "type": "exactMatch",
+          "identifier": "http://www.wikidata.org/entity/Q319576",
+          "certainty": 1,
+          "distance": 0.558
+        }
+      ],
+      "types": [
+        {
+          "identifier": "aat:300008375",
+          "label": "town"
+        },
+        {
+          "identifier": "https://www.wikidata.org/wiki/Q486972",
+          "label": "human settlement"
+        }
+      ]
+    },
+    {
+      "@id": "https://docuracy.github.io/CAMPOP-Places/API/#AGY.Amlwch",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -4.345047,
+          53.410346
+        ],
+        "certainty": "certain",
+        "when": {
+          "start": {
+            "latest": "1680"
+          },
+          "end": {
+            "earliest": "1911"
+          }
+        }
+      },
+      "properties": {
+        "title": "AMLWCH",
+        "uri": "AGY.Amlwch",
+        "description": "Arguably the centre of a town in England or Wales at some time between 1680 and 1911.",
+        "OS_gridref": "SH 44224 92955",
+        "ccodes": [
+          "GB"
+        ]
+      },
+      "relations": [
+        {
+          "relationTo": "https://www.wikidata.org/wiki/Q67283698",
+          "label": "Part of Anglesey (UK)",
+          "relationType": "gvp:broaderPartitive",
+          "when": {
+            "timespans": [
+              {
+                "start": {
+                  "latest": "1540"
+                },
+                "end": {
+                  "earliest": "1974"
+                }
+              }
+            ]
+          }
+        }
+      ],
+      "names": [
+        {
+          "toponym": "Amlwch",
+          "citations": [
+            {
+              "label": "Wikidata",
+              "@id": "http://www.wikidata.org/entity/Q472667"
+            }
+          ],
+          "certainty": 1
+        }
+      ],
+      "links": [
+        {
+          "type": "exactMatch",
+          "identifier": "http://www.wikidata.org/entity/Q472667",
+          "certainty": 1,
+          "distance": 0.046
+        }
+      ],
+      "types": [
+        {
+          "identifier": "aat:300008375",
+          "label": "town"
+        },
+        {
+          "identifier": "https://www.wikidata.org/wiki/Q486972",
+          "label": "human settlement"
+        }
+      ]
+    },
+    {
+      "@id": "https://docuracy.github.io/CAMPOP-Places/API/#AGY.Beaumaris",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -4.092813,
+          53.263358
+        ],
+        "certainty": "certain",
+        "when": {
+          "start": {
+            "latest": "1680"
+          },
+          "end": {
+            "earliest": "1911"
+          }
+        }
+      },
+      "properties": {
+        "title": "BEAUMARIS",
+        "uri": "AGY.Beaumaris",
+        "feature_type": "MARKET",
+        "feature_detail": "OS25",
+        "description": "Arguably the centre of a town in England or Wales at some time between 1680 and 1911.",
+        "OS_gridref": "SH 60508 76083",
+        "ccodes": [
+          "GB"
+        ]
+      },
+      "relations": [
+        {
+          "relationTo": "https://www.wikidata.org/wiki/Q67283698",
+          "label": "Part of Anglesey (UK)",
+          "relationType": "gvp:broaderPartitive",
+          "when": {
+            "timespans": [
+              {
+                "start": {
+                  "latest": "1540"
+                },
+                "end": {
+                  "earliest": "1974"
+                }
+              }
+            ]
+          }
+        }
+      ],
+      "names": [
+        {
+          "toponym": "Beaumaris",
+          "citations": [
+            {
+              "label": "Wikidata",
+              "@id": "http://www.wikidata.org/entity/Q1992389"
+            }
+          ],
+          "certainty": 1
+        }
+      ],
+      "links": [
+        {
+          "type": "exactMatch",
+          "identifier": "http://www.wikidata.org/entity/Q1992389",
+          "certainty": 1,
+          "distance": 0.088
+        }
+      ],
+      "types": [
+        {
+          "identifier": "aat:300008375",
+          "label": "town"
+        },
+        {
+          "identifier": "https://www.wikidata.org/wiki/Q486972",
+          "label": "human settlement"
+        }
+      ]
+    },
+    {
+      "@id": "https://docuracy.github.io/CAMPOP-Places/API/#AGY.Bodedern",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -4.50193,
+          53.294708
+        ],
+        "certainty": "certain",
+        "when": {
+          "start": {
+            "latest": "1680"
+          },
+          "end": {
+            "earliest": "1911"
+          }
+        }
+      },
+      "properties": {
+        "title": "BODEDERN",
+        "uri": "AGY.Bodedern",
+        "feature_type": "CHURCH",
+        "geodata_source": "OS25",
+        "description": "Arguably the centre of a town in England or Wales at some time between 1680 and 1911.",
+        "OS_gridref": "SH 33347 80447",
+        "ccodes": [
+          "GB"
+        ]
+      },
+      "relations": [
+        {
+          "relationTo": "https://www.wikidata.org/wiki/Q67283698",
+          "label": "Part of Anglesey (UK)",
+          "relationType": "gvp:broaderPartitive",
+          "when": {
+            "timespans": [
+              {
+                "start": {
+                  "latest": "1540"
+                },
+                "end": {
+                  "earliest": "1974"
+                }
+              }
+            ]
+          }
+        }
+      ],
+      "names": [
+        {
+          "toponym": "Bodedern",
+          "citations": [
+            {
+              "label": "Wikidata",
+              "@id": "http://www.wikidata.org/entity/Q3399236"
+            }
+          ],
+          "certainty": 1
+        }
+      ],
+      "links": [
+        {
+          "type": "exactMatch",
+          "identifier": "http://www.wikidata.org/entity/Q3399236",
+          "certainty": 1,
+          "distance": 0.498
+        }
+      ],
+      "types": [
+        {
+          "identifier": "aat:300008375",
+          "label": "town"
+        },
+        {
+          "identifier": "https://www.wikidata.org/wiki/Q486972",
+          "label": "human settlement"
+        }
+      ]
+    },
+    {
+      "@id": "https://docuracy.github.io/CAMPOP-Places/API/#AGY.Holyhead",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -4.633772,
+          53.311873
+        ],
+        "certainty": "certain",
+        "when": {
+          "start": {
+            "latest": "1680"
+          },
+          "end": {
+            "earliest": "1911"
+          }
+        }
+      },
+      "properties": {
+        "title": "HOLYHEAD",
+        "uri": "AGY.Holyhead",
+        "description": "Arguably the centre of a town in England or Wales at some time between 1680 and 1911.",
+        "OS_gridref": "SH 24632 82672",
+        "ccodes": [
+          "GB"
+        ]
+      },
+      "relations": [
+        {
+          "relationTo": "https://www.wikidata.org/wiki/Q67283698",
+          "label": "Part of Anglesey (UK)",
+          "relationType": "gvp:broaderPartitive",
+          "when": {
+            "timespans": [
+              {
+                "start": {
+                  "latest": "1540"
+                },
+                "end": {
+                  "earliest": "1974"
+                }
+              }
+            ]
+          }
+        }
+      ],
+      "names": [
+        {
+          "toponym": "Holyhead",
+          "citations": [
+            {
+              "label": "Wikidata",
+              "@id": "http://www.wikidata.org/entity/Q257446"
+            }
+          ],
+          "certainty": 1
+        }
+      ],
+      "links": [
+        {
+          "type": "exactMatch",
+          "identifier": "http://www.wikidata.org/entity/Q257446",
+          "certainty": 1,
+          "distance": 0.534
+        }
+      ],
+      "types": [
+        {
+          "identifier": "aat:300008375",
+          "label": "town"
+        },
+        {
+          "identifier": "https://www.wikidata.org/wiki/Q486972",
+          "label": "human settlement"
+        }
+      ]
+    },
+    {
+      "@id": "https://docuracy.github.io/CAMPOP-Places/API/#AGY.Llanerchymedd",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -4.377495,
+          53.330081
+        ],
+        "certainty": "certain",
+        "when": {
+          "start": {
+            "latest": "1680"
+          },
+          "end": {
+            "earliest": "1911"
+          }
+        }
+      },
+      "properties": {
+        "title": "LLANERCHYMEDD",
+        "uri": "AGY.Llanerchymedd",
+        "description": "Arguably the centre of a town in England or Wales at some time between 1680 and 1911.",
+        "OS_gridref": "SH 41770 84098",
+        "ccodes": [
+          "GB"
+        ]
+      },
+      "relations": [
+        {
+          "relationTo": "https://www.wikidata.org/wiki/Q67283698",
+          "label": "Part of Anglesey (UK)",
+          "relationType": "gvp:broaderPartitive",
+          "when": {
+            "timespans": [
+              {
+                "start": {
+                  "latest": "1540"
+                },
+                "end": {
+                  "earliest": "1974"
+                }
+              }
+            ]
+          }
+        }
+      ],
+      "names": [
+        {
+          "toponym": "Llannerch-y-medd",
+          "citations": [
+            {
+              "label": "Wikidata",
+              "@id": "http://www.wikidata.org/entity/Q3401012"
+            }
+          ],
+          "certainty": 0.7
+        }
+      ],
+      "links": [
+        {
+          "type": "closeMatch",
+          "identifier": "http://www.wikidata.org/entity/Q3401012",
+          "certainty": 0.7,
+          "distance": 0.726
+        }
+      ],
+      "types": [
+        {
+          "identifier": "aat:300008375",
+          "label": "town"
+        },
+        {
+          "identifier": "https://www.wikidata.org/wiki/Q486972",
+          "label": "human settlement"
+        }
+      ]
+    },
+    {
+      "@id": "https://docuracy.github.io/CAMPOP-Places/API/#AGY.Llanfairpwll",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -4.209534,
+          53.221503
+        ],
+        "certainty": "certain",
+        "when": {
+          "start": {
+            "latest": "1680"
+          },
+          "end": {
+            "earliest": "1911"
+          }
+        }
+      },
+      "properties": {
+        "title": "LLANFAIRPWLL",
+        "uri": "AGY.Llanfairpwll",
+        "description": "Arguably the centre of a town in England or Wales at some time between 1680 and 1911.",
+        "OS_gridref": "SH 52580 71662",
+        "ccodes": [
+          "GB"
+        ]
+      },
+      "relations": [
+        {
+          "relationTo": "https://www.wikidata.org/wiki/Q67283698",
+          "label": "Part of Anglesey (UK)",
+          "relationType": "gvp:broaderPartitive",
+          "when": {
+            "timespans": [
+              {
+                "start": {
+                  "latest": "1540"
+                },
+                "end": {
+                  "earliest": "1974"
+                }
+              }
+            ]
+          }
+        }
+      ],
+      "names": [
+        {
+          "toponym": "Aber-pwll",
+          "citations": [
+            {
+              "label": "Wikidata",
+              "@id": "http://www.wikidata.org/entity/Q107032168"
+            }
+          ],
+          "certainty": 0.3
+        }
+      ],
+      "links": [
+        {
+          "type": "closeMatch",
+          "identifier": "http://www.wikidata.org/entity/Q107032168",
+          "certainty": 0.3,
+          "distance": 3.467
+        }
+      ],
+      "types": [
+        {
+          "identifier": "aat:300008375",
+          "label": "town"
+        },
+        {
+          "identifier": "https://www.wikidata.org/wiki/Q486972",
+          "label": "human settlement"
+        }
+      ]
+    },
+    {
+      "@id": "https://docuracy.github.io/CAMPOP-Places/API/#AGY.Llangefni",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -4.311128,
+          53.255917
+        ],
+        "certainty": "certain",
+        "when": {
+          "start": {
+            "latest": "1680"
+          },
+          "end": {
+            "earliest": "1911"
+          }
+        }
+      },
+      "properties": {
+        "title": "LLANGEFNI",
+        "uri": "AGY.Llangefni",
+        "description": "Arguably the centre of a town in England or Wales at some time between 1680 and 1911.",
+        "OS_gridref": "SH 45922 75704",
+        "ccodes": [
+          "GB"
+        ]
+      },
+      "relations": [
+        {
+          "relationTo": "https://www.wikidata.org/wiki/Q67283698",
+          "label": "Part of Anglesey (UK)",
+          "relationType": "gvp:broaderPartitive",
+          "when": {
+            "timespans": [
+              {
+                "start": {
+                  "latest": "1540"
+                },
+                "end": {
+                  "earliest": "1974"
+                }
+              }
+            ]
+          }
+        }
+      ],
+      "names": [
+        {
+          "toponym": "Llangefni",
+          "citations": [
+            {
+              "label": "Wikidata",
+              "@id": "http://www.wikidata.org/entity/Q1002817"
+            }
+          ],
+          "certainty": 1
+        }
+      ],
+      "links": [
+        {
+          "type": "exactMatch",
+          "identifier": "http://www.wikidata.org/entity/Q1002817",
+          "certainty": 1,
+          "distance": 0.191
+        }
+      ],
+      "types": [
+        {
+          "identifier": "aat:300008375",
+          "label": "town"
+        },
+        {
+          "identifier": "https://www.wikidata.org/wiki/Q486972",
+          "label": "human settlement"
+        }
+      ]
+    },
+    {
+      "@id": "https://docuracy.github.io/CAMPOP-Places/API/#AGY.MenaiBridge",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -4.162761,
+          53.226156
+        ],
+        "certainty": "certain",
+        "when": {
+          "start": {
+            "latest": "1680"
+          },
+          "end": {
+            "earliest": "1911"
+          }
+        }
+      },
+      "properties": {
+        "title": "MENAI BRIDGE",
+        "uri": "AGY.MenaiBridge",
+        "description": "Arguably the centre of a town in England or Wales at some time between 1680 and 1911.",
+        "OS_gridref": "SH 55718 72084",
+        "ccodes": [
+          "GB"
+        ]
+      },
+      "relations": [
+        {
+          "relationTo": "https://www.wikidata.org/wiki/Q67283698",
+          "label": "Part of Anglesey (UK)",
+          "relationType": "gvp:broaderPartitive",
+          "when": {
+            "timespans": [
+              {
+                "start": {
+                  "latest": "1540"
+                },
+                "end": {
+                  "earliest": "1974"
+                }
+              }
+            ]
+          }
+        }
+      ],
+      "names": [
+        {
+          "toponym": "Menai Bridge",
+          "citations": [
+            {
+              "label": "Wikidata",
+              "@id": "http://www.wikidata.org/entity/Q2655856"
+            }
+          ],
+          "certainty": 1
+        }
+      ],
+      "links": [
+        {
+          "type": "exactMatch",
+          "identifier": "http://www.wikidata.org/entity/Q2655856",
+          "certainty": 1,
+          "distance": 0.971
+        }
+      ],
+      "types": [
+        {
+          "identifier": "aat:300008375",
+          "label": "town"
+        },
+        {
+          "identifier": "https://www.wikidata.org/wiki/Q486972",
+          "label": "human settlement"
+        }
+      ]
+    },
+    {
+      "@id": "https://docuracy.github.io/CAMPOP-Places/API/#AGY.Newborough",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          -4.35893,
+          53.164739
+        ],
+        "certainty": "certain",
+        "when": {
+          "start": {
+            "latest": "1680"
+          },
+          "end": {
+            "earliest": "1911"
+          }
+        }
+      },
+      "properties": {
+        "title": "NEWBOROUGH",
+        "uri": "AGY.Newborough",
+        "description": "Arguably the centre of a town in England or Wales at some time between 1680 and 1911.",
+        "OS_gridref": "SH 42399 65668",
+        "ccodes": [
+          "GB"
+        ]
+      },
+      "relations": [
+        {
+          "relationTo": "https://www.wikidata.org/wiki/Q67283698",
+          "label": "Part of Anglesey (UK)",
+          "relationType": "gvp:broaderPartitive",
+          "when": {
+            "timespans": [
+              {
+                "start": {
+                  "latest": "1540"
+                },
+                "end": {
+                  "earliest": "1974"
+                }
+              }
+            ]
+          }
+        }
+      ],
+      "names": [
+        {
+          "toponym": "Newborough",
+          "citations": [
+            {
+              "label": "Wikidata",
+              "@id": "http://www.wikidata.org/entity/Q914316"
+            }
+          ],
+          "certainty": 1
+        }
+      ],
+      "links": [
+        {
+          "type": "exactMatch",
+          "identifier": "http://www.wikidata.org/entity/Q914316",
+          "certainty": 1,
+          "distance": 0.007
+        }
+      ],
+      "types": [
+        {
+          "identifier": "aat:300008375",
+          "label": "town"
+        },
+        {
+          "identifier": "https://www.wikidata.org/wiki/Q486972",
+          "label": "human settlement"
+        }
+      ]
+    }
+  ]
+}
