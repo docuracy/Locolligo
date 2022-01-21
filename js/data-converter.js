@@ -1301,29 +1301,42 @@ $( document ).ready(function() {
         			return newHeader===null ? null : newHeader[1];
         		}
         		input = Papa.parse(filecontent,{header:true,transformHeader:transformHeader,dynamicTyping:true,skipEmptyLines:true});
-        		input['@id'] = 'https://w3id.org/locolligo/'+uuidv4();
+        		
+				input.meta.fields.forEach(function(field){ // Deal first with root attributes (a root @id may form the base of item @ids)
+					if (field !== null && field.startsWith('$.')){
+						keyValue = field.split('=');
+						input[keyValue.shift().split('.').pop()] = keyValue.shift().replace(/["]+/g, '');
+					}
+				});
+				if(input.hasOwnProperty('citation') && typeof input.citation === 'string'){
+	    			const {Cite} = require('citation-js');
+	    			const citation = new Cite(input.citation);
+	    			input.citation = citation.get()[0];
+	    			input.citation.type = 'dataset'; // Incorrectly identifies as 'book'
+	    			if(input.citation.hasOwnProperty('author') && Array.isArray(input.citation.author)){
+	    				input.citation.author.forEach(function(author){
+	    					if(author.hasOwnProperty('_orcid')){
+	    						author.orcid = author._orcid;
+	    						delete author._orcid;        			    						
+	    					}
+	    				});
+	    			}
+	    			delete input.citation._cff_mainReference;
+	    			delete input.citation._graph;
+	    			delete input.citation.id;					
+				}
+				if(!input.hasOwnProperty('@id')){
+					input['@id'] = 'https://w3id.org/locolligo/'+uuidv4();
+				}
+				
         		input.data.forEach(function(feature,i){
-        			delete feature.null
+        			delete feature.null;
+        			feature.properties = {};
         			Object.keys(feature).forEach(function(key) {
         				var keyParts = key.split('=');
-        				if (keyParts.length>1){
+        				if (keyParts.length>1 && !keyParts[0].startsWith('$.')){
         					if (key.indexOf('="')>-1){ // Fill with string value
         						if(!input.hasOwnProperty('citation') && keyParts[0]=='citation'){
-        			    			const {Cite} = require('citation-js');
-        			    			const citation = new Cite(keyParts[1].replace(/["]+/g, ''));
-        			    			input.citation = citation.get()[0];
-        			    			input.citation.type = 'dataset'; // Incorrectly identifies as 'book'
-        			    			if(input.citation.hasOwnProperty('author') && Array.isArray(input.citation.author)){
-        			    				input.citation.author.forEach(function(author){
-        			    					if(author.hasOwnProperty('_orcid')){
-        			    						author.orcid = author._orcid;
-        			    						delete author._orcid;        			    						
-        			    					}
-        			    				});
-        			    			}
-        			    			delete input.citation._cff_mainReference;
-        			    			delete input.citation._graph;
-        			    			delete input.citation.id;
         						}
         						else if(keyParts[0]=='citation'){
         							delete feature.citation;
@@ -1382,8 +1395,8 @@ $( document ).ready(function() {
         				feature.properties.ccodes = ["GB"];
         			}
         			if(!feature.hasOwnProperty('@id')){
-        				if(!feature.hasOwnProperty('uuid')) feature.uuid = uuidv4();
-            			feature['@id'] = input['@id']+'/'+feature.uuid;
+        				if(!feature.properties.hasOwnProperty('uri') && !feature.hasOwnProperty('uuid')) feature.uuid = uuidv4();
+            			input.data[i] = {'@id': input['@id']+'/'+ (feature.properties.hasOwnProperty('uri') ? feature.properties.uri : feature.uuid), ...feature};
         			}
         		});
         		input.type="lp";
