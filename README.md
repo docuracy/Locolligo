@@ -79,7 +79,7 @@ This software originates as an output of the AHRC-funded [**Locating a National 
 - [x] URLs and Persistent IDs (PIDs)
     - [x] Generate UUIDs and corresponding PIDs for datasets (and each of their items), when converted from delimited text
     - [x] Static [gazetteer](https://github.com/docuracy/Locolligo/blob/main/API/index.html)
-    - [x] Example use of PID to reach gazetteer: https://w3id.org/locolligo/AGY.Holyhead
+    - [x] Example use of PID to reach gazetteer: https://w3id.org/locolligo/CAMPOP-Places/AGY.Holyhead
 - [ ] Geocoding of un-gazetteered places
     - [ ]  Use georeferenced historical basemaps as citable references
     - [ ]  Create linked Wikidata item with geo-coordinates, using programmatically-submitted [*QuickStatements* batch jobs](https://quickstatements.toolforge.org/#/user) (default CORS policy prevents direct use of API)
