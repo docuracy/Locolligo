@@ -23,7 +23,7 @@
 		"gn": "http://www.geonames.org/ontology#",
 
 		"dct": "http://purl.org/dc/terms/",
-		"identifier": "dct:identifier",
+		"identifier": "schema:identifier",
 		"doi": "https://doi.org/",
 		"label": {
 			"@id": "rdfs:label"
@@ -73,7 +73,7 @@
 		"geo_wkt": "http://www.opengis.net/ont/geosparql#asWKT",
 		"periodo": "http://n2t.net/ark:/99152/#",
 		"ccodes": {
-			"@id": "gn:countryCode"
+			"@id": "schema:addressCountry"
 		},
 
 		"when": {
