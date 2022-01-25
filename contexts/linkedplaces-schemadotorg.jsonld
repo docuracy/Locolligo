@@ -1,0 +1,10 @@
+{"@context": {
+    "FeatureCollection": "https://schema.org/Dataset",
+    "Feature": "Place",
+    "id": "http://schema.org/identifier",
+    "geometry": "http://schema.org/geo",
+    "geometries": "http://schema.org/geo",
+    "when": "http://schema.org/temporalCoverage",
+    "earliest": "http://schema.org/startDate",
+    "latest": "http://schema.org/endDate"
+}}
