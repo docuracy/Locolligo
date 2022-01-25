@@ -205,7 +205,7 @@ function convert(){
 	});
 	var expression = mappings[$('#expression option:selected').val()].expression;
 	var jsonata_expression = jsonata(expression);
-	output = jsonata_expression.evaluate($('#source').data('data'));
+	output = JSON.parse(JSON.stringify(jsonata_expression.evaluate($('#source').data('data')))); // Strip JSONata artefacts
 	// Check selectors
 	if(output.hasOwnProperty('traces')){
 		$.each(output.traces, function(i, trace){
