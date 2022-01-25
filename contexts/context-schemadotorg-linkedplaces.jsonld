@@ -1,7 +1,5 @@
 {"@context": {
   
-  "_comment": "Based on https://github.com/LinkedPasts/linked-places-format/blob/master/linkedplaces-context-v1.1.jsonld",
-  
   "id": "@id",
   "type": "@type",
   "rdf": "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
