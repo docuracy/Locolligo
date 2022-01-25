@@ -5,6 +5,7 @@
   "rdf": "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
   "rdfs": "http://www.w3.org/2000/01/rdf-schema#",
 
+  "schema": "https://schema.org/",
   "lpo": "https://github.com/LinkedPasts/linked-pasts-ontology/blob/main/lpo_latest.ttl#",
   "lawd": "http://lawd.info/ontology/",
   "gvp": "http://vocab.getty.edu/ontology#",
@@ -26,12 +27,13 @@
   "label": {"@id": "rdfs:label"},
   "value": {"@id": "rdf:value"},
   "title": {"@id": "dct:title"},
-  "license": "dct:license",
+  "license": "schema:license",
+  "creator": "schema:creator",
 
   "geojson": "https://purl.org/geojson/vocab#",
   "geojson-t": "https://github.com/kgeographer/geojson-t/",
-  "FeatureCollection": "https://schema.org/Dataset",
-  "Feature": "https://schema.org/Place",
+  "FeatureCollection": "schema:Dataset",
+  "Feature": "schema:Place",
   "GeometryCollection": "geojson:GeometryCollection",
   "LineString": "geojson:LineString",
   "MultiLineString": "geojson:MultiLineString",
@@ -48,17 +50,17 @@
   },
   "properties": "geojson:properties",
 
-  "geometry": "http://schema.org/geo",
+  "geometry": "schema:geo",
   "geometries": {
     "@id":"lpo:setting",
-    "@type": "http://schema.org/geo",
+    "@type": "schema:geo",
     "@container": "@set"
   },
   "geo_wkt":"http://www.opengis.net/ont/geosparql#asWKT",
   "periodo": "http://n2t.net/ark:/99152/#",
   "ccodes": {"@id": "gn:countryCode"},
 
-  "when": {"@id": "http://schema.org/temporalCoverage"},
+  "when": {"@id": "schema:temporalCoverage"},
   "timespans": {
     "@id": "lpo:timespan",
     "@type": "lpo:Timespan",
@@ -66,8 +68,8 @@
   },
   "start": "lpo:has_start",
   "end": "lpo:has_end",
-  "earliest": "http://schema.org/startDate",
-  "latest": "http://schema.org/endDate",
+  "earliest": "schema:startDate",
+  "latest": "schema:endDate",
   "in": "lpo:in",
 
   "periods": {
@@ -76,6 +78,7 @@
     "@container": "@set"
   },
 
+  "name": "schema:name",
   "names": {
     "@id": "lpo:name_attestation",
     "@type": "lpo:NameAttestation",
@@ -116,8 +119,9 @@
     "@type": "@id"
   },
 
+  "description": "schema:description",
   "descriptions": {
-    "@id": "dct:description",
+    "@id": "schema:description",
     "@type": "@id",
     "@container": "@set"
   },
