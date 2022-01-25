@@ -7,6 +7,13 @@
 		"fields":["annotations"]
 	},
 	{
+		"description":"Recogito-LD to geoJSON-T",
+		"expression": "{ \"citation\":citation, \"@id\": `@id`, \"type\": \"FeatureCollection\", \"@context\": \"https://w3id.org/locolligo/contexts/context-schemadotorg-linkedplaces.jsonld\", \"features\":data.body[purpose='georeferencing'][].{ \"@id\": %.%.`@id` & '/' & %.id, \"type\":\"Feature\", \"name\":value, \"geometry\":geometry, \"properties\":{ \"title\":value, \"transcription\":%.body[purpose='transcribing'].value, \"comments\":%.body[purpose='commenting'][].{ \"comment\":value } }, \"names\":%.body[purpose='identifying'][]#$i.{ \"toponym\":%.body[purpose='georeferencing'][$i].value, \"citations\":[{\"@id\":value}] }, \"links\":%.body[purpose='identifying'][].{ \"type\":\"exactMatch\", \"identifier\":value }, \"depictions\":%.target[].{ \"@id\":source, \"title\":label, \"type\":type, \"selector\":selector } }}",
+	    "mappings": {},
+	    "CRS_conversions": [],
+		"fields":["rld"]
+	},
+	{
 		"description":"Peripleo-LD to geoJSON-T",
 		"expression": "{ \"name\": name, \"description\": description, \"created\": created, \"creator\": creator, \"isAccessibleForFree\": isAccessibleForFree, \"license\": license, \"@context\": \"https://raw.githubusercontent.com/LinkedPasts/linked-places/master/linkedplaces-context-v1.1.jsonld\", \"type\":\"FeatureCollection\", \"features\":traces.body[additionalType=\"Place\" and $exists(geometry.longitude) and $exists(geometry.latitude)][].{ \"type\":\"Feature\", \"geometry\":{ \"type\":\"Point\", \"coordinates\":[ geometry.longitude, geometry.latitude ] }, \"properties\":{ \"name\":%.target.title, \"uri\": title, \"url\": %.target.id, \"description\": %.target.description, \"feature_type\": properties.feature_type,\"feature_detail\": properties.feature_detail,\"geodata_source\": properties.geodata_source, \"OS_gridref\": properties.OS_gridref, \"links\": [ $exists(id)?{ \"additionalType\": \"Place\", \"linkRelationship\": \"identifying\", \"lpo:type\": \"SpecificResource\", \"identifier\": id }, %.body[ additionalType=\"LinkRole\" ] ] }, \"when\": when }}",
 	    "mappings": {},
@@ -15,7 +22,7 @@
 	},
 	{
 		"description":"lp.csv to geoJSON-T",
-		"expression": "{ \"citation\":citation, \"@id\": `@id`, \"type\":\"FeatureCollection\", \"@context\": \"https://raw.githubusercontent.com/LinkedPasts/linked-places/master/linkedplaces-context-v1.jsonld\", \"features\":data}",
+		"expression": "{ \"citation\":citation, \"@id\": `@id`, \"type\": \"FeatureCollection\", \"@context\": \"https://w3id.org/locolligo/contexts/context-schemadotorg-linkedplaces.jsonld\", \"features\": $map(data,function($v){$merge([{\"type\": \"Feature\"},$v])})}",
 	    "mappings": {},
 	    "CRS_conversions": [],
 		"fields":["lp"]
