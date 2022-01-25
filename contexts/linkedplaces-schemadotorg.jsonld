@@ -44,7 +44,7 @@
   "bbox": { "@container": "@list", "@id": "geojson:bbox" },
   "coordinates": { "@container": "@list", "@id": "geojson:coordinates" },
   "features": {
-    "@id": "lpo:hasFeature",
+    "@id": "schema:hasPart",
     "@type": "geojson:Feature",
     "@container": "@set"
   },
