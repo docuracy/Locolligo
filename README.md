@@ -68,6 +68,7 @@ This software originates as an output of the AHRC-funded [**Locating a National 
     - [x] Archaeological finds within radius: [PAS](https://finds.org.uk/) API
     - [ ] [Topographical Dictionary of England, 1848](https://www.british-history.ac.uk/topographical-dict/england)
     - [ ] Historical Plaques: [OpenPlaques.org](https://openplaques.org/) API (or data dump converted to Peripleo-LD)
+    - [ ] Geograph photographs: [Geograph Syndicator API](https://www.geograph.org.uk/help/api#rss)
 - [ ] Data Checking
     - [ ] Sanity checking
     - [ ] Add confirmation flags for checked data
