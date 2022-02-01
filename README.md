@@ -27,7 +27,7 @@ This software originates as an output of the AHRC-funded [**Locating a National 
 </p>
 
 ## See also:
-* **Peripleo-LD**: [Development of a LaNC Data Model](https://docs.google.com/document/d/1yhVAqpPnKJ9SWfl-yg2zfMyPMTDNkerI7lCGF-pB7I8/edit?usp=sharing)
+* **Peripleo-LD**: [Extended Linked Places Data Model](https://docs.google.com/document/d/1yhVAqpPnKJ9SWfl-yg2zfMyPMTDNkerI7lCGF-pB7I8/edit?usp=sharing)
 * [*Peripleo-Lite*](https://docuracy.github.io/LaNC-peripleo-lite/public/): a proof-of-concept prototype that will be developed by LaNC
 
 ## Feature development:
