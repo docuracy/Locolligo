@@ -1,0 +1,40 @@
+{
+	"@context": "https://schema.org/",
+	"@type": "Dataset",
+	"name": "***** Name *****",
+	"description": "***** Description (at least 50 characters) *****",
+	"creator": [{
+		"@type": "Person",
+		"name": "",
+		"url": "https://orcid.org/****-****-****-****"
+	}, {
+		"@type": "Person",
+		"name": ""
+	}],
+	"license": "https://creativecommons.org/licenses/by/4.0/",
+	"identifier": "https://w3id.org/*****",
+	"temporalCoverage": "",
+	"spatialCoverage": {
+		"@type": "Place",
+		"geoCoveredBy": {
+			"@type": "DefinedRegion",
+			"addressCountry": "GB"
+		}
+	},
+    "significantLink": [
+        "https://*****",
+        "https://*****",
+        "https://*****",
+        "https://*****",
+        "https://*****",
+        "https://*****"
+    ],
+    "relatedLink": [
+        "https://*****",
+        "https://*****",
+        "https://*****",
+        "https://*****",
+        "https://*****",
+        "https://*****"
+    ]
+}
