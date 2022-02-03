@@ -173,11 +173,11 @@ button.mapboxgl-ctrl-close-map span.mapboxgl-ctrl-icon{
 	cursor: pointer;
     z-index: 2;
 }
-.currentmarker {
-	background-color: red;
-	width: 9px;
-	height: 9px;
-    z-index: 3;
+.marker.movable {
+	width: 12px;
+	height: 12px;
+	border-radius: 50%;
+	cursor: move;
 }
 .linkmarker {
 	width: 20px;
@@ -222,7 +222,7 @@ button.mapboxgl-ctrl-close-map span.mapboxgl-ctrl-icon{
   	transition: max-height 0.5s, max-width 0.5s;
 }
 .expandingButton:hover, .expandingButton.pinned {
-    max-width: 25vw;
+    max-width: 50vw;
     max-height: 50vh;
 }
 .fence {
@@ -251,6 +251,7 @@ button.mapboxgl-ctrl-close-map span.mapboxgl-ctrl-icon{
 .layer {
     clear: left;
     float: left;
+    width: max-content;
 }
 .loading {
 	opacity: 50%;
@@ -376,6 +377,8 @@ a.popup_link.wikidata{
 .popup_link img {
 	height: 40px;	
 }
+.popupimage {
+}
 .mapboxgl-ctrl-top-right {
     top: 30px!important;
 }
@@ -447,6 +450,15 @@ a.popup_link.wikidata{
 }
 .json-formatter-string {
 	white-space: break-spaces!important;
+}
+.editlink {
+	background-image: url(images/ui-icons_777777_256x240.png);
+	display: inline-block;
+	width: 16px;
+    height: 16px;
+    position: relative;
+    top: 2px;
+    cursor: pointer;
 }
 .libraryItem {
 	position: relative;
