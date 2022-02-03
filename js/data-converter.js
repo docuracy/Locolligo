@@ -65,8 +65,7 @@
 // ===========================================================
 
 // User variables
-//var geoNamesID = 'locolligo';
-var geoNamesID = 'docuracy'; // TO DO - REMOVE THIS AND UNCOMMENT LINE ABOVE
+var geoNamesID = 'locolligo';
 
 // Global variables
 var mappings, 
@@ -75,25 +74,202 @@ var mappings,
 	input, 
 	output_formatter, 
 	output,
-	trace_formatter,
 	activeDatasetEl,
 	activeDataType,
 	filteredIndices=[],
 	selectedFilter=0,
 	markers=[], 
-	currentMarkers=[], 
+//	currentMarkers=[], 
+	traceGeoJSON={"type":"Feature","geometry":{"type":"Point","coordinates":[0,0]}},
 	linkMarkers={},
 	linkMarkerPopup,
 	radius=5, 
 	sparql_heritage_sites, 
+	APIJSON,
+	indexing,
 	timeout,
 	activeAjaxConnections = 0,
 	settings = {
 		headers: { Accept: 'application/sparql-results+json' }
     };	 
 
+const LibraryMappings = [// TO DO: Move this functionality to IndexedDB
+	// Droplist of properties for popup, id, and label when adding to Library
+	// Check that deletion from Library also deletes these mappings
+	// The "type" is an identifier generated ad hoc when a user adds to their Library
+	
+	{ // Battlefields (HE)
+		"type": "1643552320559",
+		"popup": "newbody.properties.Name",
+		"lpMappings": [
+			{
+				"links": {
+					"type": "'seeAlso'",
+					"id": "newbody.properties.Hyperlink",
+					"label": "newbody.properties.Name"
+				}
+			}
+		] 
+	},
+	{ // Scheduled Monuments (HE)
+		"type": "1643552619613",
+		"popup": "newbody.properties.Name",
+		"lpMappings": [
+			{
+				"links": {
+					"type": "'seeAlso'",
+					"id": "newbody.properties.Hyperlink",
+					"label": "newbody.properties.Name"
+				}
+			}
+		] 
+	},
+	{ // World Heritage Sites (HE)
+		"type": "1643552662447",
+		"popup": "newbody.properties.Name",
+		"lpMappings": [
+			{
+				"links": {
+					"type": "'seeAlso'",
+					"id": "newbody.properties.Hyperlink",
+					"label": "newbody.properties.Name"
+				}
+			}
+		] 
+	},
+	{ // Listed Buildings (HE)
+		"type": "1643552381677",
+		"popup": "newbody.properties.Name",
+		"lpMappings": [
+			{
+				"links": {
+					"type": "'seeAlso'",
+					"id": "newbody.properties.Hyperlink",
+					"label": "newbody.properties.Name"
+				}
+			}
+		] 
+	},
+	{ // Parks & Gardens (HE)
+		"type": "1643552574429",
+		"popup": "newbody.properties.Name",
+		"lpMappings": [
+			{
+				"links": {
+					"type": "'seeAlso'",
+					"id": "newbody.properties.Hyperlink",
+					"label": "newbody.properties.Name"
+				}
+			}
+		] 
+	},
+	{ // Visitor Sites (EH)
+		"type": "1643556165046",
+		"popup": "newbody.properties.title",
+		"lpMappings": [
+			{
+				"links": {
+					"type": "'seeAlso'",
+					"id": "newbody.properties.url",
+					"label": "newbody.properties.title"
+				}
+			}
+		] 
+	},
+	{ // National Trust Sites
+		"type": "1643556041346",
+		"popup": "newbody.properties.title",
+		"lpMappings": [
+			{
+				"links": {
+					"type": "'seeAlso'",
+					"id": "newbody.properties.url",
+					"label": "newbody.properties.title"
+				}
+			}
+		] 
+	},
+	{ // Historic Royal Palaces
+		"type": "1643556797139",
+		"popup": "newbody.properties.title",
+		"lpMappings": [
+			{
+				"links": {
+					"type": "'seeAlso'",
+					"id": "newbody.properties.url",
+					"label": "newbody.properties.title"
+				}
+			}
+		] 
+	},
+	{ // Open Plaques
+		"type": "1643631473450",
+		"popup": "newbody.properties.title",
+		"lpMappings": [
+			{
+				"links": {
+					"type": "'seeAlso'",
+					"id": "newbody['@id']",
+					"label": "newbody.properties.title"
+				}
+			}
+		] 
+	},
+	{ // State Care Sites (Northern Ireland)
+		"type": "1643557447337",
+		"popup": "newbody.properties.title",
+		"lpMappings": [
+			{
+				"links": {
+					"type": "'seeAlso'",
+					"id": "newbody.properties.url",
+					"label": "newbody.properties.title"
+				}
+			}
+		] 
+	},
+	{ // Leland Wales (Viae Regiae)
+		"type": "1643553322355",
+		"popup": "newbody.name",
+		"lpMappings": [
+			{
+				"links": {
+					"type": "'seeAlso'",
+					"id": "newbody['@id']",
+					"label": "newbody.name"
+				}
+			},
+			{
+				"depictions": {
+					"@id": "newbody.depictions[0]['@id']",
+					"title": "newbody.name",
+					"selector": "newbody.depictions[0].selector",
+					"type": "newbody.depictions[0].type",
+					"license": "'https://creativecommons.org/licenses/by/4.0/'"
+				}
+			}
+		] 
+	},
+	{ // BL & BM Objects (Victoria Morris)
+		"type": "1643543754541",
+		"popup": "newbody.properties.title",
+		"lpMappings": [
+			{
+				"links": {
+					"type": "'seeAlso'",
+					"id": "newbody.properties.resource_url",
+					"label": "newbody.properties.title",
+					"properties": "newbody.properties"
+				}
+			}
+		] 
+	}
+]
+
+function isNumber(n) { return /^-?[\d.]+(?:e-?\d+)?$/.test(n); }
+
 //Download output as file
-function download(jsonobject,filename=false){
+function download(jsonobject,filename=false){	
 	$("<a />", {
 		"download": filename ? filename : "Peripleo_Data_"+ Math.floor(Date.now()/1000) +".json",
 		"href" : "data:application/json," + encodeURIComponent(JSON.stringify(jsonobject))
@@ -214,12 +390,18 @@ function convert(){
 			});
 		})
 	}
+	if(!output.hasOwnProperty('indexing')) output.indexing = indexing;
 	output_formatter = new JSONFormatter(output,1,{theme:'dark'});
 	renderJSON($('#output'),output_formatter,output);
 }
 
+// Scatter point within c.1km square
+function scatter(coordinates,radius) {
+	return [(coordinates[0]+.01*(Math.random()-.5)).toFixed(3),(coordinates[1]+.01*(Math.random()-.5)).toFixed(3)];
+}
+
 // Calculate Haversine distance between Points
-function distance(from,to,places) {
+function distance(from,to,places=0) {
 	const earth_radius = 6371; // Result to be returned in kilometres
 	function degreesToRadians(degrees){
 		var pi = Math.PI;
@@ -234,6 +416,27 @@ function distance(from,to,places) {
 		Math.pow(Math.sin(dLon / 2), 2) * Math.cos(lat1) * Math.cos(lat2);
 	var distance = earth_radius * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
 	return Math.round((distance + Number.EPSILON) * 10**places) / 10**places;
+}
+
+function firstPoint(geometry){
+	if(geometry.type == 'Point'){
+		return geometry.coordinates;
+	}
+	else if(geometry.type == 'LineString' || geometry.type == 'MultiPoint'){		
+		return geometry.coordinates[0];
+	}
+	else if(geometry.type == 'Polygon' || geometry.type == 'MultiPolygon'){		
+		return polylabel(geometry.coordinates, 1.0);
+	}
+	else if(geometry.type == 'GeometryCollection'){
+		var subgeometries = [];
+		geometry.geometries.forEach(function(geometry){
+			subgeometry = firstPoint(geometry);
+			if(subgeometry !== null) subgeometries.push( subgeometry );
+		});
+		return subgeometries[0];
+	}
+	else return null;
 }
 
 function addLibraryItem(name, label){
@@ -304,36 +507,47 @@ function library(el){
 							}
 						});	
 					}
-					else{ // geoJSON (including Linked Places format): construct a pseudo-trace with a target that can be indexed and linked in the same way as real trace data
+					else{ // geoJSON (including Linked Places format)
 						$.each(dataset.features,function(i,feature){
-							function findProperty(options){
-								var result = '';
-								$.each(options, function(i,option){
-									if (feature.hasOwnProperty(option)) {result = feature[option]; return};
-									if (feature.properties.hasOwnProperty(option)) {result = feature.properties[option]; return};
-									if (option=='toponym' && feature.hasOwnProperty('names')) {result = feature.names[0][option]; return};
-								});
-								return result;
+//							function findProperty(options){
+//								var result = '';
+//								$.each(options, function(i,option){
+//									if (feature.hasOwnProperty(option)) {result = feature[option]; return};
+//									if (feature.properties.hasOwnProperty(option)) {result = feature.properties[option]; delete trace.properties[option]; return};
+//									if (option=='toponym' && feature.hasOwnProperty('names')) {result = feature.names[0][option]; return};
+//								});
+//								return result;
+//							}
+//							var trace = {
+//								"_longitude": feature.geometry.coordinates[0],
+//								"_latitude": feature.geometry.coordinates[1],
+//								"newbody": JSON.parse(JSON.stringify(feature)) // Clone
+//							}
+//							trace.target = {
+//								"title": findProperty(['name','title','toponym','LOCATION','Name','NAME']),
+//								"additionalType": "Place",
+//								"type": findProperty(['types','X_TYPE']),
+//								"relation": "linking",
+//								"id": findProperty(['url','@id','Hyperlink','HYPERLINK']),
+//								"description": findProperty(['description','descriptions']),
+//								"when": findProperty(['when'])
+//							}
+//							trace.target.geometry = {
+//								"@type": "GeoCoordinates",
+//								"longitude": feature.geometry.coordinates[0],
+//								"latitude": feature.geometry.coordinates[1]
+//							}
+							
+//							if(i>100)return;
+							
+							try{
+								feature._longitude = feature.geometry.coordinates[0];
+								feature._latitude = feature.geometry.coordinates[1];
+								store.put(feature);
 							}
-							var trace = {
-								"_longitude": feature.geometry.coordinates[0],
-								"_latitude": feature.geometry.coordinates[1]
+							catch{
+								console.log('Failed to store feature.',feature);
 							}
-							trace.target = {
-								"title": findProperty(['name','title','toponym','LOCATION']),
-								"additionalType": "Place",
-								"type": findProperty(['types','X_TYPE']),
-								"relation": "linking",
-								"id": findProperty(['url','@id']),
-								"description": findProperty(['description','descriptions']),
-								"when": findProperty(['when'])
-							}
-							trace.target.geometry = {
-								"@type": "GeoCoordinates",
-								"longitude": feature.geometry.coordinates[0],
-								"latitude": feature.geometry.coordinates[1]
-							}
-							store.put(trace);
 						});	
 					}
 				}
@@ -363,7 +577,7 @@ function library(el){
 // Render JSON display
 function renderJSON(target,object,data){
 	target
-		.data('data',data)
+		.data({'data':data,'formatter':object})
 		.html(object.render());
 	$('<button class="dataButton clear" title="Clear this dataset">Clear</button>').prependTo(target).button().click(function(){location.reload();});
 	var downloadButton = $('<button class="dataButton" title="Download this dataset to local filesystem">Download</button>').prependTo(target); // Create button for downloading JSON dataset
@@ -500,18 +714,8 @@ function drawMap(el,render=true){
 		else{
 			$(el)
 			.attr('title','Click to examine this data point')
-			.data({'annotation_id':feature.properties.annotation_id})
-			.click(function(){
-				$('#filter').val(''); // Clear filter
-				updateFilter();
-				$.each(activeDatasetEl.data('data').traces, function(i,trace){
-					if(trace.id == feature.properties.annotation_id){
-						selectedFilter=i;
-						$('#index').change(); // Trigger updateTrace
-						return;
-					}
-				})
-			})
+			.data({'id':feature['@id']})
+			.addClass('dataFeature');
 			var marker = new mapboxgl.Marker(el)
 			.setLngLat(feature.geometry.coordinates)
 			.addTo(map);			
@@ -523,16 +727,22 @@ function drawMap(el,render=true){
 }
 
 function updateLinkMarkers(root=$('#layerSelector')){ // TO DO: Update each newbody to account for activeDataType (features/traces)
-	function linkMarker(newbody,type,colour,coordinates,name=false){
+	function linkMarker(newbody,type,colour,coordinates,name=false,popup=false){
 		if(!newbody.hasOwnProperty('geoWithin')) newbody.geometry = {
 				"@type": "GeoCoordinates",
 				"addressCountry": "GB",
 				"longitude": coordinates[0],
 				"latitude": coordinates[1]
 			}
+		if(!popup) popup = newbody.title;
 		const el = document.createElement('div');
 		$(el)
-			.data({'newbody': newbody,'coordinates':coordinates})
+			.data({
+				'newbody': newbody,
+				'type': type,
+				'coordinates':coordinates,
+				'popup':popup.length>200 ? popup.slice(0,200)+'...' : popup
+			})
 			.html(name?name.slice(0,2):type)
 			.css({'background-color': colour, 'color': 'white'});
 		el.className = 'linkmarker';
@@ -547,147 +757,47 @@ function updateLinkMarkers(root=$('#layerSelector')){ // TO DO: Update each newb
 		root.removeClass('loading');
 	}
 	const mapCentre = map.getCenter();
+	var bounds = map.getBounds();
 	$.each(input.filter(':checked'),function(i,layer){
 		// Add markers for these layers		
 		var type = $(layer).val();
 		var colour = 'rgba('+Math.floor(Math.random()*255)+','+Math.floor(Math.random()*255)+','+Math.floor(Math.random()*255)+',0.45)';
 		linkMarkers[type] = [];
-		switch(type) {
-		case 'GT': // Query GeoNames for Toponyms
+		
+		try {
 			$(layer).closest('.layer').addClass('loading');
-			settings.url = 'https://secure.geonames.org/findNearbyJSON?lat='+mapCentre.lat+'&lng='+mapCentre.lng+'&radius='+radius+'&username='+geoNamesID+'&maxRows=50';
-			$.ajax(settings).then(function(data){
-				$.each(data.geonames, function(i,feature){
-					var newbody = {
-							"additionalType": "LinkRole",
-							"linkRelationship": "Toponym found nearby",
-							"lpo:type": ['seeAlso',feature.fclName],
-							"id": "https://secure.geonames.org/get?geonameId="+feature.geonameId+"&username="+geoNamesID+"&style=full",
-							"title": feature.toponymName,
-							"description": '',
-							"distance": feature.distance 
-					}
-					var coordinates = [feature.lng,feature.lat];
-					linkMarker(newbody,type,colour,coordinates);
+			var result = APIJSON.filter(obj => {return obj.type === type})[0];
+			$.ajax({url:eval(result.url),headers:result.headers,data:{query:(result.hasOwnProperty('query') ? eval(result.query) : '')}}).then(function(data){
+				$.each(eval('data.'+result.datakey), function(i,feature){
+					console.log(i,feature,result.coordinates);
+					linkMarker(feature,result.type,colour,eval(result.coordinates),false,eval(result.name));
 				});
-				$(layer).closest('.layer').removeClass('loading');
 			});
-			break;
-		case 'WP': // Query GeoNames for Wikipedia
-			$(layer).closest('.layer').addClass('loading');
-			settings.url = 'https://secure.geonames.org/findNearbyWikipediaJSON?lat='+mapCentre.lat+'&lng='+mapCentre.lng+'&radius='+radius+'&username='+geoNamesID+'&maxRows=50';
-			$.ajax(settings).then(function(data){
-				$.each(data.geonames, function(i,feature){
-					var newbody = {
-							"additionalType": "LinkRole",
-							"linkRelationship": "Wikipedia Article linked nearby",
-							"lpo:type": ['seeAlso',feature.feature],
-							"id": "https://"+feature.wikipediaUrl,
-							"title": feature.title,
-							"description": feature.summary,
-							"distance": feature.distance 
-					}
-					var coordinates = [feature.lng,feature.lat];
-					linkMarker(newbody,type,colour,coordinates);
-				});
-				$(layer).closest('.layer').removeClass('loading');
-			});
-			break;
-		case 'WS': // Query Wikidata for Settlements
-			$(layer).closest('.layer').addClass('loading');
-			var sparql = sparql_nearby_settlements;
-			settings.url = 'https://query.wikidata.org/sparql';
-			settings.data = { query: sparql.replace('%%%lng%%%',mapCentre.lng).replace('%%%lat%%%',mapCentre.lat).replace('%%%radius%%%',radius) }
-			$.ajax(settings).then(function(data){
-				$.each(data.results.bindings, function(i,feature){
-					var newbody = {
-						"additionalType": "LinkRole",
-						"linkRelationship": "Corresponding Wikidata Item",
-						"id": feature.place.value,
-						"name": feature.placeLabel.value 
-					}
-					var coordinates = feature.geo.value.match(/-?\d+\.\d+/g);
-					linkMarker(newbody,type,colour,coordinates);
-				});
-				$(layer).closest('.layer').removeClass('loading');
-			});
-			break;
-		case 'WC': // Query Wikidata for Cultural Heritage Sites
-			$(layer).closest('.layer').addClass('loading');
-			var sparql = sparql_heritage_sites;
-			settings.url = 'https://query.wikidata.org/sparql';
-			settings.data = { query: sparql.replace('%%%lng%%%',mapCentre.lng).replace('%%%lat%%%',mapCentre.lat).replace('%%%radius%%%',radius) }
-			$.ajax(settings).then(function(data){
-				$.each(data.results.bindings, function(i,feature){
-					var newbody = {
-						"additionalType": "LinkRole",
-						"linkRelationship": "Cultural heritage site found nearby",
-						"lpo:type": ['seeAlso',feature.classLabel.value],
-						"id": feature.site.value,
-						"title": feature.siteLabel.value,
-						"description": feature.hasOwnProperty('siteDescription') ? feature.siteDescription.value : '',
-						"distance": feature.distance.value 
-					}
-					var coordinates = feature.geo.value.match(/-?\d+\.\d+/g);
-					linkMarker(newbody,type,colour,coordinates);
-				});
-				$(layer).closest('.layer').removeClass('loading');
-			});
-			break;
-		case 'PA':// Query Portable Antiquities Scheme database
-			$(layer).closest('.layer').addClass('loading');
-			function processPage(page){
-				settings.url = 'https://finds.org.uk/database/search/results/lat/'+mapCentre.lat+'/lon/'+mapCentre.lng+'/d/'+radius+'/format/geojson/page/'+page;
-				$.ajax(settings).then(function(data){
-					$.each(data.features, function(i,feature){
-						newbody = {
-								"additionalType": "LinkRole",
-								"linkRelationship": "Artefact found nearby",
-								"lpo:type": ['seeAlso',feature.properties.objecttype],
-								"id": feature.properties.url,
-								"title": feature.properties.description.slice(0,60)+'...',
-								"description": feature.properties.description,
-								"image": feature.properties.thumbnail
-						}
-						if(feature.geometry.coordinates[0]!==null){
-							// Note: 'findspot to 1km grid square level and slight obfuscation of findspot by randomised subtraction/addition of 10ths of a degree to the degraded findspot'
-							newbody.distance = distance([mapCentre.lng,mapCentre.lat],feature.geometry.coordinates,0); // 0 places = nearest kilometre
-							newbody.geoWithin = OSGB_WGS84(feature.properties.fourFigure)[2].geoWithin;
-//							var coordinates = feature.geometry.coordinates;
-							var coordinates = [feature.geometry.coordinates[0]+((Math.random()-.5)/5),feature.geometry.coordinates[1]+((Math.random()-.5)/5)]; // Obfuscate by up to a tenth of a degree in case not implemented on API
-							linkMarker(newbody,type,colour,coordinates);
-						}
-					});		
-					if(page < Math.min( 1+Math.floor((data.meta.totalResults-1)/data.meta.resultsPerPage), 10 )) { // Limit to maximum of 10 pages of results (=200 items)
-						processPage(page+1);
-					}
-					else{
-						$(layer).closest('.layer').removeClass('loading');
-					}
-				});
-			}
-			processPage(1);
-			break;
-		case 'other': // ****************** TO DO - generic added geoJSON or shapefiles
-			break;
-		default: // GeoData Library
-			const bounds = map.getBounds();
+		}
+		catch(err) {// Assume GeoData Library
 			var open = indexedDB.open(type);
 			open.onsuccess = function(){
 				var db = open.result;
 				var tx = db.transaction('dataset');
 				var index = tx.objectStore('dataset').index('coordinates');
-				select(index, [IDBKeyRange.bound(bounds._sw.lng, bounds._ne.lng),IDBKeyRange.bound(bounds._sw.lat, bounds._ne.lat)], function(value){
-					var newbody = value.target;
-					var coordinates = [value._longitude,value._latitude];
-					linkMarker(newbody,type,colour,coordinates,$(layer).siblings('label').text());
+				try{
+					var popupRule = LibraryMappings.filter(obj => {return obj.type === type})[0].popup;
+				}
+				catch{
+					var popupRule = "'Popup not yet configured for this dataset (type='+type+')'";
+				}
+				select(index, [IDBKeyRange.bound(bounds._sw.lng, bounds._ne.lng),IDBKeyRange.bound(bounds._sw.lat, bounds._ne.lat)], function(newbody){
+					var coordinates = [newbody._longitude,newbody._latitude];
+					linkMarker(newbody,type,colour,coordinates,$(layer).siblings('label').text(),eval(popupRule));
 				}, function(){
 					console.log('Index retrieval complete');
 				});
 			}
+		}
+		finally {
+			$(layer).closest('.layer').removeClass('loading');
+		}
 		
-			break;
-		}	
 	});
 }
 
@@ -697,31 +807,20 @@ function removeLinkMarkers(){
 	});
 }
 
-function updateTrace(dataset){
-	var bounds = false;
-	$.each(currentMarkers, function(i,marker){ marker.remove(); });
+function updateTrace(dataset=activeDatasetEl.data('data')[activeDataType]){
 	removeLinkMarkers();
 	var index = $('#index').val()-1;
-	geoParent = (activeDataType=='features') ? [dataset[index]] : dataset[index].body;
-	$.each(geoParent, function(j,body){
-		if(body.hasOwnProperty('geometry') && (body.geometry['@type']=='GeoCoordinates' || body.geometry['type']=='Point')){
-			var coordinates = (activeDataType=='features') ? body.geometry.coordinates : [body.geometry.longitude,body.geometry.latitude];
-			const el = document.createElement('div');
-			el.className = 'marker currentmarker';
-			var marker = new mapboxgl.Marker(el)
-				.setLngLat(coordinates)
-				.addTo(map);
-			currentMarkers.push(marker);
-			if(bounds){
-				bounds.extend(coordinates);
-			}
-			else{
-				bounds = new mapboxgl.LngLatBounds(coordinates,coordinates);
-			}
+	traceGeoJSON = dataset[index];
+	map.getSource('point').setData(traceGeoJSON);
+	bounds = new mapboxgl.LngLatBounds(traceGeoJSON.geometry.coordinates,traceGeoJSON.geometry.coordinates);
+	$('.marker.movable').removeClass('movable');
+	$.each(markers, function(i,marker){
+		if(traceGeoJSON['@id'] == $(marker.getElement()).data('id')){
+			$(marker.getElement()).addClass('movable');
 		}
-	});
-	trace_formatter = new JSONFormatter(dataset[index],3,{theme:'light'}); // remove JSONata sequence and keepSingleton artefacts
-	$('#trace').html(trace_formatter.render());
+	});	
+	$('#trace').data('formatter',new JSONFormatter(dataset[index],3,{theme:'light'}));
+	$('#trace').html($('#trace').data('formatter').render()).addClass('json-formatter');
 	showMap(true, bounds);
 	updateLinkMarkers();
 }
@@ -742,28 +841,10 @@ function updateFilter() {
 	}
 	$('#navigation').addClass('filtered');
 	filteredIndices=[];
-	
-	if(activeDataType=='features'){
-		$.each(activeDatasetEl.data('data')[activeDataType], function(i,feature){
-			var found = false;
-			$.each(feature.names,function(j,name){
-				found = (found || name.toponym.toUpperCase().indexOf(filter) > -1);
-			})
-			if (found) filteredIndices.push(i+1);
-		});
-	}
-	else{
-		$.each(activeDatasetEl.data('data')[activeDataType], function(i,trace){
-			var found = false;
-			found = trace.target.title.toUpperCase().indexOf(filter) > -1;
-			if (!found) {
-				$.each(trace.body,function(j,body){
-					if(body.hasOwnProperty('title')) found = (found || body.title.toUpperCase().indexOf(filter) > -1);
-				})
-			}
-			if (found) filteredIndices.push(i+1);
-		});
-	}
+
+	$.each(activeDatasetEl.data('data')[activeDataType], function(i,feature){
+		if ((JSON.stringify(feature)).indexOf(filter)>-1) filteredIndices.push(i+1);
+	});
 	
 	$('#filtered').html('('+filteredIndices.length+')');
 	selectedFilter = 0;
@@ -807,7 +888,7 @@ function explore(el) {
 		.eq(1).after($('<input id="index" />')
 			.val(1)
 			.button()
-			.change(function(){$('#index').val(filteredIndices[selectedFilter]); updateTrace(activeDatasetEl.data('data')[activeDataType])})
+			.change(function(){$('#index').val(filteredIndices[selectedFilter]); updateTrace()})
 		).end()
 		.eq(2).before('<span>/'+activeDatasetEl.data('data')[activeDataType].length+'</span>').end()
 		.eq(3)
@@ -824,11 +905,10 @@ function explore(el) {
 		.eq(7).button({icon:"ui-icon-trash",showlabel:false}).prop({'title':'Delete this item','id':'delete'}).click(function(){
 			if (confirm('Delete this item?')){
 				$.each(markers, function(i,marker){
-					if(activeDatasetEl.data('data')[activeDataType][$('#index').val()-1].id == $(marker.getElement()).data('annotation_id')){
+					if(activeDatasetEl.data('data')[activeDataType][$('#index').val()-1].id == $(marker.getElement()).data('id')){
 						marker.remove();
 					}
 				});
-				$.each(currentMarkers, function(i,marker){ marker.remove(); });
 				filteredIndices.splice(selectedFilter,1);
 				$.each(filteredIndices, function(i,index){
 					if(i>=selectedFilter) filteredIndices[i]-=1;
@@ -1226,26 +1306,186 @@ $( document ).ready(function() {
 	});
 	$('#map')
 		.on('mouseenter','.linkmarker',function(e){
-			var text = $(e.target).data('newbody').hasOwnProperty('title') ? $(e.target).data('newbody').title : $(e.target).data('newbody').name;
-			linkMarkerPopup.setLngLat($(e.target).data('coordinates')).setHTML(text).addTo(map);
+//			var text = $(e.target).data('newbody').hasOwnProperty('title') ? $(e.target).data('newbody').title : $(e.target).data('newbody').name;
+//			linkMarkerPopup.setLngLat($(e.target).data('coordinates')).setHTML(text).addTo(map);
+			linkMarkerPopup.setLngLat($(e.target).data('coordinates')).setHTML($(e.target).data('popup')).addTo(map);
 		})
 		.on('mouseleave','.linkmarker',function(e){
 			linkMarkerPopup.remove();
 		})
 		.on('click','.linkmarker',function(e){
 			if(activeDataType=='features'){
+				var newbody = $(e.target).data('newbody');
+				console.log($(e.target).data());
 				if(confirm('Add to current feature?')){
-					activeDatasetEl.data('data').features[filteredIndices[selectedFilter]-1].links.push($(e.target).data('newbody'));
-					$('#trace').html(trace_formatter.render());
+					var selectedItem = activeDatasetEl.data('data').features[filteredIndices[selectedFilter]-1];
+					try{
+						var lpMappings = APIJSON.filter(obj => {return obj.type === $(e.target).data('type')})[0].lpMappings;
+					}
+					catch{
+						var lpMappings = LibraryMappings.filter(obj => {return obj.type === $(e.target).data('type')})[0].lpMappings;
+					}
+					lpMappings.forEach(function(mapping){
+						for (const mappingType in mapping) {
+							try{
+								var clone = {};
+								for (const property in mapping[mappingType]) {
+									clone[property] = eval(mapping[mappingType][property]);	
+								}
+								if(!selectedItem.hasOwnProperty(mappingType)) selectedItem[mappingType] = [];
+								selectedItem[mappingType].push(clone);
+							}
+							catch{
+								console.log('Failed to map object.',mapping);
+							}
+						}
+					});
+					$('#trace').html($('#trace').data('formatter').render());
 				}
 			}
 			else{
 				if(confirm('Add to current trace bodies?')){
 					activeDatasetEl.data('data').traces[filteredIndices[selectedFilter]-1].body.push($(e.target).data('newbody'));
-					$('#trace').html(trace_formatter.render());
+					$('#trace').html($('#trace').data('formatter').render());
 				}
 			}
 		});
+	
+	function reformat(e){
+		var formatter = $(e.target).closest('.json-formatter');
+		var tempButtons = formatter.children('button').appendTo('#darkroom');
+		formatter.html(formatter.data('formatter').render()).prepend(tempButtons);
+	}
+	
+	$('body') // Object value editor
+	.on('mouseenter','.json-formatter-number,.json-formatter-string',function(e){
+		if(!$(e.target).prev().hasClass('json-formatter-bracket') && $('.editing').length<1) $(e.target).prepend('<span title="Edit this element." class="editlink ui-icon-pencil"></span>'); // Prevent edit button on array indices
+	})
+	.on('mouseleave','.json-formatter-number,.json-formatter-string',function(e){
+		$('.editlink.ui-icon-pencil').remove();
+	})
+	.on('click','.editlink.ui-icon-pencil',function(e){
+		var input = $('<input class="editing" />')
+			.val($(e.target).parent().text().replace(/^["'](.+(?=["']$))["']$/, '$1')) // Strip delimiter quotes from strings
+			.data('classes',$(e.target).parent().attr("class").split(/\s+/));
+		e.preventDefault(); // Disable url-opening on url links
+        $(e.target).parent().replaceWith(input);
+        input
+        .after('<span title="Abandon changes." class="editlink ui-icon-circle-close"></span>')
+        .after('<span title="Confirm changes." class="editlink ui-icon-circle-check"></span>');
+	})
+	.on('click','.editlink.ui-icon-circle-close',function(e){
+		reformat(e);
+	})
+	.on('click','.editlink.ui-icon-circle-check',function(e){
+		var value = $(e.target).siblings('input').val();
+		value = isNumber(value) ? value : '"'+value+'"';
+		var keys = $(e.target).parentsUntil('.json-formatter','.json-formatter-row').map(function(){
+			return $(this).find('.json-formatter-key:first').text().slice(0,-1);
+		}).get().slice(0,-1).reverse();
+		eval(($('#trace').length>0?'activeDatasetEl.data("data")[activeDataType][filteredIndices[selectedFilter]-1]':'$(e.target).closest(".json-formatter").data("data")')+'["'+keys.join('"]["')+'"] = '+value);
+		reformat(e);
+	});
+	
+	$('body') // Delete JSON object
+	.on('mouseenter','.json-formatter-key',function(e){
+		if($('.editlink.ui-icon-trash').length<1) $(e.target).prepend('<span title="Delete this element." class="editlink ui-icon-trash"></span>');
+	})
+	.on('mouseleave','.json-formatter-key',function(e){
+		$('.editlink.ui-icon-trash').remove();
+	})
+	.on('click','.editlink.ui-icon-trash',function(e){
+		function joinkeys(keys){
+			return keys.length>0?'["'+keys.join('"]["')+'"]':'';
+		}
+		var keys = $(e.target).parentsUntil('.json-formatter','.json-formatter-row').map(function(){
+			return $(this).find('.json-formatter-key:first').text().slice(0,-1);
+		}).get().slice(0,-1).reverse();
+		if($(e.target).closest('.json-formatter-row').parent('.json-formatter-array').length>0){
+			var index = keys.pop();
+			var parentKey = keys.pop();
+			eval('var arrayParent = '+($('#trace').length>0?'activeDatasetEl.data("data")[activeDataType][filteredIndices[selectedFilter]-1]':'$(e.target).closest(".json-formatter").data("data")')+joinkeys(keys));
+			if(arrayParent[parentKey].length==1){
+				delete arrayParent[parentKey];
+			}
+			else{
+				arrayParent[parentKey].splice(index,1);
+			}
+		}
+		else{
+			eval('delete '+($('#trace').length>0?'activeDatasetEl.data("data")[activeDataType][filteredIndices[selectedFilter]-1]':'$(e.target).closest(".json-formatter").data("data")')+joinkeys(keys));
+		}
+		reformat(e);
+	});
+	
+	$('body') // Zoom to feature
+	.on('click','.dataFeature',function(e){
+		$('#filter').val(''); // Clear filter
+		updateFilter();
+		$.each(activeDatasetEl.data('data')[activeDataType], function(i,dataItem){
+			if(dataItem['@id'] == $(e.target).data('id')){
+				selectedFilter=i;
+				$('#index').change(); // Trigger updateTrace
+				return;
+			}
+		})
+	});
+	
+	// Prepare for repositioning of features (see https://docs.mapbox.com/mapbox-gl-js/example/drag-a-point/)
+	const canvas = map.getCanvasContainer();
+	function onMove(e){
+		const coords = e.lngLat;
+		canvas.style.cursor = 'grabbing';
+		traceGeoJSON.geometry.coordinates = [coords.lng, coords.lat];
+		map.getSource('point').setData(traceGeoJSON);
+	}
+	function onUp(e){
+		canvas.style.cursor = '';
+		map.off('mousemove', onMove);
+		map.off('touchmove', onMove);
+		$('#trace').html($('#trace').data('formatter').render());
+		$.each(markers, function(i,marker){
+			if(traceGeoJSON['@id'] == $(marker.getElement()).data('id')){
+				marker.setLngLat(traceGeoJSON.geometry.coordinates)
+			}
+		});
+	}
+	map.on('load', () => {
+		map.addSource('point', {
+			'type': 'geojson',
+			'data': traceGeoJSON
+		});
+		map.addLayer({
+			'id': 'point',
+			'type': 'circle',
+			'source': 'point',
+			'paint': {
+				'circle-radius': 12,
+				'circle-color': '#FF0000', // red color
+				'circle-opacity': 0.7
+			}
+		});
+		map.on('mouseenter', 'point', () => {
+			map.setPaintProperty('point', 'circle-opacity', 0.4);
+			canvas.style.cursor = 'move';
+		});
+		map.on('mouseleave', 'point', () => {
+			map.setPaintProperty('point', 'circle-opacity', 0.7);
+			canvas.style.cursor = '';
+		});
+		map.on('mousedown', 'point', (e) => {
+			e.preventDefault();
+			canvas.style.cursor = 'grab';
+			map.on('mousemove', onMove);
+			map.once('mouseup', onUp);
+		});
+		map.on('touchstart', 'point', (e) => {
+			if (e.points.length !== 1) return;
+			e.preventDefault();
+			map.on('touchmove', onMove);
+			map.once('touchend', onUp);
+		});
+	});
 	
 	// Apply jquery-ui styling
 	$('#choose_input').selectmenu().on('selectmenuchange',function () {
@@ -1288,6 +1528,11 @@ $( document ).ready(function() {
 		});
 	});
 	
+	// Fetch default schema.org indexing template
+	$.get('./templates/indexing.json?'+Date.now(), function(data) { // Do not use any cached file
+		indexing = data;
+	},'json');
+	
 	// Populate JSONata expressions drop-down list
 	$.get('./templates/mappings.json?'+Date.now(), function(data) { // Do not use any cached file
 		mappings = data;
@@ -1299,6 +1544,7 @@ $( document ).ready(function() {
 	
 	// Populate link layer options
 	$.get('./templates/APIs.json?'+Date.now(), function(data) { // Do not use any cached file
+		APIJSON = data;
 		$.each(data, function(key,value) {
 			$('#layerSelector .layerGroup:nth-of-type(1)').append('<span class="layer" title="'+(value.label.startsWith('*')?'Not yet implemented':value.title)+'"><input '+(value.label.startsWith('*')?'disabled ':'')+'type="checkbox" name="'+value.type+'" value="'+value.type+'"><label for="'+value.type+'">'+value.label+'</label></span>');
 		});
@@ -1401,6 +1647,12 @@ $( document ).ready(function() {
 	    				delete feature.easting_ni;
 	    				delete feature.northing_ni;
         			}
+        			else if(feature.hasOwnProperty('PAS_longitude') && feature.hasOwnProperty('PAS_latitude')){
+        				feature.geometry = {"type": "Point", "coordinates": scatter([feature.PAS_longitude,feature.PAS_latitude]), 'certainty': '0.7km'}; // Obfuscate PAS Coordinates plus/minus 0.5km lat & lng
+	    				delete feature.PAS_longitude;
+	    				delete feature.PAS_latitude;
+	    				if(feature.hasOwnProperty('properties.thumbnail')) feature['properties.thumbnail'] = 'https://finds.org.uk/images/thumbnails/'+feature['properties.thumbnail']+'.jpg';
+        			}
         			else if(feature.hasOwnProperty('longitude') && feature.hasOwnProperty('latitude')){
         				feature.geometry = {"type": "Point", "coordinates": [feature.longitude,feature.latitude], 'certainty': 'certain'};
 	    				delete feature.longitude;
@@ -1472,6 +1724,19 @@ $( document ).ready(function() {
     		input_truncated = input; // TO DO: Find generic method for truncation, to avoid browser overload on expansion of large arrays.
     	}
     	else if(typeof filecontent != 'string'){ // Might be object returned from shapefile conversion
+    		// Replace polygons with poles of inaccessibility (not to be confused with centroids). Could be added as part of a GeometryCollection, but this would break other functionality which relies on Point data only.
+    		if(filecontent.hasOwnProperty('features')){
+    			filecontent.features.forEach(function(feature){
+    				if(feature.geometry.type=='Polygon'){
+    					feature.properties._polygon = feature.geometry;
+    					feature.geometry = {
+							'type': 'Point',
+							'coordinates': polylabel(feature.geometry.coordinates, 1.0),
+							'description': 'Pole of inaccessibility, generated from polygon'
+    					}
+    				}
+    			});
+    		}
     		input = filecontent;
     		input_truncated = input; // TO DO: Find generic method for truncation, to avoid browser overload on expansion of large arrays.
     	}
@@ -1488,6 +1753,16 @@ $( document ).ready(function() {
     		input = JSON.parse(filecontent);
     		input_truncated = input; // TO DO: Find generic method for truncation, to avoid browser overload on expansion of large arrays; could easily be fixed for geoJSON.
     	}
+    	
+    	// Create geometry for geojson where none yet exists
+    	if(input.hasOwnProperty('features')){
+    		input.features.forEach(function(feature){
+    			if(!feature.hasOwnProperty('geometry') || firstPoint(feature.geometry)==null){
+    				feature.geometry = {"type":"Point","coordinates":[null,null],"certainty":"uncertain"};
+    			}
+    		});
+    	}    	
+    	
     	$('#source_block').appendTo('#darkroom');
     	$('#conversions').insertBefore('.arrow');
     	input_formatter = new JSONFormatter(input_truncated,1,{theme:'dark'});
@@ -1500,8 +1775,7 @@ $( document ).ready(function() {
 		var file = this.files[0];
 		if(file.name.split(/[#?]/)[0].split('.').pop().trim() == 'zip'){ // Assume zipped shapefile - see shp2geojson-preview-v2.js
     		$('body').loadingModal({text: 'Processing...'});
-			loadshp({url: file, encoding: 'utf-8'}, function(geojson) {
-				console.log(geojson);
+			loadshp({url: file, encoding: 'iso-8859-1'}, function(geojson) {
 				parse_file(file.name,geojson);
 	        	$('body').loadingModal('destroy');
 			});
@@ -1525,32 +1799,6 @@ $( document ).ready(function() {
 	        fr.readAsText(file);			
 		}
 	});
-	
-//	// Process uploaded file
-//	$('#file_source').on('change', function () {
-//		var file = this.files[0];
-//		if(file.name.split(/[#?]/)[0].split('.').pop().trim() == 'zip'){ // Assume zipped shapefile - see shp2geojson-preview-v2.js
-//    		$('body').loadingModal({text: 'Processing...'});
-//			loadshp({url: file}, function(geojson) {
-//				parse_file(file.name,geojson);
-//	        	$('body').loadingModal('destroy');
-//			});
-//		}
-//		else{
-//	        var fr = new FileReader();
-//	        fr.onloadstart = function(){
-//	    		$('body').loadingModal({text: 'Processing...'});        	
-//	        }
-//	        fr.onerror = function(){
-//	        	$('body').loadingModal('destroy');       	
-//	        }
-//	        fr.onload = function(){
-//				parse_file(file.name,fr.result);
-//	        	$('body').loadingModal('destroy');
-//	        }
-//	        fr.readAsText(file);			
-//		}	
-//	});
 	
 	// Process fetched file
 	$('#fetch').on('click', function () {
@@ -1591,16 +1839,22 @@ $( document ).ready(function() {
 	// Prepare dataset library catalogue
 	const db_promise = indexedDB.databases()
 	db_promise.then(databases => {
-		console.log(databases)
 		$.each(databases,function(i,database){
 			var open = indexedDB.open(database.name);
 			open.onsuccess = function(){
-				var db = open.result;
-				var tx = db.transaction("dataname");
-				var objectStore = tx.objectStore("dataname");
-				var request = objectStore.getAll();
-				request.onsuccess = function(event) {
-					addLibraryItem(database.name, request.result[0].name);
+				try{
+					var db = open.result;
+					var tx = db.transaction("dataname");
+					var objectStore = tx.objectStore("dataname");
+					var request = objectStore.getAll();
+					request.onsuccess = function(event) {
+						addLibraryItem(database.name, request.result[0].name);
+						console.log('Found '+database.name);
+					}
+				}
+				catch{
+					console.log('Removing '+database.name);
+					indexedDB.deleteDatabase(database.name);
 				}
 			};
 		});
