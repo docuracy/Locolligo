@@ -27,7 +27,7 @@ This software originates as an output of the AHRC-funded [**Locating a National 
 </p>
 
 ## See also:
-* **Peripleo-LD**: [Extended Linked Places Data Model](https://docs.google.com/document/d/1yhVAqpPnKJ9SWfl-yg2zfMyPMTDNkerI7lCGF-pB7I8/edit?usp=sharing)
+* **xLP**: [Extended Linked Places Data Model](https://docs.google.com/document/d/1yhVAqpPnKJ9SWfl-yg2zfMyPMTDNkerI7lCGF-pB7I8/edit?usp=sharing)
 * [*Peripleo-Lite*](https://docuracy.github.io/LaNC-peripleo-lite/public/): a proof-of-concept prototype that will be developed by LaNC
 
 ## Feature development:
@@ -37,7 +37,7 @@ This software originates as an output of the AHRC-funded [**Locating a National 
     - [x] XML (from upload or URL)
     - [x] Google Maps KML (from upload or URL; also convert to geoJSON)
     - [x] Zipped Shapefile (from upload, to geoJSON)
-- [x] Convert the following JSON types to Peripleo-LD:
+- [x] Convert the following JSON types to xLP:
     - [x] Recogito LD
     - [x] Uploaded datasets (JSONata configuration required, UI not yet built)
 - [x] Convert Peripleo-LD to:
@@ -53,22 +53,23 @@ This software originates as an output of the AHRC-funded [**Locating a National 
 - [x] Location approximation: translation of text values to schema.org *geoRadius* values and *geoWithin* *geoCircle*s
 - [ ] UI for configuration of JSONata transformation of unrecognised data models
 - [x] Fetch CITATION.cff and incorporate in dataset as CSL-JSON
-- [ ] Facilitate editing of dataset metadata
-- [x] Add Peripleo-LD, shapefile, and geoJSON datasets to user's local **GeoData Library** ([indexedDB](https://developer.mozilla.org/en-US/docs/Web/API/IndexedDB_API) store)
+- [x] Facilitate editing of dataset metadata
+- [x] Add xLP, shapefile, and geoJSON datasets to user's local **GeoData Library** ([indexedDB](https://developer.mozilla.org/en-US/docs/Web/API/IndexedDB_API) store)
 - [x] Find places in map view (using GeoNames API)
 - [ ] Data Linking
-    - [x] Curated interlinking of Peripleo-LD datasets (using **GeoData Library**)
+    - [x] Curated interlinking of xLP datasets (using **GeoData Library**)
     - [x] Programmatic linking of Wikidata settlements (best text match within 15km, using Levenshtein algorithm)
     - [x] Cultural Heritage sites within radius: [Wikidata](https://www.wikidata.org/)
     - [x] [GeoNames toponyms](https://www.geonames.org/export/web-services.html#findNearby)
+    - [x] [World Historical Gazetteer](https://whgazetteer.org/usingapi/)
     - [ ] [Open Street Map Points of Interest](https://wiki.openstreetmap.org/wiki/Points_of_interest)
     - [ ] [Open Historical Map](https://wiki.openstreetmap.org/wiki/Open_Historical_Map)
     - [ ] [GB1900](http://www.visionofbritain.org.uk/)
     - [x] Wikipedia articles: [GeoNames API](https://www.geonames.org/export/wikipedia-webservice.html#findNearbyWikipedia)
     - [x] Archaeological finds within radius: [PAS](https://finds.org.uk/) API
     - [ ] [Topographical Dictionary of England, 1848](https://www.british-history.ac.uk/topographical-dict/england)
-    - [ ] Historical Plaques: [OpenPlaques.org](https://openplaques.org/) API (or data dump converted to Peripleo-LD)
-    - [ ] Geograph photographs: [Geograph Syndicator API](https://www.geograph.org.uk/help/api#rss)
+    - [x] Historical Plaques: [OpenPlaques.org](https://openplaques.org/) API (or data dump converted to Peripleo-LD)
+    - [x] Geograph photographs: [Geograph Syndicator API](https://www.geograph.org.uk/help/api#rss)
 - [ ] Data Checking
     - [ ] Sanity checking
     - [ ] Add confirmation flags for checked data
@@ -82,8 +83,9 @@ This software originates as an output of the AHRC-funded [**Locating a National 
     - [x] Static [gazetteer](https://github.com/docuracy/Locolligo/blob/main/API/index.html)
     - [x] Example use of PID to reach gazetteer: https://w3id.org/locolligo/CAMPOP-Places/AGY.Holyhead
 - [ ] Geocoding of un-gazetteered places
-    - [ ]  Use georeferenced historical basemaps as citable references
-    - [ ]  Create linked Wikidata item with geo-coordinates, using programmatically-submitted [*QuickStatements* batch jobs](https://quickstatements.toolforge.org/#/user) (default CORS policy prevents direct use of API)
+    - [x] Create or adjust feature coordinates with reference to basemap
+    - [ ] Use georeferenced historical basemaps as citable references
+    - [ ] Create linked Wikidata item with geo-coordinates, using programmatically-submitted [*QuickStatements* batch jobs](https://quickstatements.toolforge.org/#/user) (default CORS policy prevents direct use of API)
 - [ ] [Pelagios Registry](https://pelagios.org/activities/registry/) metadata generation
 - [ ] Recogito meta-gazetteer generation
 
