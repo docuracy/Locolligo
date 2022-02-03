@@ -263,6 +263,32 @@ const LibraryMappings = [// TO DO: Move this functionality to IndexedDB
 				}
 			}
 		] 
+	},
+	{ // Listed Buildings (CADW)
+		"type": "1643905705879",
+		"popup": "newbody.properties.name",
+		"lpMappings": [
+			{
+				"links": {
+					"type": "'seeAlso'",
+					"id": "newbody['@id']",
+					"label": "newbody.properties.name"
+				}
+			}
+		] 
+	},
+	{ // Scheduled Ancient Monuments (CADW)
+		"type": "1643906262026",
+		"popup": "newbody.properties.name",
+		"lpMappings": [
+			{
+				"links": {
+					"type": "'seeAlso'",
+					"id": "newbody['@id']",
+					"label": "newbody.properties.name"
+				}
+			}
+		] 
 	}
 ]
 
@@ -813,10 +839,10 @@ function updateTrace(dataset=activeDatasetEl.data('data')[activeDataType]){
 	traceGeoJSON = dataset[index];
 	map.getSource('point').setData(traceGeoJSON);
 	bounds = new mapboxgl.LngLatBounds(traceGeoJSON.geometry.coordinates,traceGeoJSON.geometry.coordinates);
-	$('.marker.movable').removeClass('movable');
+	$('.marker.movable').removeClass('movable').attr('title', 'Click to examine this data point');
 	$.each(markers, function(i,marker){
 		if(traceGeoJSON['@id'] == $(marker.getElement()).data('id')){
-			$(marker.getElement()).addClass('movable');
+			$(marker.getElement()).addClass('movable').attr('title', 'Drag this marker to a new location');
 		}
 	});	
 	$('#trace').data('formatter',new JSONFormatter(dataset[index],3,{theme:'light'}));
@@ -1642,10 +1668,19 @@ $( document ).ready(function() {
         				// Projection definition from https://epsg.io/29900 (copy and paste Proj4js Definition)
         				proj4.defs('EPSG:29900','+proj=tmerc +lat_0=53.5 +lon_0=-8 +k=1.000035 +x_0=200000 +y_0=250000 +ellps=mod_airy +towgs84=482.5,-130.6,564.6,-1.042,-0.214,-0.631,8.15 +units=m +no_defs');
         				const wgs84 = proj4('EPSG:29900','WGS84',[feature.easting_ni,feature.northing_ni]);
-        				console.log(wgs84);
-        				feature.geometry = {"type": "Point", "coordinates": [wgs84[0].toFixed(6),wgs84[1].toFixed(6)], 'certainty': 'certain'};
+//        				console.log(wgs84);
+        				feature.geometry = {"type": "Point", "coordinates": [parseFloat(wgs84[0].toFixed(6)),parseFloat(wgs84[1].toFixed(6))], 'certainty': 'certain'};
 	    				delete feature.easting_ni;
 	    				delete feature.northing_ni;
+        			}
+        			else if(feature.hasOwnProperty('easting') && feature.hasOwnProperty('northing')){
+        				// Projection definition from https://epsg.io/27700 (copy and paste Proj4js Definition)
+        				proj4.defs("EPSG:27700","+proj=tmerc +lat_0=49 +lon_0=-2 +k=0.9996012717 +x_0=400000 +y_0=-100000 +ellps=airy +towgs84=446.448,-125.157,542.06,0.15,0.247,0.842,-20.489 +units=m +no_defs");
+        				const wgs84 = proj4('EPSG:27700','WGS84',[feature.easting,feature.northing]);
+//        				console.log(wgs84);
+        				feature.geometry = {"type": "Point", "coordinates": [parseFloat(wgs84[0].toFixed(6)),parseFloat(wgs84[1].toFixed(6))], 'certainty': 'certain'};
+	    				delete feature.easting;
+	    				delete feature.northing;
         			}
         			else if(feature.hasOwnProperty('PAS_longitude') && feature.hasOwnProperty('PAS_latitude')){
         				feature.geometry = {"type": "Point", "coordinates": scatter([feature.PAS_longitude,feature.PAS_latitude]), 'certainty': '0.7km'}; // Obfuscate PAS Coordinates plus/minus 0.5km lat & lng
