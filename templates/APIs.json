@@ -1,10 +1,185 @@
 [
-	{"label": "GeoNames Toponyms","type": "GT", "title": "Toponyms from the GeoNames database"},
-	{"label": "Wikipedia (from GeoNames)","type": "WP", "title": "Wikipedia articles linked from the GeoNames database"},
-	{"label": "*Open Street Map Points of Interest","type": "OS", "title": ""},
-	{"label": "*Open Historical Map","type": "OH", "title": ""},
-	{"label": "Wikidata Cultural Heritage","type": "WD", "title": "Cultural Heritage sites identified in Wikidata"},
-	{"label": "Portable Antiquities","type": "PA", "title": "Archaeological finds from the Portable Antiquities Scheme (PAS) database"},
-	{"label": "*Topographical Dictionary of England, 1848","type": "TD", "title": ""},
-	{"label": "*Upload geoJSON / zipped shapefiles","type": "XX", "title": ""}
+	{
+		"label": "GeoNames Toponyms",
+		"type": "GT", 
+		"title": "Toponyms from the GeoNames database",
+		"url": "'https://secure.geonames.org/findNearbyJSON?lat='+mapCentre.lat+'&lng='+mapCentre.lng+'&radius='+radius+'&username='+geoNamesID+'&maxRows=50'",
+		"headers": {
+			"Accept": "application/json" 
+		},
+		"datakey": "geonames",
+		"coordinates": "[feature.lng,feature.lat]",
+		"name": "feature.toponymName",
+		"lpMappings": [
+			{
+				"links": {
+					"type": "'closeMatch'",
+					"id": "'https://www.geonames.org/'+newbody.geonameId+'/'"
+				}
+			}
+		] 
+	},
+	{
+		"label": "Wikipedia (from GeoNames)",
+		"type": "WP", 
+		"title": "Wikipedia articles linked from the GeoNames database",
+		"url": "'https://secure.geonames.org/findNearbyWikipediaJSON?lat='+mapCentre.lat+'&lng='+mapCentre.lng+'&radius='+radius+'&username='+geoNamesID+'&maxRows=50'",
+		"headers": {
+			"Accept": "application/json" 
+		},
+		"datakey": "geonames",
+		"coordinates": "[feature.lng,feature.lat]",
+		"name": "feature.title",
+		"lpMappings": [
+			{
+				"links": {
+					"type": "'primaryTopicOf'",
+					"id": "'https://'+newbody.wikipediaUrl"
+				}
+			},
+			{
+				"descriptions": {
+					"@id": "'https://'+newbody.wikipediaUrl",
+					"value": "newbody.summary",
+					"lang": "'en'"
+				}
+			}
+		] 
+	},
+	{
+		"label": "Geograph",
+		"type": "GG", 
+		"title": "Photographs sourced from Geograph",
+		"url": "'https://api.geograph.org.uk/syndicator.php?format=JSON&q='+mapCentre.lat+','+mapCentre.lng+'&distance='+(radius*5)+'&perpage=100&key=c743e78c04'",
+		"headers": {
+			"Accept": "application/json" 
+		},
+		"datakey": "items",
+		"coordinates": "scatter([parseFloat(feature.long),parseFloat(feature.lat)])",
+		"name": "'<img class=\"popupimage\" src=\"'+feature.thumb+'\" /><br/>'+feature.title",
+		"lpMappings": [
+			{
+				"links": {
+					"type": "'primaryTopicOf'",
+					"id": "newbody.link"
+				}
+			},
+			{
+				"depictions": {
+					"@id": "newbody.link",
+					"title": "newbody.title",
+					"license": "newbody.licence"
+				}
+			}
+		] 
+	},
+	{
+		"label": "*Open Street Map Points of Interest",
+		"type": "OS", 
+		"title": ""
+	},
+	{
+		"label": "*Open Historical Map",
+		"type": "OH", 
+		"title": ""
+	},
+	{
+		"label": "World Historical Gazetteer",
+		"type": "WH", 
+		"title": "Features identified in the World Historical Gazetteer",
+		"url": "'https://whgazetteer.org/api/spatial/?type=bbox&sw='+bounds._sw.lng+','+bounds._sw.lat+'&ne='+bounds._ne.lng+','+bounds._ne.lat",
+		"headers": {
+			"Accept": "application/json" 
+		},
+		"datakey": "features",
+		"coordinates": "firstPoint(feature.geometry)",
+		"name": "feature.properties.title",
+		"lpMappings": [
+			{
+				"links": {
+					"type": "'closeMatch'",
+					"id": "newbody.uri"
+				}
+			}
+		] 
+	},
+	{
+		"label": "Wikidata Settlements",
+		"type": "WS", 
+		"title": "Settlements identified in Wikidata",
+		"url": "'https://query.wikidata.org/sparql'",
+		"query": "sparql_nearby_settlements.replace('%%%lng%%%',mapCentre.lng).replace('%%%lat%%%',mapCentre.lat).replace('%%%radius%%%',radius)",
+		"headers": {
+			"Accept": "application/sparql-results+json" 
+		},
+		"datakey": "results.bindings",
+		"coordinates": "feature.geo.value.match(/-?\\d+\\.\\d+/g)",
+		"name": "feature.placeLabel.value",
+		"lpMappings": [
+			{
+				"links": {
+					"type": "'closeMatch'",
+					"id": "newbody.place.value"
+				}
+			}
+		] 
+	},
+	{
+		"label": "Wikidata Cultural Heritage",
+		"type": "WC", 
+		"title": "Cultural Heritage sites identified in Wikidata",
+		"url": "'https://query.wikidata.org/sparql'",
+		"query": "sparql_heritage_sites.replace('%%%lng%%%',mapCentre.lng).replace('%%%lat%%%',mapCentre.lat).replace('%%%radius%%%',radius)",
+		"headers": {
+			"Accept": "application/sparql-results+json" 
+		},
+		"datakey": "results.bindings",
+		"coordinates": "feature.geo.value.match(/-?\\d+\\.\\d+/g)",
+		"name": "feature.siteLabel.value",
+		"lpMappings": [
+			{
+				"links": {
+					"type": "'closeMatch'",
+					"id": "newbody.site.value"
+				}
+			},
+			{
+				"depictions": {
+					"@id": "newbody.image.value",
+					"title": "newbody.siteLabel.value"
+				}
+			}
+		] 
+	},
+	{
+		"label": "Portable Antiquities",
+		"type": "PA", 
+		"title": "Archaeological finds from the Portable Antiquities Scheme (PAS) database",
+		"url": "'https://finds.org.uk/database/search/results/lat/'+mapCentre.lat+'/lon/'+mapCentre.lng+'/d/'+radius+'/format/geojson/page/1'",
+		"headers": {
+			"Accept": "application/json" 
+		},
+		"datakey": "features",
+		"coordinates": "[feature.geometry.coordinates[0]+((Math.random()-.5)/5),feature.geometry.coordinates[1]+((Math.random()-.5)/5)]",
+		"name": "feature.properties.description",
+		"lpMappings": [
+			{
+				"links": {
+					"type": "'seeAlso'",
+					"id": "newbody.properties.url"
+				}
+			},
+			{
+				"depictions": {
+					"@id": "newbody.properties.thumbnail",
+					"title": "newbody.properties.description"
+				}
+			}
+		] 
+	},
+	{
+		"label": "*Topographical Dictionary of England, 1848",
+		"type": "TD", 
+		"title": ""
+	}
 ]
