@@ -13,10 +13,10 @@
 // JSONata expression paste module
 // Enable URL input 
 // Conversion for Recogito LD download
-// Fixed JSONata for geoJSON conversion from Peripleo-LD with multiple Places per trace body: https://try.jsonata.org/79tc-dKqM
+// Fixed JSONata for geoJSON conversion from xLP with multiple Places per trace body: https://try.jsonata.org/79tc-dKqM
 // Included Wikidata identifiers for tags: https://try.jsonata.org/H1xppiTyx
-// CSV to Peripleo-LD JSONata examples at https://try.jsonata.org/AiLGV4yn2; https://try.jsonata.org/5Qs2VD7K6
-// CSV to Peripleo-LD JSONata CRS-conversion example at https://try.jsonata.org/XU6jC_uwd
+// CSV to xLP JSONata examples at https://try.jsonata.org/AiLGV4yn2; https://try.jsonata.org/5Qs2VD7K6
+// CSV to xLP JSONata CRS-conversion example at https://try.jsonata.org/XU6jC_uwd
 // Included gazetteer in geoJSON links
 // Standardised fragment selectors  
 // Reformatted linked box selector as box+line+marker 
@@ -34,9 +34,12 @@
 // GeoNames reverse geocoding for nearby toponyms, e.g. http://api.geonames.org/findNearbyJSON?lat=51.0177369115508&lng=-1.92513942718506&radius=10&username=docuracy&maxRows=500
 // Added facility for fetching CITATION.cff and incorporating as CSL-JSON in a dataset
 // Convert Recogito LD to LP: https://try.jsonata.org/CjSUFILrv
+// Georeferencing/linking of any input or output identifiable as xLP
+// Catch and requeue rejected API requests if due to overload
+// Increase API limit: need to check usage limits
+// Google Rich Results
 //
 // TO DO:
-// SEE ALSO: https://docs.google.com/document/d/1H0KmYf405QS2ECozHpmAFsLz2MbXd_3qLKXBmLFCoJc/edit?usp=sharing
 // Require default relation definition on adding dataset to Geodata Library
 // Show IIIF fragments in Data Item Explorer overlay
 // Manage marker collisions
@@ -46,22 +49,17 @@
 // Overpass query for Open Historical Map, see https://wiki.openstreetmap.org/wiki/Open_Historical_Map#Using_the_data
 // Find places (and photos) by name using Google Places API, e.g. https://maps.googleapis.com/maps/api/place/findplacefromtext/json?fields=formatted_address,photo%2Cgeometry&locationbias=circle%3A678000%40-5.734863,55.813629&input=British%20Library&inputtype=textquery&key=AIzaSyAk3AdLLz8XoOwLD1NtwFGypLyh77vtw-k
 // Request API endpoint and specification for History of English Places (VCH) - and/or get permission to convert dataset to Peripleo-LD (includes links to BHO URLs)?
-// OpenPlaques.org has an API (e.g. http://openplaques.org/plaques.csv?box=[55.0473,-1.757],[54.9161,-1.474]), and also a dump which could be converted to Peripleo-LD and used for distance matching. Some linking might be possible through NER on the inscription field.
-// Fix superfluous quote marks in csv->Peripleo-LD "when" property. Seems to be a bug in JSONata.
+// OpenPlaques.org has an API (e.g. http://openplaques.org/plaques.csv?box=[55.0473,-1.757],[54.9161,-1.474]), but this has CORS issues. There is also a dump which can be converted to xLP and used for distance matching. Some linking might be possible through NER on the inscription field.
+// Fix superfluous quote marks in csv->xLP "when" property. Seems to be a bug in JSONata.
 // Populate body Place titles from gazetteer urls; also 'when'?
 // Pad descriptions to meet Google minimum length
 // Hide everything below input area until it is populated
 // Switch display to side-by-side input and output?
 // Indicate display truncation of very large datasets: displaying only the first 5,000 lines
 // Map fields to controlled vocabulary (Schema.org AND Wikidata?), using populated drop-down lists (with text filtering?)
-// Georeferencing/linking of any input or output identifiable as Peripleo-JSON
 // Warn of unsaved edits (i.e. prompt download) after set interval and on leaving page
 // Check Wikidata SPARQL query, which seems to return some duplicates
-// Catch and requeue rejected API requests if due to overload
-// Increase API limit (currently sliced down to 25 traces): need to check usage limits
 // Offer download of Pelagios Registry description for dataset
-// Google Rich Tests [SEEMS TO BREAK WITH >72 TRACES] (within <script type="application/ld+json"></script>): https://search.google.com/test/rich-results/result?id=E7YNkXX8uM3MCPofvDc2eQ
-// Check https://search.google.com/search-console/inspect?resource_id=https%3A%2F%2Fdescartes.emew.io%2FLaNC%2F&id=_OBiiM9Efsxpyod913oLcg&alt_id=XIs1hg9P665fjH4fvp6fGA
 // ===========================================================
 
 // User variables
