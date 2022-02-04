@@ -445,14 +445,26 @@ function distance(from,to,places=0) {
 }
 
 function firstPoint(geometry){
+	Number.prototype.between = function(a, b) {
+		var min = Math.min(a, b),
+		max = Math.max(a, b);
+		return this >= min && this <= max;
+	}
+	function checkValidity(coordinates){
+		if (!Array.isArray(coordinates) || coordinates.length!==2) return null;
+		if(coordinates[0].between(-180,180) && coordinates[1].between(-90,90)){
+			return coordinates;
+		}
+		else return null;
+	}
 	if(geometry.type == 'Point'){
-		return geometry.coordinates;
+		return checkValidity(geometry.coordinates);
 	}
 	else if(geometry.type == 'LineString' || geometry.type == 'MultiPoint'){		
-		return geometry.coordinates[0];
+		return checkValidity(geometry.coordinates[0]);
 	}
 	else if(geometry.type == 'Polygon' || geometry.type == 'MultiPolygon'){		
-		return polylabel(geometry.coordinates, 1.0);
+		return checkValidity(polylabel(geometry.coordinates, 1.0));
 	}
 	else if(geometry.type == 'GeometryCollection'){
 		var subgeometries = [];
@@ -460,9 +472,51 @@ function firstPoint(geometry){
 			subgeometry = firstPoint(geometry);
 			if(subgeometry !== null) subgeometries.push( subgeometry );
 		});
-		return subgeometries[0];
+		return checkValidity(subgeometries[0]);
 	}
 	else return null;
+}
+
+function markTrace(){
+	markers.forEach(function(marker,i){
+		if(activeDatasetEl.data('data')[activeDataType][filteredIndices[selectedFilter]-1]['@id'] == $(marker.getElement()).data('id')){
+			marker.remove();
+			markers.splice(i,1);
+		}
+	});
+	if(traceGeoJSON.hasOwnProperty('geometry') && firstPoint(traceGeoJSON.geometry)!==null){
+		const el = document.createElement('div');
+		$(el)
+		.attr('title','Drag this marker to a new location')
+		.data({'id':traceGeoJSON['@id']})
+		.addClass('marker dataFeature movable');
+		var marker = new mapboxgl.Marker(el)
+		.setLngLat(traceGeoJSON.geometry.coordinates)
+		.addTo(map);
+		markers.push(marker);
+		map.getSource('point').setData(traceGeoJSON);
+		map.setLayoutProperty('point', 'visibility', 'visible');
+	}
+	$('#trace').html($('#trace').data('formatter').render());
+}
+
+function dropPin(){
+	$('#history').data('states').push(JSON.stringify(activeDatasetEl.data("data")[activeDataType][filteredIndices[selectedFilter]-1]));
+	const mapCentre = map.getCenter();
+	traceGeoJSON = activeDatasetEl.data('data')[activeDataType][filteredIndices[selectedFilter]-1];
+	traceGeoJSON.geometry = {"type":"Point","coordinates":[mapCentre.lng,mapCentre.lat],"certainty":"certain"};
+	markTrace();	
+	alert('Drag the new marker to the desired location.');
+}
+
+function undoEdit(){
+	if($('#history').data('states').length>0){
+		activeDatasetEl.data('data')[activeDataType][filteredIndices[selectedFilter]-1] = JSON.parse($('#history').data('states').pop());
+		traceGeoJSON = activeDatasetEl.data('data')[activeDataType][filteredIndices[selectedFilter]-1];
+		$('#trace').data('formatter',new JSONFormatter(traceGeoJSON,3,{theme:'light'}));
+		markTrace();
+	}
+	else alert('Nothing to undo');
 }
 
 function addLibraryItem(name, label){
@@ -683,6 +737,7 @@ function showMap(onOff,bounds=false){
 	}
 	else{
 		$.each(markers, function(i,marker){ marker.remove(); });
+		markers=[];
 		$('#data-explorer').remove();
 	}
 	if(bounds) {
@@ -713,6 +768,7 @@ function drawMap(el,render=true){
 	}
 	const bounds = new mapboxgl.LngLatBounds(geoJSON.features[0].geometry.coordinates,geoJSON.features[0].geometry.coordinates);
 	for (const feature of geoJSON.features) {
+		if(!feature.hasOwnProperty('geometry') || firstPoint(feature.geometry)==null) continue;
 		bounds.extend(feature.geometry.coordinates);
 		const el = document.createElement('div');
 		el.className = 'marker';
@@ -834,21 +890,31 @@ function removeLinkMarkers(){
 }
 
 function updateTrace(dataset=activeDatasetEl.data('data')[activeDataType]){
+	$('#history').data('states',[]);
 	removeLinkMarkers();
 	var index = $('#index').val()-1;
 	traceGeoJSON = dataset[index];
 	map.getSource('point').setData(traceGeoJSON);
-	bounds = new mapboxgl.LngLatBounds(traceGeoJSON.geometry.coordinates,traceGeoJSON.geometry.coordinates);
+	var addBounds=false;
+	if(!traceGeoJSON.hasOwnProperty('geometry') || firstPoint(traceGeoJSON.geometry)==null){
+		addBounds=true;
+		map.setLayoutProperty('point', 'visibility', 'none');
+	}
+	else{
+		bounds = new mapboxgl.LngLatBounds(traceGeoJSON.geometry.coordinates,traceGeoJSON.geometry.coordinates);
+		map.setLayoutProperty('point', 'visibility', 'visible');
+	}
 	$('.marker.movable').removeClass('movable').attr('title', 'Click to examine this data point');
 	$.each(markers, function(i,marker){
 		if(traceGeoJSON['@id'] == $(marker.getElement()).data('id')){
 			$(marker.getElement()).addClass('movable').attr('title', 'Drag this marker to a new location');
 		}
+		if(addBounds) bounds.extend(marker.getLngLat());
 	});	
 	$('#trace').data('formatter',new JSONFormatter(dataset[index],3,{theme:'light'}));
 	$('#trace').html($('#trace').data('formatter').render()).addClass('json-formatter');
 	showMap(true, bounds);
-	updateLinkMarkers();
+	if(!addBounds) updateLinkMarkers();
 }
 
 function updateFilter() {
@@ -905,7 +971,7 @@ function explore(el) {
 		}))
 		.appendTo('#map');
 	$('#navigation')
-		.append(new Array(9).join('<button></button>'))
+		.append(new Array(10).join('<button></button>'))
 		.find('button')
 		.eq(0).button({icon:"ui-icon-seek-first",showlabel:false}).prop('title','First (filtered) item').click(function(){selectedFilter=0;$('#index').change()}).end()
 		.eq(1).button({icon:"ui-icon-seek-prev",showlabel:false}).prop('title','Previous (filtered) item').click(function(){selectedFilter=Math.max(0,selectedFilter-1);$('#index').change()}).end()
@@ -925,14 +991,16 @@ function explore(el) {
 				.button()
 			)
 			.end()
-		.eq(4).button({icon:"ui-icon-pin-s",showlabel:false}).prop('title','Drop pin on map').click(function(){alert('Not yet implemented')}).end()
-		.eq(5).button({icon:"ui-icon-image",showlabel:false}).prop('title','Fetch IIIF image fragments').click(function(){alert('Not yet implemented')}).end()
-		.eq(6).button({icon:"ui-icon-circle-arrow-s",showlabel:false}).prop('title','Download/Save edited dataset').click(function(){download(activeDatasetEl.data('data'));}).end()
-		.eq(7).button({icon:"ui-icon-trash",showlabel:false}).prop({'title':'Delete this item','id':'delete'}).click(function(){
+		.eq(4).button({icon:"ui-icon-arrowreturnthick-1-w",showlabel:false}).prop({'title':'Undo last edit','id':'history'}).click(function(){undoEdit();}).data({'states':[]}).end()
+		.eq(5).button({icon:"ui-icon-pin-s",showlabel:false}).prop('title','Drop pin on map').click(function(){dropPin();}).end()
+		.eq(6).button({icon:"ui-icon-image",showlabel:false}).prop('title','Fetch IIIF image fragments').click(function(){alert('Not yet implemented')}).end()
+		.eq(7).button({icon:"ui-icon-circle-arrow-s",showlabel:false}).prop('title','Download/Save edited dataset').click(function(){download(activeDatasetEl.data('data'));}).end()
+		.eq(8).button({icon:"ui-icon-trash",showlabel:false}).prop({'title':'Delete this item','id':'delete'}).click(function(){
 			if (confirm('Delete this item?')){
-				$.each(markers, function(i,marker){
-					if(activeDatasetEl.data('data')[activeDataType][$('#index').val()-1].id == $(marker.getElement()).data('id')){
+				markers.forEach(function(marker,i){
+					if(activeDatasetEl.data('data')[activeDataType][filteredIndices[selectedFilter]-1]['@id'] == $(marker.getElement()).data('id')){
 						marker.remove();
+						markers.splice(i,1);
 					}
 				});
 				filteredIndices.splice(selectedFilter,1);
@@ -946,7 +1014,7 @@ function explore(el) {
 					.next('span').html('/'+activeDatasetEl.data('data')[activeDataType].length);
 			}
 		}).end()
-		.slice(-4).insertAfter($('#navigation')).wrapAll('<div id="edit"/>');
+		.slice(-5).insertAfter($('#navigation')).wrapAll('<div id="edit"/>');
 		;
 	updateFilter();
 	$('#index').change(); // Trigger updateTrace
@@ -1383,6 +1451,20 @@ $( document ).ready(function() {
 		formatter.html(formatter.data('formatter').render()).prepend(tempButtons);
 	}
 	
+	function checkValidGeometry(){ // Remove marker if invalid
+		if($('#trace').length>0 && (!activeDatasetEl.data('data')[activeDataType][filteredIndices[selectedFilter]-1].hasOwnProperty('geometry') || firstPoint(activeDatasetEl.data('data')[activeDataType][filteredIndices[selectedFilter]-1].geometry)==null)) { 
+			markers.forEach(function(marker,i){
+				if(activeDatasetEl.data('data')[activeDataType][filteredIndices[selectedFilter]-1]['@id'] == $(marker.getElement()).data('id')){
+					marker.remove();
+					markers.splice(i,1);
+					map.setLayoutProperty('point', 'visibility', 'none');
+					delete activeDatasetEl.data('data')[activeDataType][filteredIndices[selectedFilter]-1].geometry;
+					alert('The geometry for this feature is now invalid. Please use the [Drop Pin] button to select a new point on the map.');
+				}
+			});
+		}
+	}
+	
 	$('body') // Object value editor
 	.on('mouseenter','.json-formatter-number,.json-formatter-string',function(e){
 		if(!$(e.target).prev().hasClass('json-formatter-bracket') && $('.editing').length<1) $(e.target).prepend('<span title="Edit this element." class="editlink ui-icon-pencil"></span>'); // Prevent edit button on array indices
@@ -1404,12 +1486,14 @@ $( document ).ready(function() {
 		reformat(e);
 	})
 	.on('click','.editlink.ui-icon-circle-check',function(e){
+		$('#history').data('states').push(JSON.stringify(activeDatasetEl.data("data")[activeDataType][filteredIndices[selectedFilter]-1]));
 		var value = $(e.target).siblings('input').val();
 		value = isNumber(value) ? value : '"'+value+'"';
 		var keys = $(e.target).parentsUntil('.json-formatter','.json-formatter-row').map(function(){
 			return $(this).find('.json-formatter-key:first').text().slice(0,-1);
 		}).get().slice(0,-1).reverse();
 		eval(($('#trace').length>0?'activeDatasetEl.data("data")[activeDataType][filteredIndices[selectedFilter]-1]':'$(e.target).closest(".json-formatter").data("data")')+'["'+keys.join('"]["')+'"] = '+value);
+		checkValidGeometry();
 		reformat(e);
 	});
 	
@@ -1421,6 +1505,7 @@ $( document ).ready(function() {
 		$('.editlink.ui-icon-trash').remove();
 	})
 	.on('click','.editlink.ui-icon-trash',function(e){
+		$('#history').data('states').push(JSON.stringify(activeDatasetEl.data("data")[activeDataType][filteredIndices[selectedFilter]-1]));
 		function joinkeys(keys){
 			return keys.length>0?'["'+keys.join('"]["')+'"]':'';
 		}
@@ -1441,6 +1526,7 @@ $( document ).ready(function() {
 		else{
 			eval('delete '+($('#trace').length>0?'activeDatasetEl.data("data")[activeDataType][filteredIndices[selectedFilter]-1]':'$(e.target).closest(".json-formatter").data("data")')+joinkeys(keys));
 		}
+		checkValidGeometry();
 		reformat(e);
 	});
 	
@@ -1500,6 +1586,7 @@ $( document ).ready(function() {
 			canvas.style.cursor = '';
 		});
 		map.on('mousedown', 'point', (e) => {
+			$('#history').data('states').push(JSON.stringify(activeDatasetEl.data("data")[activeDataType][filteredIndices[selectedFilter]-1]));
 			e.preventDefault();
 			canvas.style.cursor = 'grab';
 			map.on('mousemove', onMove);
