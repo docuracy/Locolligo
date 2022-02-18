@@ -9,6 +9,7 @@
 
 	"type": "object",
 	"definitions": {
+		"description": "***TO DO***: Add when, citations, and certainty to definitions and to geometries. Resolve xLP version of citations.",
 		"ISO8601": {
 			"description": "Any valid ISO 8601 expression.",
 			"type": "string"
@@ -92,16 +93,12 @@
 		}
 	},
 	"properties": {
-		"@id": {
-			"description": "URI for the dataset",
-			"type": "string",
-			"format": "uri"
-		},
 		"type": {
 			"enum": ["FeatureCollection"]
 		},
 		"@context": {
-			"description": "URL of context document, which could be 'https://w3id.org/locolligo/contexts/linkedplaces.jsonld'",
+			"description": "URL of context document",
+			"example":"https://w3id.org/locolligo/contexts/linkedplaces.jsonld",
 			"type": "string",
 			"format": "uri",
 			"pattern": "^https?://"
@@ -117,11 +114,13 @@
 						"properties": {
 							"title": {
 								"description": "A label for the record, usually a 'preferred name' from among the toponyms associated with a place.",
+								"example":"Abingdon (UK)",
 								"type": "string",
 								"minLength": 1
 							},
 							"ccodes": {
-								"description": "A set (list) of one or more two-letter codes (ISO 3166-1 alpha-2) indicating modern countries whose bounds contains or overlap the place.",
+								"description": "An array of one or more two-letter codes (ISO 3166-1 alpha-2) indicating modern countries whose bounds contains or overlap the place.",
+								"example":["GB"],
 								"type": "array",
 								"items": {
 									"type": "string",
