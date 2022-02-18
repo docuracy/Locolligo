@@ -8,6 +8,89 @@
 	}],
 
 	"type": "object",
+	"definitions": {
+		"ISO8601": {
+			"description": "Any valid ISO 8601 expression.",
+			"type": "string"
+		},
+		"whenDelimiter": {
+			"type": "object",
+			"properties": {
+				"in": {
+					"$ref": "#/definitions/ISO8601"
+				},
+				"earliest": {
+					"$ref": "#/definitions/ISO8601"
+				},
+				"latest": {
+					"$ref": "#/definitions/ISO8601"
+				}
+			},
+			"oneOf": [{
+					"required": ["in"]
+				},
+				{
+					"required": ["earliest"]
+				},
+				{
+					"required": ["latest"]
+				}
+			]
+		},
+		"when": {
+			"type": "object",
+			"properties": {
+				"timespans": {
+					"description": "If end is omitted, the timespan is interpreted as the interval described by the start. See https://github.com/LinkedPasts/linked-places-format#when-required",
+					"type": "array",
+					"items": {
+						"type": "object",
+						"properties": {
+							"start": {
+								"$ref": "#/definitions/whenDelimiter"
+							},
+							"end": {
+								"$ref": "#/definitions/whenDelimiter"
+							}
+						}
+					},
+					"minItems": 1,
+					"uniqueItems": true
+				},
+				"periods": {
+					"description": "Might be drawn from http://perio.do/ or http://chronontology.dainst.org/.",
+					"type": "array",
+					"items": {
+						"type": "object",
+						"properties": {
+							"name": {
+								"description": "Name of a period.",
+								"type": "string"
+							},
+							"uri": {
+								"description": "URI defining the period.",
+								"type": "string",
+								"format": "uri"
+							}
+						},
+						"required": ["name", "uri"]
+					},
+					"minItems": 1,
+					"uniqueItems": true
+				},
+				"label": {
+					"description": "Textual summary of the entire 'when' object.",
+					"type": "string"
+				},
+				"duration": {
+					"description": "Valid values are strings with the letter 'P' followed by an integer, followed by one of Y, M, W, or D to indicate years, months, weeks, or days.",
+					"type": "string",
+					"pattern": "^P\\d*[YMWD]"
+				}
+			},
+			"required": ["timespans"]
+		}
+	},
 	"properties": {
 		"@id": {
 			"description": "URI for the dataset",
@@ -51,7 +134,7 @@
 						"required": ["title"]
 					},
 					"when": {
-						"$ref": "#/properties/when"
+						"$ref": "#/definitions/when"
 					},
 					"names": {
 						"description": "***TO DO***"
@@ -76,87 +159,6 @@
 			},
 			"minItems": 1,
 			"uniqueItems": true
-		},
-		"when": {
-			"type": "object",
-			"properties": {
-				"timespans": {
-					"description": "If end is omitted, the timespan is interpreted as the interval described by the start. See https://github.com/LinkedPasts/linked-places-format#when-required",
-					"type": "array",
-					"items": {
-						"type": "object",
-						"properties": {
-							"start": {
-								"$ref": "#/properties/whenDelimiter"
-							},
-							"end": {
-								"$ref": "#/properties/whenDelimiter"
-							}
-						}
-					},
-					"minItems": 1,
-					"uniqueItems": true
-				},
-				"periods": {
-					"description": "Might be drawn from http://perio.do/ or http://chronontology.dainst.org/.",
-					"type": "array",
-					"items": {
-						"type": "object",
-						"properties": {
-							"name": {
-								"description": "Name of a period.",
-								"type": "string"
-							},
-							"uri": {
-								"description": "URI defining the period.",
-								"type": "string",
-								"format": "uri"
-							}
-						},
-						"required": ["name", "uri"]
-					},
-					"minItems": 1,
-					"uniqueItems": true
-				},
-				"label": {
-					"description": "Textual summary of the entire 'when' object.",
-					"type": "string"
-				},
-				"duration": {
-					"description": "Valid values are strings with the letter 'P' followed by an integer, followed by one of Y, M, W, or D to indicate years, months, weeks, or days.",
-					"type": "string",
-					"pattern": "^P\\d*[YMWD]"
-				}
-			},
-			"required": ["timespans"]
-		},
-		"whenDelimiter": {
-			"type": "object",
-			"properties": {
-				"in": {
-					"$ref": "#/properties/ISO8601"
-				},
-				"earliest": {
-					"$ref": "#/properties/ISO8601"
-				},
-				"latest": {
-					"$ref": "#/properties/ISO8601"
-				}
-			},
-			"oneOf": [{
-					"required": ["in"]
-				},
-				{
-					"required": ["earliest"]
-				},
-				{
-					"required": ["latest"]
-				}
-			]
-		},
-		"ISO8601": {
-			"description": "Any valid ISO 8601 expression.",
-			"type": "string"
 		}
 	},
 	"allOf": [{
