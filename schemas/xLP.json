@@ -4,9 +4,15 @@
 
 	"type": "object",
 	"properties": {
-		"features": [{
-			"$ref": "https://w3id.org/locolligo/schemas/geojson.json"
-		}]
+		"features": {
+			"description": "Tags for the product",
+			"type": "array",
+			"items": {
+				"$ref": "https://w3id.org/locolligo/schemas/geojson.json"
+			},
+			"minItems": 1,
+			"uniqueItems": true
+		}
 	},
 	"required": ["features"]
 }
