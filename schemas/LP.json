@@ -2,28 +2,169 @@
 	"$schema": "http://json-schema.org/draft-07/schema#",
 	"$id": "https://w3id.org/locolligo/schemas/LP.json",
 
+	"description": "This Linked Places JSON schema extends the standard geojson schema as described at https://github.com/LinkedPasts/linked-places-format.",
+	"anyOf": [{
+		"$ref": "https://w3id.org/locolligo/schemas/geojson.json"
+	}],
+
 	"type": "object",
 	"properties": {
 		"@id": {
-			"description": "URL for the dataset",
-			"type": "string"
+			"description": "URI for the dataset",
+			"type": "string",
+			"format": "uri"
 		},
 		"type": {
 			"enum": ["FeatureCollection"]
 		},
 		"@context": {
 			"description": "URL of context document, which could be 'https://w3id.org/locolligo/contexts/linkedplaces.jsonld'",
-			"type": "string"
+			"type": "string",
+			"format": "uri",
+			"pattern": "^https?://"
 		},
 		"features": {
 			"description": "This array contains the primary subjects of the dataset. They will usually be geolocated, but this is optional.",
 			"type": "array",
 			"items": {
-				"$ref": "https://w3id.org/locolligo/schemas/geojson.json"
+				"type": "object",
+				"properties": {
+					"properties": {
+						"type": "object",
+						"properties": {
+							"title": {
+								"description": "A label for the record, usually a 'preferred name' from among the toponyms associated with a place.",
+								"type": "string",
+								"minLength": 1
+							},
+							"ccodes": {
+								"description": "A set (list) of one or more two-letter codes (ISO 3166-1 alpha-2) indicating modern countries whose bounds contains or overlap the place.",
+								"type": "array",
+								"items": {
+									"type": "string",
+									"pattern": "[A-Z]{2}"
+								},
+								"minItems": 1,
+								"uniqueItems": true
+							}
+						},
+						"required": ["title"]
+					},
+					"when": {
+						"$ref": "#/properties/when"
+					},
+					"names": {
+						"description": "***TO DO***"
+					},
+					"types": {
+						"description": "***TO DO***"
+					},
+					"links": {
+						"description": "***TO DO***"
+					},
+					"relations": {
+						"description": "***TO DO***"
+					},
+					"descriptions": {
+						"description": "***TO DO***"
+					},
+					"depictions": {
+						"description": "***TO DO***"
+					}
+				},
+				"required": ["@id", "properties"]
 			},
 			"minItems": 1,
 			"uniqueItems": true
+		},
+		"when": {
+			"type": "object",
+			"properties": {
+				"timespans": {
+					"description": "If end is omitted, the timespan is interpreted as the interval described by the start. See https://github.com/LinkedPasts/linked-places-format#when-required",
+					"type": "array",
+					"items": {
+						"type": "object",
+						"properties": {
+							"start": {
+								"$ref": "#/properties/whenDelimiter"
+							},
+							"end": {
+								"$ref": "#/properties/whenDelimiter"
+							}
+						}
+					},
+					"minItems": 1,
+					"uniqueItems": true
+				},
+				"periods": {
+					"description": "Might be drawn from http://perio.do/ or http://chronontology.dainst.org/.",
+					"type": "array",
+					"items": {
+						"type": "object",
+						"properties": {
+							"name": {
+								"description": "Name of a period.",
+								"type": "string"
+							},
+							"uri": {
+								"description": "URI defining the period.",
+								"type": "string",
+								"format": "uri"
+							}
+						},
+						"required": ["name", "uri"]
+					},
+					"minItems": 1,
+					"uniqueItems": true
+				},
+				"label": {
+					"description": "Textual summary of the entire 'when' object.",
+					"type": "string"
+				},
+				"duration": {
+					"description": "Valid values are strings with the letter 'P' followed by an integer, followed by one of Y, M, W, or D to indicate years, months, weeks, or days.",
+					"type": "string",
+					"pattern": "^P\\d*[YMWD]"
+				}
+			},
+			"required": ["timespans"]
+		},
+		"whenDelimiter": {
+			"type": "object",
+			"properties": {
+				"in": {
+					"$ref": "#/properties/ISO8601"
+				},
+				"earliest": {
+					"$ref": "#/properties/ISO8601"
+				},
+				"latest": {
+					"$ref": "#/properties/ISO8601"
+				}
+			},
+			"oneOf": [{
+					"required": ["in"]
+				},
+				{
+					"required": ["earliest"]
+				},
+				{
+					"required": ["latest"]
+				}
+			]
+		},
+		"ISO8601": {
+			"description": "Any valid ISO 8601 expression.",
+			"type": "string"
 		}
 	},
-	"required": ["type","@context","features"]
+	"allOf": [{
+			"required": ["type", "@context", "features"]
+		},
+		{
+			"description": "***TO DO***: Standard LP specification requires a 'when' property to to temporally scope a) an entire Feature; b) a name; c) a geometry (representative point or extent); d) a type; or e) a relation.",
+			"anyOf": [{}]
+		}
+	]
 }
