@@ -40,12 +40,22 @@
 					"description": "This array contains the names and affiliations of Persons and Organisations responsible for the creation of the dataset.",
 					"type": "array",
 					"items": {
-						"@type": {
-							"enum": ["Person","Organisation"]
+						"type": "object",
+						"properties": {
+							"@type": {
+								"enum": ["Person","Organisation"]
+							},
+							"name": {
+								"type": "string"
+							},
+							"url": {
+								"description": "URL for the Person or Organisation. Could be a Person's ORCID URL.",
+								"type": "string",
+								"format": "uri",
+								"pattern": "^https?://"
+							}
 						},
-						"name": {
-							"type": "string"
-						}
+						"required": ["@type","name"]
 					},
 					"minItems": 1,
 					"uniqueItems": true
