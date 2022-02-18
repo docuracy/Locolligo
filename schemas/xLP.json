@@ -1,0 +1,86 @@
+{
+	"$schema": "http://json-schema.org/draft-07/schema#",
+	"$id": "https://w3id.org/locolligo/schemas/xLP.json",
+
+	"type": "object",
+	"properties": {
+		"@id": {
+			"description": "URL for the dataset",
+			"type": "string",
+			"format": "uri",
+			"pattern": "^https?://"
+		},
+		"type": {
+			"enum": ["FeatureCollection"]
+		},
+		"@context": {
+			"description": "URL of context document, which could be 'https://w3id.org/locolligo/contexts/xLP.jsonld'.",
+			"type": "string"
+		},
+		"indexing": {
+			"description": "Schema.org object describing the dataset. Used for indexing by Google and other search engines.",
+			"type": "object",
+			"properties": {
+				"@context": {
+					"enum": ["https://schema.org/"]
+				},
+				"@type": {
+					"enum": ["Dataset"]
+				},
+				"name": {
+					"description": "The name of the dataset.",
+					"type": "string"
+				},
+				"description": {
+					"description": "A description of the dataset.",
+					"type": "string",
+					"minLength": 50
+				},
+				"creator": {
+					"description": "This array contains the names and affiliations of Persons and Organisations responsible for the creation of the dataset.",
+					"type": "array",
+					"items": {
+						"@type": {
+							"enum": ["Person","Organisation"]
+						},
+						"name": {
+							"type": "string"
+						}
+					},
+					"minItems": 1,
+					"uniqueItems": true
+				},
+				"license": {
+					"description": "A URL or string giving the licence terms for the dataset.",
+					"type": "string"
+				},
+				"identifier": {
+					"description": "A URL for the dataset. This will usually be identical to the properties.@id.",
+					"type": "string",
+					"format": "uri",
+					"pattern": "^https?://"
+				},
+				"temporalCoverage": {
+					"description": "The time period covered by the dataset. See https://schema.org/temporalCoverage.",
+					"type": ["string","object"]
+				},
+				"spatialCoverage": {
+					"description": "The geographical area covered by the dataset.",
+					"type": "object",
+					"$ref": "https://json.schemastore.org/schema-org-place.json"
+				}
+			},
+			"required": ["@context", "@type", "name", "description"]
+		},
+		"features": {
+			"description": "This array contains the primary subjects of the dataset. They will usually be geolocated, but this is optional.",
+			"type": "array",
+			"items": {
+				"$ref": "https://w3id.org/locolligo/schemas/LP.json#/properties/features/items"
+			},
+			"minItems": 1,
+			"uniqueItems": true
+		}
+	},
+	"required": ["type", "@context", "features"]
+}
