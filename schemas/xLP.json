@@ -1,0 +1,9 @@
+{
+  "$id": "https://w3id.org/locolligo/schemas/xLP.json",
+
+  "type": "object",
+  "properties": {
+    
+  },
+  "required": []
+}
