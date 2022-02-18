@@ -1,0 +1,18 @@
+{
+	"$schema": "http://json-schema.org/draft-07/schema#",
+	"$id": "https://w3id.org/locolligo/schemas/LP.json",
+
+	"type": "object",
+	"properties": {
+		"features": {
+			"description": "This array contains the primary subjects of the dataset. They will usually be geolocated, but this is optional.",
+			"type": "array",
+			"items": {
+				"$ref": "https://w3id.org/locolligo/schemas/geojson.json"
+			},
+			"minItems": 1,
+			"uniqueItems": true
+		}
+	},
+	"required": ["features"]
+}
