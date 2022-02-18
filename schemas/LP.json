@@ -1,5 +1,5 @@
 {
-	"$schema": "http://json-schema.org/draft-07/schema#",
+	"$schema": "http://json-schema.org/draft/2019-09/schema#",
 	"$id": "https://w3id.org/locolligo/schemas/LP.json",
 
 	"description": "This Linked Places JSON schema extends the standard geojson schema as described at https://github.com/LinkedPasts/linked-places-format.",
