@@ -1,22 +1,14 @@
 {
-	"$schema": "http://json-schema.org/draft-07/schema#",
+	"$schema": "http://json-schema.org/draft/2019-09/schema#",
 	"$id": "https://w3id.org/locolligo/schemas/xLP.json",
+
+	"description": "This JSON schema extends the standard Linked Places schema to include indexing and citation properties.",
+	"anyOf": [{
+		"$ref": "https://w3id.org/locolligo/schemas/LP.json"
+	}],
 
 	"type": "object",
 	"properties": {
-		"@id": {
-			"description": "URL for the dataset",
-			"type": "string",
-			"format": "uri",
-			"pattern": "^https?://"
-		},
-		"type": {
-			"enum": ["FeatureCollection"]
-		},
-		"@context": {
-			"description": "URL of context document, which could be 'https://w3id.org/locolligo/contexts/xLP.jsonld'.",
-			"type": "string"
-		},
 		"indexing": {
 			"description": "Schema.org object describing the dataset. Used for indexing by Google and other search engines.",
 			"type": "object",
@@ -43,7 +35,7 @@
 						"type": "object",
 						"properties": {
 							"@type": {
-								"enum": ["Person","Organisation"]
+								"enum": ["Person", "Organisation"]
 							},
 							"name": {
 								"type": "string"
@@ -55,7 +47,7 @@
 								"pattern": "^https?://"
 							}
 						},
-						"required": ["@type","name"]
+						"required": ["@type", "name"]
 					},
 					"minItems": 1,
 					"uniqueItems": true
@@ -72,7 +64,7 @@
 				},
 				"temporalCoverage": {
 					"description": "The time period covered by the dataset. See https://schema.org/temporalCoverage.",
-					"type": ["string","object"]
+					"type": ["string", "object"]
 				},
 				"spatialCoverage": {
 					"description": "The geographical area covered by the dataset.",
@@ -90,16 +82,6 @@
 			},
 			"minItems": 1,
 			"uniqueItems": true
-		},
-		"features": {
-			"description": "This array contains the primary subjects of the dataset. They will usually be geolocated, but this is optional.",
-			"type": "array",
-			"items": {
-				"$ref": "https://w3id.org/locolligo/schemas/LP.json#/properties/features/items"
-			},
-			"minItems": 1,
-			"uniqueItems": true
 		}
-	},
-	"required": ["type", "@context", "features"]
+	}
 }
