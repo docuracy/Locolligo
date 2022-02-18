@@ -85,7 +85,7 @@
 				"duration": {
 					"description": "Valid values are strings with the letter 'P' followed by an integer, followed by one of Y, M, W, or D to indicate years, months, weeks, or days.",
 					"type": "string",
-					"pattern": "^P\\d*[YMWD]"
+					"pattern": "^P\\d*[YMWD]$"
 				}
 			},
 			"required": ["timespans"]
@@ -125,7 +125,7 @@
 								"type": "array",
 								"items": {
 									"type": "string",
-									"pattern": "[A-Z]{2}"
+									"pattern": "^[A-Z]{2}$"
 								},
 								"minItems": 1,
 								"uniqueItems": true
