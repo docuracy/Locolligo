@@ -4,6 +4,10 @@
 
 	"type": "object",
 	"properties": {
+		"@id": {
+			"description": "URL for the dataset",
+			"type": "string"
+		},
 		"type": {
 			"enum": ["FeatureCollection"]
 		},
