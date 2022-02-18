@@ -34,6 +34,7 @@
 			"@id": "dct:title"
 		},
 		"license": "dct:license",
+		"citation": "https://raw.githubusercontent.com/citation-style-language/schema/master/schemas/input/csl-citation.json",
 
 		"geojson": "https://purl.org/geojson/vocab#",
 		"geojson-t": "https://github.com/kgeographer/geojson-t/",
