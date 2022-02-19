@@ -9,9 +9,10 @@
 
 	"type": "object",
 	"definitions": {
-		"description": "***TO DO***: Add when, citations, and certainty to definitions and to geometries. Resolve xLP version of citations.",
+		"description": "***TO DO***: Add when, citations, and certainty to definitions and to geometries. Resolve xLP version of citations. Add more examples.",
 		"ISO8601": {
-			"description": "Any valid ISO 8601 expression.",
+			"description": "Any valid ISO 8601 expression. See https://en.wikipedia.org/wiki/ISO_8601#Dates.",
+			"example":"1066",
 			"type": "string"
 		},
 		"whenDelimiter": {
@@ -66,10 +67,12 @@
 						"properties": {
 							"name": {
 								"description": "Name of a period.",
+								"example":"Anglo-Saxon Period, 449-1066",
 								"type": "string"
 							},
 							"uri": {
 								"description": "URI defining the period.",
+								"example":"periodo:p06c6g3whtg",
 								"type": "string",
 								"format": "uri"
 							}
@@ -81,15 +84,74 @@
 				},
 				"label": {
 					"description": "Textual summary of the entire 'when' object.",
+					"example":"for a century during the Anglo-Saxon period",
 					"type": "string"
 				},
 				"duration": {
 					"description": "Valid values are strings with the letter 'P' followed by an integer, followed by one of Y, M, W, or D to indicate years, months, weeks, or days.",
+					"example":"P100Y",
 					"type": "string",
 					"pattern": "^P\\d*[YMWD]$"
 				}
 			},
 			"required": ["timespans"]
+		},
+		"lang": {
+			"description": "Two-letter ISO 639-1 language code of the referenced toponym or other textual element. See https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes.",
+			"example":"en",
+			"type": "string",
+			"pattern": "^[a-z]{2}$"			
+		},
+		"citations": {
+			"description": "This array contains citations for the referenced element. ***TO DISCUSS***: This could be replaced by the CSL-JSON standard as in xLP (see https://citationstyles.org/).",
+			"type": "array",
+			"items": {
+				"type": "object",
+				"properties":{
+					"label": {
+						"description": "Name of the source being cited.",
+						"example":"Ye Olde Gazetteer",
+						"type": "string"
+					},
+					"year":{
+						"description": "Publication year of the source being cited. ***TO DISCUSS***: Validation pattern limits this to years between 1000 and 2999 - should we allow ancient sources?",
+						"example":"1635",
+						"type": "string",
+						"pattern": "^[12][0-9]{3}$"
+					},
+					"@id":{
+						"description": "URI of the source being cited (may be a URL).",
+						"example":"tgn:7011944",
+						"type": "string",
+						"format": "uri"
+					}
+				},
+				"required": ["label"]
+			},
+			"minItems": 1,
+			"uniqueItems": true
+		},
+		"placename":{
+			"description": "A toponym together with optional citations and temporal scoping.",
+			"type": "object",
+			"properties": {
+				"toponym": {
+					"description": "The name of a place.",
+					"example": "Abingdon",
+					"type": "string",
+					"minLength": 1
+				},
+				"lang": {
+					"$ref": "#/definitions/lang"
+				},
+				"citations":{
+					"$ref": "#/definitions/citations"
+				},
+				"when":{
+					"$ref": "#/definitions/when"
+				}
+			},
+			"required": ["toponym"]
 		}
 	},
 	"properties": {
@@ -136,7 +198,13 @@
 						"$ref": "#/definitions/when"
 					},
 					"names": {
-						"description": "***TO DO***"
+						"description": "An array of one or more attested toponyms. ***TO DISCUSS***: LP standard requires at least the first toponym to have a citation, and for at least one citation to have a year. This might be considered too restrictive, especially for xLP use cases, and has not (yet) been implemented in this schema.",
+						"type": "array",
+						"items": {
+							"$ref": "#/definitions/placename"
+						},
+						"minItems": 1,
+						"uniqueItems": true
 					},
 					"types": {
 						"description": "***TO DO***"
@@ -154,7 +222,7 @@
 						"description": "***TO DO***"
 					}
 				},
-				"required": ["@id", "properties"]
+				"required": ["@id", "properties","names","geometry"]
 			},
 			"minItems": 1,
 			"uniqueItems": true
@@ -164,7 +232,7 @@
 			"required": ["type", "@context", "features"]
 		},
 		{
-			"description": "***TO DO***: Standard LP specification requires a 'when' property to to temporally scope a) an entire Feature; b) a name; c) a geometry (representative point or extent); d) a type; or e) a relation.",
+			"description": "***TO DO / DISCUSS***: Standard LP specification *requires* a 'when' property to to temporally scope a) an entire Feature; b) a name; c) a geometry (representative point or extent); d) a type; or e) a relation.",
 			"anyOf": [{}]
 		}
 	]
