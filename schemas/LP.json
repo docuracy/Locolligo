@@ -1,441 +1,605 @@
 {
-	"$schema": "http://json-schema.org/draft/2019-09/schema#",
-	"$id": "https://w3id.org/locolligo/schemas/LP.json",
-
-	"description": "This Linked Places JSON schema extends the standard geojson schema as described at https://github.com/LinkedPasts/linked-places-format.",
-	"anyOf": [{
-		"$ref": "https://w3id.org/locolligo/schemas/geojson.json"
-	}],
-
-	"type": "object",
-	"definitions": {
-		"description": "***TO DO***: Add when, citations, and certainty to definitions and to geometries. Resolve xLP version of citations. Add more examples.",
-		"ISO8601": {
-			"description": "Any valid ISO 8601 expression. See https://en.wikipedia.org/wiki/ISO_8601#Dates.",
-			"example": "1066",
-			"type": "string",
-			"minLength": 4
-		},
-		"whenDelimiter": {
-			"description": "***TO DISCUSS***: LP specification (https://github.com/LinkedPasts/linked-places-format#when-required) requires one of these three properties, but offers inconsistent examples.",
-			"type": "object",
-			"properties": {
-				"in": {
-					"$ref": "#/definitions/ISO8601"
-				},
-				"earliest": {
-					"$ref": "#/definitions/ISO8601"
-				},
-				"latest": {
-					"$ref": "#/definitions/ISO8601"
-				}
-			},
-			"oneOf": [{
-					"required": ["in"]
-				},
-				{
-					"anyOf":[
-						{
-							"required": ["earliest"]
-						},
-						{
-							"required": ["latest"]
-						}
-					]
-				}
-			]
-		},
-		"when": {
-			"type": "object",
-			"properties": {
-				"timespans": {
-					"description": "If end is omitted, the timespan is interpreted as the interval described by the start. See https://github.com/LinkedPasts/linked-places-format#when-required",
-					"example": {"start":{"in":"1832"},"end":{"earliest":"1839","latest":"1841"}},
-					"type": "array",
-					"items": {
-						"type": "object",
-						"properties": {
-							"start": {
-								"$ref": "#/definitions/whenDelimiter"
-							},
-							"end": {
-								"$ref": "#/definitions/whenDelimiter"
-							}
-						}
-					},
-					"minItems": 1,
-					"uniqueItems": true
-				},
-				"periods": {
-					"description": "Might be drawn from http://perio.do/ or http://chronontology.dainst.org/.",
-					"type": "array",
-					"items": {
-						"type": "object",
-						"properties": {
-							"name": {
-								"description": "Name of a period.",
-								"example": "Anglo-Saxon Period, 449-1066",
-								"type": "string",
-								"minLength": 1
-							},
-							"uri": {
-								"description": "URI defining the period.",
-								"example": "periodo:p06c6g3whtg",
-								"type": "string",
-								"format": "uri",
-								"minLength": 1
-							}
-						},
-						"required": ["name", "uri"]
-					},
-					"minItems": 1,
-					"uniqueItems": true
-				},
-				"label": {
-					"description": "Textual summary of the entire 'when' object.",
-					"example": "for a century during the Anglo-Saxon period",
-					"type": "string",
-					"minLength": 1
-				},
-				"duration": {
-					"description": "Valid values are strings with the letter 'P' followed by an integer, followed by one of Y, M, W, or D to indicate years, months, weeks, or days.",
-					"example": "P100Y",
-					"type": "string",
-					"pattern": "^P\\d*[YMWD]$"
-				}
-			},
-			"required": ["timespans"]
-		},
-		"lang": {
-			"description": "Two-letter ISO 639-1 language code of the referenced toponym or other textual element. See https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes.",
-			"example": "en",
-			"type": "string",
-			"pattern": "^[a-z]{2}$"
-		},
-		"citations": {
-			"description": "This array contains citations for the referenced element. ***TO DISCUSS***: This could be replaced by the CSL-JSON standard as in xLP (see https://citationstyles.org/).",
-			"type": "array",
-			"items": {
-				"type": "object",
-				"properties": {
-					"label": {
-						"description": "Name of the source being cited.",
-						"example": "Ye Olde Gazetteer",
-						"type": "string",
-						"minLength": 1
-					},
-					"year": {
-						"description": "Publication year of the source being cited. ***TO DISCUSS***: Validation pattern limits this to years between 1000 and 2999 - should we allow ancient sources?",
-						"example": "1635",
-						"type": "string",
-						"pattern": "^[12][0-9]{3}$"
-					},
-					"@id": {
-						"description": "URI of the source being cited (may be a URL).",
-						"example": "tgn:7011944",
-						"type": "string",
-						"format": "uri",
-						"minLength": 1
-					}
-				},
-				"required": ["@id"]
-			},
-			"minItems": 1,
-			"uniqueItems": true
-		},
-		"placename": {
-			"description": "A toponym together with optional citations and temporal scoping.",
-			"type": "object",
-			"properties": {
-				"toponym": {
-					"description": "The name of a place.",
-					"example": "Abingdon",
-					"type": "string",
-					"minLength": 1
-				},
-				"lang": {
-					"$ref": "#/definitions/lang"
-				},
-				"citations": {
-					"$ref": "#/definitions/citations"
-				},
-				"when": {
-					"$ref": "#/definitions/when"
-				}
-			},
-			"required": ["toponym"]
-		},
-		"title": {
-			"description": "A label for the record, usually a 'preferred name' from among the toponyms associated with a place.",
-			"example": "Abingdon (UK)",
-			"type": "string",
-			"minLength": 1
-		},
-		"ccodes": {
-			"description": "An array of one or more two-letter codes (ISO 3166-1 alpha-2) indicating modern countries whose bounds contains or overlap the place.",
-			"example": ["GB"],
-			"type": "array",
-			"items": {
-				"type": "string",
-				"pattern": "^[A-Z]{2}$"
-			},
-			"minItems": 1,
-			"uniqueItems": true
-		},
-		"sourceLabels":{
-			"description": "Labels present in the source (or in some private vocabulary), which may differ from the equivalent citable vocabulary label.",
-			"type": "array",
-			"items":{
-				"type": "object",
-				"properties":{
-					"label":{
-						"example": "Market Town",
-						"type": "string",
-						"minLength": 1
-					},
-					"lang":{
-						"$ref": "#/definitions/lang"
-					}
-				},
-				"required": ["label"]
-			},
-			"minItems": 1,
-			"uniqueItems": true
-		},
-		"featuretype":{
-			"description": "***TO DISCUSS***: LP standard limits these to _place_ types, but this is too restrictive for the more generic use of the schema as required for xLP.",
-			"type": "object",
-			"properties": {
-				"identifier":{
-					"description": "A concept in a published vocabulary.",
-					"example": "http://vocab.getty.edu/aat/300008375",
-					"type": "string",
-					"format": "uri",
-					"minLength": 1
-				},
-				"label":{
-					"example": "town",
-					"type": "string",
-					"minLength": 1
-				},
-				"sourceLabels":{
-					"$ref": "#/definitions/sourceLabels"
-				},
-				"when":{
-					"$ref": "#/definitions/when"
-				}
-			},
-			"required": ["identifier","label"]
-		},
-		"certainty":{
-			"type": "string",
-			"enum": ["certain", "less-certain", "uncertain"]
-		},
-		"precision":{
-			"description": "An indication of the precision of Point coordinate data: Points lie somewhere within all of the resolved properties.",
-			"type": "object",
-			"properties":{
-				"tolerance":{
-					"description": "A bounding circle of the given linear radius, or a bounding box defined by the tolerance of both longitude and latitude.",
-					"example": {"value":3,"units":"degrees"},
-					"type": "object",
-					"properties": {
-						"value":{
-							"type": "number"
-						},
-						"units":{
-							"description": "Units of the radius, which may be a linear distance or decimal degrees.",
-							"type": "string",
-							"enum": ["kilometres","metres","degrees"]
-						}
-					},
-					"required": ["value","units"]
-				},
-				"bbox":{
-					"description": "A bounding box defined by an array of minimum and maximum values for both longitude and latitude.",
-					"example": [-48.691406,41.376809,-0.741577,52.288323],
-					"$ref": "https://w3id.org/locolligo/schemas/geojson.json#/properties/bbox"
-				},
-				"ccodes":{
-					"$ref": "#/definitions/ccodes"
-				},
-				"citations":{
-					"description": "An array of citations of gazetteered places which can be resolved to non-Point geometries. These might be parishes or counties.",
-					"$ref": "#/definitions/citations"
-				}
-			},
-			"minProperties": 1
-		},
-		"geowkt":{
-			"description": "A WKT representation of geometry. See https://en.wikipedia.org/wiki/Well-known_text_representation_of_geometry.",
-			"example": "GEOMETRYCOLLECTION(POINT(-1.2879 51.6708),POLYGON ((-1.3077 51.6542, -1.2555 51.6542, -1.2555 51.6908, -1.3077 51.6908, -1.3077 51.6542)))",
-			"type": "string",
-			"minLength": 10
-		},
-		"geometryExtensions": {
-			"description": "Extensions to the standard GeoJSON schema.",
-			"type": "object",
-			"properties":{
-				"geowkt":{
-					"$ref": "#/definitions/geowkt"
-				},
-				"when":{
-					"$ref": "#/definitions/when"
-				},
-				"certainty":{
-					"$ref": "#/definitions/certainty"
-				},
-				"precision":{
-					"description": "***TO DISCUSS***: Proposal for optional geometry property to indicate the precision of Point coordinate data.",
-					"$ref": "#/definitions/precision"
-				},
-				"geometries": {
-					"type": "array",
-					"items": {
-						"$ref": "#/definitions/geometryExtensions"
-					}
-				}
-			},
-			"dependencies": {
-				"description": "***TO DISCUSS***: This LP Standard dependency is disabled in this schema because it might be argued to be unneccessary.",
-				"!coordinates": { "required": ["certainty"] }
-			}
-		}
-	},
-	"properties": {
-		"type": {
-			"enum": ["FeatureCollection"]
-		},
-		"@context": {
-			"description": "URL of context document",
-			"example": "https://w3id.org/locolligo/contexts/linkedplaces.jsonld",
-			"type": "string",
-			"format": "uri",
-			"pattern": "^https?://"
-		},
-		"features": {
-			"description": "This array contains the primary subjects of the dataset. They will usually be geolocated, but this is optional.",
-			"type": "array",
-			"items": {
-				"type": "object",
-				"properties": {
-					"properties": {
-						"type": "object",
-						"properties": {
-							"title": {
-								"$ref": "#/definitions/title"
-							},
-							"ccodes": {
-								"$ref": "#/definitions/ccodes"
-							}
-						},
-						"required": ["title"]
-					},
-					"when": {
-						"$ref": "#/definitions/when"
-					},
-					"names": {
-						"description": "An array of one or more attested toponyms. ***TO DISCUSS***: LP standard requires the _names_ property and at least the first toponym to have a citation, and for at least one citation to have a year. These conditions might be considered too restrictive, especially for xLP use cases, and can bloat the dataset, and so have not (yet) been implemented in this schema.",
-						"type": "array",
-						"items": {
-							"$ref": "#/definitions/placename"
-						},
-						"minItems": 1,
-						"uniqueItems": true
-					},
-					"types": {
-						"description": "An array of one or more types defining the feature.",
-						"type": "array",
-						"items": {
-							"$ref": "#/definitions/featuretype"
-						},
-						"minItems": 1,
-						"uniqueItems": true
-					},
-					"geometry": {
-						"description": "***TO DISCUSS***: LP standard states that unknown locations should be be represented by an empty coordinates array within a Point geometry, but this is inconsistent with the GeoJSON standard which requires a null geometry in such cases.",
-						"$ref": "#/definitions/geometryExtensions"
-					},
-					"links": {
-						"description": "Linked Places format supports four types of linked resources. Close matches are the principal means of linking places and gazetteer datasets.",
-						"type": "array",
-						"items": {
-							"type": "object",
-							"properties":{
-								"type": {
-									"description": "***TO DISCUSS***: LP standard does not include 'exactMatch', which has been found to be useful.",
-									"type":"string",
-									"enum": ["exactMatch","closeMatch","primaryTopicOf","subjectOf","seeAlso"]
-								},
-								"identifier":{
-									"description": "URL of linked resource. Short URI prefixes are permitted, as described at https://github.com/LinkedPasts/linked-places-format#links-encouraged.",
-									"example": "https://www.wikidata.org/wiki/Q321381",
-									"type": "string",
-									"format": "uri"
-								}
-							},
-							"required": ["type","identifier"]
-						},
-						"minItems": 1,
-						"uniqueItems": true
-					},
-					"relations": {
-						"description": "An array of one or more attestations. The relationType property must be de-referenceable to an existing vocabulary or ontology.",
-						"type": "object",
-						"properties": {
-							"relationType":{
-								"description": "URL of vocabulary item describing the relationship. Short URI prefixes are permitted, as described at https://github.com/LinkedPasts/linked-places-format#relations-optional.",
-								"example": "gvp:broaderPartitive",
-								"type": "string",
-								"format": "uri"
-							},
-							"relationTo": {
-								"description": "URL of related resource. Short URI prefixes are permitted, as described at https://github.com/LinkedPasts/linked-places-format#relations-optional.",
-								"example": "mygaz:places/p_3456",
-								"type": "string",
-								"format": "uri"
-							},
-							"label": {
-								"description": "",
-								"example": "part of Berkshire (UK)",
-								"type": "string"
-							},
-							"sourceLabels":{
-								"description": "***TO DISCUSS***: Not part of the existing LP standard, but found to be useful.",
-								"$ref": "#/definitions/sourceLabels"
-							},
-							"when": {
-								"$ref": "#/definitions/when"
-							},
-							"citations":{
-								"$ref": "#/definitions/citations"
-							},
-							"certainty":{
-								"$ref": "#/definitions/certainty"
-							}
-						},
-						"required": ["relationType"],
-						"minProperties": 2
-					},
-					"descriptions": {
-						"description": "***TO DO***"
-					},
-					"depictions": {
-						"description": "***TO DO***"
-					}
-				},
-				"required": ["@id", "properties", "geometry"]
-			},
-			"minItems": 1,
-			"uniqueItems": true
-		}
-	},
-	"allOf": [{
-			"required": ["type", "@context", "features"]
-		},
-		{
-			"description": "***TO DO / DISCUSS***: Standard LP specification *requires* a 'when' property to to temporally scope a) an entire Feature; b) a name; c) a geometry (representative point or extent); d) a type; or e) a relation.",
-			"anyOf": [{}]
-		}
-	]
+   "$schema":"http://json-schema.org/draft/2019-09/schema#",
+   "$id":"https://w3id.org/locolligo/schemas/LP.json",
+   "description":"This Linked Places JSON schema extends the standard geojson schema as described at https://github.com/LinkedPasts/linked-places-format.",
+   "anyOf":[
+      {
+         "$ref":"https://w3id.org/locolligo/schemas/geojson.json"
+      }
+   ],
+   "type":"object",
+   "definitions":{
+      "description":"***TO DO***: Add when, citations, and certainty to definitions and to geometries. Resolve xLP version of citations. Add more examples.",
+      "ISO8601":{
+         "description":"Any valid ISO 8601 expression. See https://en.wikipedia.org/wiki/ISO_8601#Dates.",
+         "example":"1066",
+         "type":"string",
+         "minLength":4
+      },
+      "whenDelimiter":{
+         "description":"***TO DISCUSS***: LP specification (https://github.com/LinkedPasts/linked-places-format#when-required) requires one of these three properties, but offers inconsistent examples.",
+         "type":"object",
+         "properties":{
+            "in":{
+               "$ref":"#/definitions/ISO8601"
+            },
+            "earliest":{
+               "$ref":"#/definitions/ISO8601"
+            },
+            "latest":{
+               "$ref":"#/definitions/ISO8601"
+            }
+         },
+         "oneOf":[
+            {
+               "required":[
+                  "in"
+               ]
+            },
+            {
+               "anyOf":[
+                  {
+                     "required":[
+                        "earliest"
+                     ]
+                  },
+                  {
+                     "required":[
+                        "latest"
+                     ]
+                  }
+               ]
+            }
+         ]
+      },
+      "when":{
+         "type":"object",
+         "properties":{
+            "timespans":{
+               "description":"If end is omitted, the timespan is interpreted as the interval described by the start. See https://github.com/LinkedPasts/linked-places-format#when-required",
+               "example":{
+                  "start":{
+                     "in":"1832"
+                  },
+                  "end":{
+                     "earliest":"1839",
+                     "latest":"1841"
+                  }
+               },
+               "type":"array",
+               "items":{
+                  "type":"object",
+                  "properties":{
+                     "start":{
+                        "$ref":"#/definitions/whenDelimiter"
+                     },
+                     "end":{
+                        "$ref":"#/definitions/whenDelimiter"
+                     }
+                  }
+               },
+               "minItems":1,
+               "uniqueItems":true
+            },
+            "periods":{
+               "description":"Might be drawn from http://perio.do/ or http://chronontology.dainst.org/.",
+               "type":"array",
+               "items":{
+                  "type":"object",
+                  "properties":{
+                     "name":{
+                        "description":"Name of a period.",
+                        "example":"Anglo-Saxon Period, 449-1066",
+                        "type":"string",
+                        "minLength":1
+                     },
+                     "uri":{
+                        "description":"URI defining the period.",
+                        "example":"periodo:p06c6g3whtg",
+                        "type":"string",
+                        "format":"uri",
+                        "minLength":1
+                     }
+                  },
+                  "required":[
+                     "name",
+                     "uri"
+                  ]
+               },
+               "minItems":1,
+               "uniqueItems":true
+            },
+            "label":{
+               "description":"Textual summary of the entire 'when' object.",
+               "example":"for a century during the Anglo-Saxon period",
+               "type":"string",
+               "minLength":1
+            },
+            "duration":{
+               "description":"Valid values are strings with the letter 'P' followed by an integer, followed by one of Y, M, W, or D to indicate years, months, weeks, or days.",
+               "example":"P100Y",
+               "type":"string",
+               "pattern":"^P\\d*[YMWD]$"
+            }
+         },
+         "required":[
+            "timespans"
+         ]
+      },
+      "lang":{
+         "description":"Two-letter ISO 639-1 language code of the referenced toponym or other textual element. See https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes.",
+         "example":"en",
+         "type":"string",
+         "pattern":"^[a-z]{2}$"
+      },
+      "citations":{
+         "description":"This array contains citations for the referenced element. ***TO DISCUSS***: This could be replaced by the CSL-JSON standard as in xLP (see https://citationstyles.org/).",
+         "type":"array",
+         "items":{
+            "type":"object",
+            "properties":{
+               "label":{
+                  "description":"Name of the source being cited.",
+                  "example":"Ye Olde Gazetteer",
+                  "type":"string",
+                  "minLength":1
+               },
+               "year":{
+                  "description":"Publication year of the source being cited. ***TO DISCUSS***: Validation pattern limits this to years between 1000 and 2999 - should we allow ancient sources?",
+                  "example":"1635",
+                  "type":"string",
+                  "pattern":"^[12][0-9]{3}$"
+               },
+               "@id":{
+                  "description":"URI of the source being cited (may be a URL).",
+                  "example":"tgn:7011944",
+                  "type":"string",
+                  "format":"uri",
+                  "minLength":1
+               }
+            },
+            "required":[
+               "@id"
+            ]
+         },
+         "minItems":1,
+         "uniqueItems":true
+      },
+      "placename":{
+         "description":"A toponym together with optional citations and temporal scoping.",
+         "type":"object",
+         "properties":{
+            "toponym":{
+               "description":"The name of a place.",
+               "example":"Abingdon",
+               "type":"string",
+               "minLength":1
+            },
+            "lang":{
+               "$ref":"#/definitions/lang"
+            },
+            "citations":{
+               "$ref":"#/definitions/citations"
+            },
+            "when":{
+               "$ref":"#/definitions/when"
+            }
+         },
+         "required":[
+            "toponym"
+         ]
+      },
+      "title":{
+         "description":"A label for the record, usually a 'preferred name' from among the toponyms associated with a place.",
+         "example":"Abingdon (UK)",
+         "type":"string",
+         "minLength":1
+      },
+      "ccodes":{
+         "description":"An array of one or more two-letter codes (ISO 3166-1 alpha-2) indicating modern countries whose bounds contains or overlap the place.",
+         "example":[
+            "GB"
+         ],
+         "type":"array",
+         "items":{
+            "type":"string",
+            "pattern":"^[A-Z]{2}$"
+         },
+         "minItems":1,
+         "uniqueItems":true
+      },
+      "sourceLabels":{
+         "description":"Labels present in the source (or in some private vocabulary), which may differ from the equivalent citable vocabulary label.",
+         "type":"array",
+         "items":{
+            "type":"object",
+            "properties":{
+               "label":{
+                  "example":"Market Town",
+                  "type":"string",
+                  "minLength":1
+               },
+               "lang":{
+                  "$ref":"#/definitions/lang"
+               }
+            },
+            "required":[
+               "label"
+            ]
+         },
+         "minItems":1,
+         "uniqueItems":true
+      },
+      "featuretype":{
+         "description":"***TO DISCUSS***: LP standard limits these to _place_ types, but this is too restrictive for the more generic use of the schema as required for xLP.",
+         "type":"object",
+         "properties":{
+            "identifier":{
+               "description":"A concept in a published vocabulary.",
+               "example":"http://vocab.getty.edu/aat/300008375",
+               "type":"string",
+               "format":"uri",
+               "minLength":1
+            },
+            "label":{
+               "example":"town",
+               "type":"string",
+               "minLength":1
+            },
+            "sourceLabels":{
+               "$ref":"#/definitions/sourceLabels"
+            },
+            "when":{
+               "$ref":"#/definitions/when"
+            }
+         },
+         "required":[
+            "identifier",
+            "label"
+         ]
+      },
+      "certainty":{
+         "type":"string",
+         "enum":[
+            "certain",
+            "less-certain",
+            "uncertain"
+         ]
+      },
+      "precision":{
+         "description":"An indication of the precision of Point coordinate data: Points lie somewhere within all of the resolved properties.",
+         "type":"object",
+         "properties":{
+            "tolerance":{
+               "description":"A bounding circle of the given linear radius, or a bounding box defined by the tolerance of both longitude and latitude.",
+               "example":{
+                  "value":3,
+                  "units":"degrees"
+               },
+               "type":"object",
+               "properties":{
+                  "value":{
+                     "type":"number"
+                  },
+                  "units":{
+                     "description":"Units of the radius, which may be a linear distance or decimal degrees.",
+                     "type":"string",
+                     "enum":[
+                        "kilometres",
+                        "metres",
+                        "degrees"
+                     ]
+                  }
+               },
+               "required":[
+                  "value",
+                  "units"
+               ]
+            },
+            "bbox":{
+               "description":"A bounding box defined by an array of minimum and maximum values for both longitude and latitude.",
+               "example":[
+                  -48.691406,
+                  41.376809,
+                  -0.741577,
+                  52.288323
+               ],
+               "$ref":"https://w3id.org/locolligo/schemas/geojson.json#/properties/bbox"
+            },
+            "ccodes":{
+               "$ref":"#/definitions/ccodes"
+            },
+            "citations":{
+               "description":"An array of citations of gazetteered places which can be resolved to non-Point geometries. These might be parishes or counties.",
+               "$ref":"#/definitions/citations"
+            }
+         },
+         "minProperties":1
+      },
+      "geowkt":{
+         "description":"A WKT representation of geometry. See https://en.wikipedia.org/wiki/Well-known_text_representation_of_geometry.",
+         "example":"GEOMETRYCOLLECTION(POINT(-1.2879 51.6708),POLYGON ((-1.3077 51.6542, -1.2555 51.6542, -1.2555 51.6908, -1.3077 51.6908, -1.3077 51.6542)))",
+         "type":"string",
+         "minLength":10
+      },
+      "geometryExtensions":{
+         "description":"Extensions to the standard GeoJSON schema.",
+         "type":"object",
+         "properties":{
+            "geowkt":{
+               "$ref":"#/definitions/geowkt"
+            },
+            "when":{
+               "$ref":"#/definitions/when"
+            },
+            "certainty":{
+               "$ref":"#/definitions/certainty"
+            },
+            "precision":{
+               "description":"***TO DISCUSS***: Proposal for optional geometry property to indicate the precision of Point coordinate data.",
+               "$ref":"#/definitions/precision"
+            },
+            "geometries":{
+               "type":"array",
+               "items":{
+                  "$ref":"#/definitions/geometryExtensions"
+               }
+            }
+         },
+         "dependencies":{
+            "description":"***TO DISCUSS***: This LP Standard dependency is disabled in this schema because it might be argued to be unneccessary.",
+            "!coordinates":{
+               "required":[
+                  "certainty"
+               ]
+            }
+         }
+      }
+   },
+   "properties":{
+      "type":{
+         "enum":[
+            "FeatureCollection"
+         ]
+      },
+      "@context":{
+         "description":"URL of context document",
+         "example":"https://w3id.org/locolligo/contexts/linkedplaces.jsonld",
+         "type":"string",
+         "format":"uri",
+         "pattern":"^https?://"
+      },
+      "features":{
+         "description":"This array contains the primary subjects of the dataset. They will usually be geolocated, but this is optional.",
+         "type":"array",
+         "items":{
+            "type":"object",
+            "properties":{
+               "properties":{
+                  "type":"object",
+                  "properties":{
+                     "title":{
+                        "$ref":"#/definitions/title"
+                     },
+                     "ccodes":{
+                        "$ref":"#/definitions/ccodes"
+                     }
+                  },
+                  "required":[
+                     "title"
+                  ]
+               },
+               "when":{
+                  "$ref":"#/definitions/when"
+               },
+               "names":{
+                  "description":"An array of one or more attested toponyms. ***TO DISCUSS***: LP standard requires the _names_ property and at least the first toponym to have a citation, and for at least one citation to have a year. These conditions might be considered too restrictive, especially for xLP use cases, and can bloat the dataset, and so have not (yet) been implemented in this schema.",
+                  "type":"array",
+                  "items":{
+                     "$ref":"#/definitions/placename"
+                  },
+                  "minItems":1,
+                  "uniqueItems":true
+               },
+               "types":{
+                  "description":"An array of one or more types defining the feature.",
+                  "type":"array",
+                  "items":{
+                     "$ref":"#/definitions/featuretype"
+                  },
+                  "minItems":1,
+                  "uniqueItems":true
+               },
+               "geometry":{
+                  "description":"***TO DISCUSS***: LP standard states that unknown locations should be be represented by an empty coordinates array within a Point geometry, but this is inconsistent with the GeoJSON standard which requires a null geometry in such cases.",
+                  "$ref":"#/definitions/geometryExtensions"
+               },
+               "links":{
+                  "description":"Linked Places format supports four types of linked resources. Close matches are the principal means of linking places and gazetteer datasets.",
+                  "type":"array",
+                  "items":{
+                     "type":"object",
+                     "properties":{
+                        "type":{
+                           "description":"***TO DISCUSS***: LP standard does not include 'exactMatch', which has been found to be useful.",
+                           "type":"string",
+                           "enum":[
+                              "exactMatch",
+                              "closeMatch",
+                              "primaryTopicOf",
+                              "subjectOf",
+                              "seeAlso"
+                           ]
+                        },
+                        "identifier":{
+                           "description":"URL of linked resource. Short URI prefixes are permitted, as described at https://github.com/LinkedPasts/linked-places-format#links-encouraged.",
+                           "example":"https://www.wikidata.org/wiki/Q321381",
+                           "type":"string",
+                           "format":"uri"
+                        }
+                     },
+                     "required":[
+                        "type",
+                        "identifier"
+                     ]
+                  },
+                  "minItems":1,
+                  "uniqueItems":true
+               },
+               "relations":{
+                  "description":"An array of one or more attestations. The relationType property must be de-referenceable to an existing vocabulary or ontology.",
+                  "type":"object",
+                  "properties":{
+                     "relationType":{
+                        "description":"URL of vocabulary item describing the relationship. Short URI prefixes are permitted, as described at https://github.com/LinkedPasts/linked-places-format#relations-optional.",
+                        "example":"gvp:broaderPartitive",
+                        "type":"string",
+                        "format":"uri"
+                     },
+                     "relationTo":{
+                        "description":"URL of related resource. Short URI prefixes are permitted, as described at https://github.com/LinkedPasts/linked-places-format#relations-optional.",
+                        "example":"mygaz:places/p_3456",
+                        "type":"string",
+                        "format":"uri"
+                     },
+                     "label":{
+                        "description":"",
+                        "example":"part of Berkshire (UK)",
+                        "type":"string"
+                     },
+                     "sourceLabels":{
+                        "description":"***TO DISCUSS***: Not part of the existing LP standard, but found to be useful.",
+                        "$ref":"#/definitions/sourceLabels"
+                     },
+                     "when":{
+                        "$ref":"#/definitions/when"
+                     },
+                     "citations":{
+                        "$ref":"#/definitions/citations"
+                     },
+                     "certainty":{
+                        "$ref":"#/definitions/certainty"
+                     }
+                  },
+                  "required":[
+                     "relationType"
+                  ],
+                  "minProperties":2
+               },
+               "descriptions":{
+                  "description":"An array of one or more brief descriptions of the feature.",
+                  "type":"array",
+                  "items":{
+                     "type":"object",
+                     "properties":{
+                        "value":{
+                           "example":"A historic market town and civil parish in the ceremonial county of Oxfordshire, England",
+                           "type":"string"
+                        },
+                        "lang":{
+                           "$ref":"#/definitions/lang"
+                        },
+                        "source":{
+                           "description":"URL of a resource which gives a description of the feature.",
+                           "example":"https://en.wikipedia.org/wiki/Abingdon-on-Thames",
+                           "type":"string",
+                           "format":"uri",
+                           "pattern":"^https?://"
+                        }
+                     },
+                     "anyOf":[
+                        {
+                           "required":[
+                              "value"
+                           ]
+                        },
+                        {
+                           "required":[
+                              "source"
+                           ]
+                        }
+                     ]
+                  },
+                  "minItems":1,
+                  "uniqueItems":true
+               },
+               "depictions":{
+                  "description":"An array of one or more images of some part or aspect of the feature.",
+                  "type":"array",
+                  "items":{
+                     "type":"object",
+                     "properties":{
+                        "@id":{
+                           "description":"URL of an image resource.",
+                           "example":"https://commons.wikimedia.org/wiki/File:ThamesAtAbingdon.jpg",
+                           "type":"string",
+                           "format":"uri",
+                           "pattern":"^https?://"
+                        },
+                        "title":{
+                           "example":"The River Thames at Abingdon, Oxfordshire",
+                           "type":"string"
+                        },
+                        "license":{
+                           "description":"A URL or string giving the licence terms for the image.",
+                           "type":"string",
+                           "minLength":1
+                        },
+                        "fragmentSelector":{
+                           "description":"A means to annotate specific areas of an image. ***TO DISCUSS***: Not explicitly part of the existing LP standard, but found to be useful.",
+                           "type":"object",
+                           "properties":{
+                              "type":{
+                                 "description":"The type of fragment selector",
+                                 "example":"SvgSelector",
+                                 "type":"string",
+                                 "minLength":1
+                              },
+                              "value":{
+                                 "example":"<svg:svg xmlns=\"http://www.w3.org/2000/svg\"><circle cx=\"159\" cy=\"72\" r=\"10\" /></svg:svg>",
+                                 "type":"string",
+                                 "minLength":1
+                              }
+                           },
+                           "required":[
+                              "type",
+                              "value"
+                           ]
+                        }
+                     },
+                     "required":[
+                        "@id"
+                     ]
+                  },
+                  "minItems":1,
+                  "uniqueItems":true
+               }
+            },
+            "required":[
+               "@id",
+               "properties",
+               "geometry"
+            ]
+         },
+         "minItems":1,
+         "uniqueItems":true
+      }
+   },
+   "allOf":[
+      {
+         "required":[
+            "type",
+            "@context",
+            "features"
+         ]
+      },
+      {
+         "description":"***TO DO / DISCUSS***: Standard LP specification *requires* a 'when' property to to temporally scope a) an entire Feature; b) a name; c) a geometry (representative point or extent); d) a type; or e) a relation.",
+         "anyOf":[
+            {
+               
+            }
+         ]
+      }
+   ]
 }
