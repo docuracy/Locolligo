@@ -1,87 +1,105 @@
 {
-	"$schema": "http://json-schema.org/draft/2019-09/schema#",
-	"$id": "https://w3id.org/locolligo/schemas/xLP.json",
-
-	"description": "This JSON schema extends the standard Linked Places schema to include indexing and citation properties.",
-	"anyOf": [{
-		"$ref": "https://w3id.org/locolligo/schemas/LP.json"
-	}],
-
-	"type": "object",
-	"properties": {
-		"indexing": {
-			"description": "Schema.org object describing the dataset. Used for indexing by Google and other search engines.",
-			"type": "object",
-			"properties": {
-				"@context": {
-					"enum": ["https://schema.org/"]
-				},
-				"@type": {
-					"enum": ["Dataset"]
-				},
-				"name": {
-					"description": "The name of the dataset.",
-					"type": "string"
-				},
-				"description": {
-					"description": "A description of the dataset.",
-					"type": "string",
-					"minLength": 50
-				},
-				"creator": {
-					"description": "This array contains the names and affiliations of Persons and Organisations responsible for the creation of the dataset.",
-					"type": "array",
-					"items": {
-						"type": "object",
-						"properties": {
-							"@type": {
-								"enum": ["Person", "Organisation"]
-							},
-							"name": {
-								"type": "string"
-							},
-							"url": {
-								"description": "URL for the Person or Organisation. Could be a Person's ORCID URL.",
-								"type": "string",
-								"format": "uri",
-								"pattern": "^https?://"
-							}
-						},
-						"required": ["@type", "name"]
-					},
-					"minItems": 1,
-					"uniqueItems": true
-				},
-				"license": {
-					"description": "A URL or string giving the licence terms for the dataset.",
-					"type": "string"
-				},
-				"identifier": {
-					"description": "A URL for the dataset. This will usually be identical to the properties.@id.",
-					"type": "string",
-					"format": "uri",
-					"pattern": "^https?://"
-				},
-				"temporalCoverage": {
-					"description": "The time period covered by the dataset. See https://schema.org/temporalCoverage.",
-					"type": ["string", "object"]
-				},
-				"spatialCoverage": {
-					"description": "The geographical area covered by the dataset.",
-					"type": "object",
-					"$ref": "https://json.schemastore.org/schema-org-place.json"
-				}
-			},
-			"required": ["@context", "@type", "name", "description"]
-		},
-		"citations": {
-			"description": "This array contains citations for the dataset, using the CSL-JSON format (see https://citationstyles.org/). Items are required to have at least an id and type.",
-			"type": "array",
-			"items": {
-				"$ref": "https://raw.githubusercontent.com/citation-style-language/schema/master/schemas/input/csl-data.json#/items"
-			},
-			"minItems": 1,
-			"uniqueItems": true
-		}
-	}
+  "$schema":"http://json-schema.org/draft/2019-09/schema#",
+  "$id":"https://w3id.org/locolligo/schemas/xLP.json",
+  "description":"This JSON schema extends the standard Linked Places schema to include indexing and citation properties.",
+  "anyOf":[
+    {
+      "$ref":"https://w3id.org/locolligo/schemas/LP.json"
+    }
+  ],
+  "type":"object",
+  "properties":{
+    "indexing":{
+      "description":"Schema.org object describing the dataset. Used for indexing by Google and other search engines.",
+      "type":"object",
+      "properties":{
+        "@context":{
+          "enum":[
+            "https://schema.org/"
+          ]
+        },
+        "@type":{
+          "enum":[
+            "Dataset"
+          ]
+        },
+        "name":{
+          "description":"The name of the dataset.",
+          "type":"string"
+        },
+        "description":{
+          "description":"A description of the dataset.",
+          "type":"string",
+          "minLength":50
+        },
+        "creator":{
+          "description":"This array contains the names and affiliations of Persons and Organisations responsible for the creation of the dataset.",
+          "type":"array",
+          "items":{
+            "type":"object",
+            "properties":{
+              "@type":{
+                "enum":[
+                  "Person",
+                  "Organisation"
+                ]
+              },
+              "name":{
+                "type":"string"
+              },
+              "url":{
+                "description":"URL for the Person or Organisation. Could be a Person's ORCID URL.",
+                "type":"string",
+                "format":"uri",
+                "pattern":"^https?://"
+              }
+            },
+            "required":[
+              "@type",
+              "name"
+            ]
+          },
+          "minItems":1,
+          "uniqueItems":true
+        },
+        "license":{
+          "description":"A URL or string giving the licence terms for the dataset.",
+          "type":"string"
+        },
+        "identifier":{
+          "description":"A URL for the dataset. This will usually be identical to the properties.@id.",
+          "type":"string",
+          "format":"uri",
+          "pattern":"^https?://"
+        },
+        "temporalCoverage":{
+          "description":"The time period covered by the dataset. See https://schema.org/temporalCoverage.",
+          "type":[
+            "string",
+            "object"
+          ]
+        },
+        "spatialCoverage":{
+          "description":"The geographical area covered by the dataset.",
+          "type":"object",
+          "$ref":"https://json.schemastore.org/schema-org-place.json"
+        }
+      },
+      "required":[
+        "@context",
+        "@type",
+        "name",
+        "description"
+      ]
+    },
+    "citations":{
+      "description":"This array contains citations for the dataset, using the CSL-JSON format (see https://citationstyles.org/). Items are required to have at least an id and type.",
+      "type":"array",
+      "items":{
+        "$ref":"https://raw.githubusercontent.com/citation-style-language/schema/master/schemas/input/csl-data.json#/items"
+      },
+      "minItems":1,
+      "uniqueItems":true
+    }
+  }
 }
