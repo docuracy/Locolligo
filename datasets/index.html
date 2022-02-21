@@ -19,8 +19,8 @@ The script searches the dataset for features or traces with an @id matching the 
 	window.onload = function(){
 		var dataset = window.location.href.split('#').pop();
 		const itemID = dataset.split('/').pop();
-    dataset += '.lp.json';
-		console.log("ID",itemID);
+    		dataset = dataset+'.lp.json';
+		console.log(dataset,itemID);
 		fetch(dataset)
 		.then(response => response.json())
 		.then(data => {
