@@ -251,6 +251,15 @@
             },
             "when":{
                "$ref":"#/definitions/when"
+            },
+            "geometries":{
+               "description":"***TO DISCUSS***: Proposal for optional array of UUIDs referencing particular geometries within a feature's Geometry Collection to which this feature type applies.",
+               "type":"array",
+               "items":{
+                  "type":"string",
+                  "format":"uuid"
+               },
+               "minItems":1
             }
          },
          "required":[
@@ -338,6 +347,15 @@
             "precision":{
                "description":"***TO DISCUSS***: Proposal for optional geometry property to indicate the precision of Point coordinate data.",
                "$ref":"#/definitions/precision"
+            },
+            "uuid":{
+               "description":"***TO DISCUSS***: Proposal for optional property that can be used in Geometry Collections to associate particular geometries with one or more of its parent feature's types. This might be used, for example, to indicate separate points for the creation, discovery, and repository of archaeological artefacts.",
+               "example":"8d6e0aa7-0b2c-403c-b27c-10c10dd7f10e",
+               "type":"object",
+               "properties":{
+                  "type":"string",
+                  "format": "uuid"
+               }
             },
             "geometries":{
                "type":"array",
@@ -447,7 +465,7 @@
                   "uniqueItems":true
                },
                "relations":{
-                  "description":"An array of one or more attestations. The relationType property must be de-referenceable to an existing vocabulary or ontology.",
+                  "description":"*** TO DO *** FIX THIS - declared as object but should be array // An array of one or more attestations. The relationType property must be de-referenceable to an existing vocabulary or ontology.",
                   "type":"object",
                   "properties":{
                      "relationType":{
