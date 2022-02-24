@@ -83,6 +83,26 @@
           "description":"The geographical area covered by the dataset.",
           "type":"object",
           "$ref":"https://json.schemastore.org/schema-org-place.json"
+        },
+        "significantLink":{
+          "type":"array",
+          "items":{
+            "description":"A web resource significant to one or more features within the dataset.",
+            "type":"string",
+            "format":"uri",
+            "pattern":"^https?://"
+          },
+          "minItems":0
+        }
+        "relatedLink":{
+          "type":"array",
+          "items":{
+            "description":"A web resource related to one or more features within the dataset.",
+            "type":"string",
+            "format":"uri",
+            "pattern":"^https?://"
+          },
+          "minItems":0
         }
       },
       "required":[
