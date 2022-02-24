@@ -1,4 +1,4 @@
-## This directory serves as a static API for datasets store here in Linked Places (.lp.json) format.
+## This directory serves as a static API for datasets stored here in Linked Places (.lp.json) format.
 
 For example, the persistent identifer URL
 * https://w3id.org/locolligo/VCH-Places/9 
