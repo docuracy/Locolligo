@@ -1,0 +1,426 @@
+{
+	"data": [{
+			"VCH-term": "bathing-place",
+			"WD-label": "bathing beach",
+			"WD-identifier": "Q11959973",
+			"WD-url": "https://www.wikidata.org/wiki/Q11959973",
+			"Notes": "Strictly, the VCH term applies to a settlement with a renowned bathing beach",
+			"uuid": "f45ee8c6-9bbc-4426-9cf5-60f3d53dd3f5",
+			"@id": "https://w3id.org/locolligo/cae6ad7b-ab02-42ed-b8b0-9fe870dc965e/f45ee8c6-9bbc-4426-9cf5-60f3d53dd3f5"
+		},
+		{
+			"VCH-term": "borough",
+			"WD-label": "ancient borough",
+			"WD-identifier": "Q4752944",
+			"WD-url": "https://www.wikidata.org/wiki/Q4752944",
+			"Notes": null,
+			"uuid": "2cf4e040-0f76-483d-9443-a57b0717fb81",
+			"@id": "https://w3id.org/locolligo/cae6ad7b-ab02-42ed-b8b0-9fe870dc965e/2cf4e040-0f76-483d-9443-a57b0717fb81"
+		},
+		{
+			"VCH-term": "capital of the county",
+			"WD-label": "county town",
+			"WD-identifier": "Q1357964",
+			"WD-url": "https://www.wikidata.org/wiki/Q1357964",
+			"Notes": null,
+			"uuid": "689b580a-713e-4c36-978f-539b5b51ed15",
+			"@id": "https://w3id.org/locolligo/cae6ad7b-ab02-42ed-b8b0-9fe870dc965e/689b580a-713e-4c36-978f-539b5b51ed15"
+		},
+		{
+			"VCH-term": "chapelry",
+			"WD-label": "Chapelry",
+			"WD-identifier": "Q5073136",
+			"WD-url": "https://www.wikidata.org/wiki/Q5073136",
+			"Notes": null,
+			"uuid": "73407546-0c1b-426e-82e9-ca81b4e4f6ca",
+			"@id": "https://w3id.org/locolligo/cae6ad7b-ab02-42ed-b8b0-9fe870dc965e/73407546-0c1b-426e-82e9-ca81b4e4f6ca"
+		},
+		{
+			"VCH-term": "church district",
+			"WD-label": "ecclesiastical district",
+			"WD-identifier": "Q1492823",
+			"WD-url": "https://www.wikidata.org/wiki/Q1492823",
+			"Notes": null,
+			"uuid": "9a8d8f88-bf6a-4726-9e10-0b90487dc770",
+			"@id": "https://w3id.org/locolligo/cae6ad7b-ab02-42ed-b8b0-9fe870dc965e/9a8d8f88-bf6a-4726-9e10-0b90487dc770"
+		},
+		{
+			"VCH-term": "cinque-port",
+			"WD-label": "Cinque Ports",
+			"WD-identifier": "Q748895",
+			"WD-url": "https://www.wikidata.org/wiki/Q748895",
+			"Notes": "A separate concept required for one of the cinque-ports rather than the group",
+			"uuid": "3628fabf-abb0-4f95-8845-6f20c7c43bd5",
+			"@id": "https://w3id.org/locolligo/cae6ad7b-ab02-42ed-b8b0-9fe870dc965e/3628fabf-abb0-4f95-8845-6f20c7c43bd5"
+		},
+		{
+			"VCH-term": "city",
+			"WD-label": "city",
+			"WD-identifier": "Q515",
+			"WD-url": "https://www.wikidata.org/wiki/Q515",
+			"Notes": null,
+			"uuid": "0ecea686-9bea-4490-82b9-a1838d200f16",
+			"@id": "https://w3id.org/locolligo/cae6ad7b-ab02-42ed-b8b0-9fe870dc965e/0ecea686-9bea-4490-82b9-a1838d200f16"
+		},
+		{
+			"VCH-term": "county of itself",
+			"WD-label": "county",
+			"WD-identifier": "Q28575",
+			"WD-url": "https://www.wikidata.org/wiki/Q28575",
+			"Notes": "A separate concept for a City County (as chartered in England and Wales) would be a nice nuance",
+			"uuid": "9b9485ae-9bf0-41b0-a677-c0901703b336",
+			"@id": "https://w3id.org/locolligo/cae6ad7b-ab02-42ed-b8b0-9fe870dc965e/9b9485ae-9bf0-41b0-a677-c0901703b336"
+		},
+		{
+			"VCH-term": "district",
+			"WD-label": "district",
+			"WD-identifier": "Q106658",
+			"WD-url": "https://www.wikidata.org/wiki/Q106658",
+			"Notes": null,
+			"uuid": "06c4a19d-14d8-4bf5-89fc-5ebc8bbff6ca",
+			"@id": "https://w3id.org/locolligo/cae6ad7b-ab02-42ed-b8b0-9fe870dc965e/06c4a19d-14d8-4bf5-89fc-5ebc8bbff6ca"
+		},
+		{
+			"VCH-term": "division",
+			"WD-label": "poor law union",
+			"WD-identifier": "Q3397866",
+			"WD-url": "https://www.wikidata.org/wiki/Q3397866",
+			"Notes": "Concept required for a part of a Poor Law Union",
+			"uuid": "b5cbf36b-9219-4905-82eb-2f00e853e73f",
+			"@id": "https://w3id.org/locolligo/cae6ad7b-ab02-42ed-b8b0-9fe870dc965e/b5cbf36b-9219-4905-82eb-2f00e853e73f"
+		},
+		{
+			"VCH-term": "ecclesiastical district",
+			"WD-label": "ecclesiastical district",
+			"WD-identifier": "Q1492823",
+			"WD-url": "https://www.wikidata.org/wiki/Q1492823",
+			"Notes": null,
+			"uuid": "55ad0d1a-e1dc-4c8a-ade9-c9c65e5ce844",
+			"@id": "https://w3id.org/locolligo/cae6ad7b-ab02-42ed-b8b0-9fe870dc965e/55ad0d1a-e1dc-4c8a-ade9-c9c65e5ce844"
+		},
+		{
+			"VCH-term": "exclusive jurisdiction",
+			"WD-label": "exclusive jurisdiction",
+			"WD-identifier": "Q5419699",
+			"WD-url": "https://www.wikidata.org/wiki/Q5419699",
+			"Notes": null,
+			"uuid": "2185b768-4b1b-4481-8d1e-52b193074590",
+			"@id": "https://w3id.org/locolligo/cae6ad7b-ab02-42ed-b8b0-9fe870dc965e/2185b768-4b1b-4481-8d1e-52b193074590"
+		},
+		{
+			"VCH-term": "extra-episcopal liberty",
+			"WD-label": "jurisdiction",
+			"WD-identifier": "Q471855",
+			"WD-url": "https://www.wikidata.org/wiki/Q471855",
+			"Notes": "Lacks nuance",
+			"uuid": "e990242c-c813-40f6-93c9-642cbbb8abae",
+			"@id": "https://w3id.org/locolligo/cae6ad7b-ab02-42ed-b8b0-9fe870dc965e/e990242c-c813-40f6-93c9-642cbbb8abae"
+		},
+		{
+			"VCH-term": "extra-parochial",
+			"WD-label": "extra-parochial area",
+			"WD-identifier": "Q5422121",
+			"WD-url": "https://www.wikidata.org/wiki/Q5422121",
+			"Notes": null,
+			"uuid": "59416a57-0d8a-4075-b2ef-3369b4efa9b2",
+			"@id": "https://w3id.org/locolligo/cae6ad7b-ab02-42ed-b8b0-9fe870dc965e/59416a57-0d8a-4075-b2ef-3369b4efa9b2"
+		},
+		{
+			"VCH-term": "hamlet",
+			"WD-label": "hamlet",
+			"WD-identifier": "Q5084",
+			"WD-url": "https://www.wikidata.org/wiki/Q5084",
+			"Notes": null,
+			"uuid": "1f391202-512c-4e07-8d84-0492fe28c5f3",
+			"@id": "https://w3id.org/locolligo/cae6ad7b-ab02-42ed-b8b0-9fe870dc965e/1f391202-512c-4e07-8d84-0492fe28c5f3"
+		},
+		{
+			"VCH-term": "hundred",
+			"WD-label": "hundred",
+			"WD-identifier": "Q26678366",
+			"WD-url": "https://www.wikidata.org/wiki/Q26678366",
+			"Notes": "This lacks the sense of jurisdiction",
+			"uuid": "6461ffe2-e7c9-4add-89e1-b00d844809dd",
+			"@id": "https://w3id.org/locolligo/cae6ad7b-ab02-42ed-b8b0-9fe870dc965e/6461ffe2-e7c9-4add-89e1-b00d844809dd"
+		},
+		{
+			"VCH-term": "incorporated borough",
+			"WD-label": "incorporated town",
+			"WD-identifier": "Q9283961",
+			"WD-url": "https://www.wikidata.org/wiki/Q9283961",
+			"Notes": null,
+			"uuid": "592f3c31-cd32-4ae0-9d3d-3209d7128323",
+			"@id": "https://w3id.org/locolligo/cae6ad7b-ab02-42ed-b8b0-9fe870dc965e/592f3c31-cd32-4ae0-9d3d-3209d7128323"
+		},
+		{
+			"VCH-term": "inland port",
+			"WD-label": "inland port",
+			"WD-identifier": "Q863915",
+			"WD-url": "https://www.wikidata.org/wiki/Q863915",
+			"Notes": null,
+			"uuid": "d127f2c8-4d35-40f6-9053-9b3b741230d7",
+			"@id": "https://w3id.org/locolligo/cae6ad7b-ab02-42ed-b8b0-9fe870dc965e/d127f2c8-4d35-40f6-9053-9b3b741230d7"
+		},
+		{
+			"VCH-term": "isle",
+			"WD-label": "island",
+			"WD-identifier": "Q23442",
+			"WD-url": "https://www.wikidata.org/wiki/Q23442",
+			"Notes": null,
+			"uuid": "bc8fc1ef-4f62-4dfb-ba47-ffdd98d0593f",
+			"@id": "https://w3id.org/locolligo/cae6ad7b-ab02-42ed-b8b0-9fe870dc965e/bc8fc1ef-4f62-4dfb-ba47-ffdd98d0593f"
+		},
+		{
+			"VCH-term": "jurisdiction",
+			"WD-label": "jurisdiction",
+			"WD-identifier": "Q471855",
+			"WD-url": "https://www.wikidata.org/wiki/Q471855",
+			"Notes": null,
+			"uuid": "1d1fd986-d452-4242-9e72-10d8273ea6dd",
+			"@id": "https://w3id.org/locolligo/cae6ad7b-ab02-42ed-b8b0-9fe870dc965e/1d1fd986-d452-4242-9e72-10d8273ea6dd"
+		},
+		{
+			"VCH-term": "liberties",
+			"WD-label": "jurisdiction",
+			"WD-identifier": "Q5982983",
+			"WD-url": "https://www.wikidata.org/wiki/Q5982983",
+			"Notes": null,
+			"uuid": "9717ffef-32ca-45be-9f10-27a324bc5202",
+			"@id": "https://w3id.org/locolligo/cae6ad7b-ab02-42ed-b8b0-9fe870dc965e/9717ffef-32ca-45be-9f10-27a324bc5202"
+		},
+		{
+			"VCH-term": "liberty",
+			"WD-label": "jurisdiction",
+			"WD-identifier": "Q5982983",
+			"WD-url": "https://www.wikidata.org/wiki/Q5982983",
+			"Notes": null,
+			"uuid": "2f9ff182-2892-4fd4-9555-aa033cd0a2d7",
+			"@id": "https://w3id.org/locolligo/cae6ad7b-ab02-42ed-b8b0-9fe870dc965e/2f9ff182-2892-4fd4-9555-aa033cd0a2d7"
+		},
+		{
+			"VCH-term": "manor",
+			"WD-label": "manor estate",
+			"WD-identifier": "Q2116450",
+			"WD-url": "https://www.wikidata.org/wiki/Q2116450",
+			"Notes": null,
+			"uuid": "dcb5ac89-e91b-4edb-8c57-b3bcba1a2ae1",
+			"@id": "https://w3id.org/locolligo/cae6ad7b-ab02-42ed-b8b0-9fe870dc965e/dcb5ac89-e91b-4edb-8c57-b3bcba1a2ae1"
+		},
+		{
+			"VCH-term": "manufacturing district",
+			"WD-label": "manufacturing",
+			"WD-identifier": "Q187939",
+			"WD-url": "https://www.wikidata.org/wiki/Q187939",
+			"Notes": "Needs a concept to convey the place where the activity occurs rather than the activity itself",
+			"uuid": "d6e55f5a-2fd8-4333-a27c-56f55e0a3f36",
+			"@id": "https://w3id.org/locolligo/cae6ad7b-ab02-42ed-b8b0-9fe870dc965e/d6e55f5a-2fd8-4333-a27c-56f55e0a3f36"
+		},
+		{
+			"VCH-term": "manufacturing town",
+			"WD-label": "manufacturing",
+			"WD-identifier": "Q187939",
+			"WD-url": "https://www.wikidata.org/wiki/Q187939",
+			"Notes": "Needs a concept to convey the place where the activity occurs rather than the activity itself",
+			"uuid": "c9480b4b-b4b5-4e66-b810-b6640fa8c375",
+			"@id": "https://w3id.org/locolligo/cae6ad7b-ab02-42ed-b8b0-9fe870dc965e/c9480b4b-b4b5-4e66-b810-b6640fa8c375"
+		},
+		{
+			"VCH-term": "market-town",
+			"WD-label": "market town",
+			"WD-identifier": "Q18511725",
+			"WD-url": "https://www.wikidata.org/wiki/Q18511725",
+			"Notes": null,
+			"uuid": "99f991da-b864-45c4-aad3-466ed69138f2",
+			"@id": "https://w3id.org/locolligo/cae6ad7b-ab02-42ed-b8b0-9fe870dc965e/99f991da-b864-45c4-aad3-466ed69138f2"
+		},
+		{
+			"VCH-term": "metropolitan borough",
+			"WD-label": "metropolitan borough",
+			"WD-identifier": "Q1002812",
+			"WD-url": "https://www.wikidata.org/wiki/Q1002812",
+			"Notes": null,
+			"uuid": "8b8c49b9-5f07-459b-b3b8-98d489fc7d69",
+			"@id": "https://w3id.org/locolligo/cae6ad7b-ab02-42ed-b8b0-9fe870dc965e/8b8c49b9-5f07-459b-b3b8-98d489fc7d69"
+		},
+		{
+			"VCH-term": "municipal borough",
+			"WD-label": "municipal borough",
+			"WD-identifier": "Q518343",
+			"WD-url": "https://www.wikidata.org/wiki/Q518343",
+			"Notes": null,
+			"uuid": "e1078bd8-1d90-497d-b309-3091f63c6fdc",
+			"@id": "https://w3id.org/locolligo/cae6ad7b-ab02-42ed-b8b0-9fe870dc965e/e1078bd8-1d90-497d-b309-3091f63c6fdc"
+		},
+		{
+			"VCH-term": "naval arsenal",
+			"WD-label": "naval arsenal",
+			"WD-identifier": "Q1745026",
+			"WD-url": "https://www.wikidata.org/wiki/Q1745026",
+			"Notes": null,
+			"uuid": "ada348c4-f252-4c65-8d20-8be26335455c",
+			"@id": "https://w3id.org/locolligo/cae6ad7b-ab02-42ed-b8b0-9fe870dc965e/ada348c4-f252-4c65-8d20-8be26335455c"
+		},
+		{
+			"VCH-term": "parish",
+			"WD-label": "parish",
+			"WD-identifier": "Q102496",
+			"WD-url": "https://www.wikidata.org/wiki/Q102496",
+			"Notes": null,
+			"uuid": "67fcd617-fbda-44cc-bd66-bb62649e525b",
+			"@id": "https://w3id.org/locolligo/cae6ad7b-ab02-42ed-b8b0-9fe870dc965e/67fcd617-fbda-44cc-bd66-bb62649e525b"
+		},
+		{
+			"VCH-term": "place",
+			"WD-label": "place",
+			"WD-identifier": "Q98929991",
+			"WD-url": "https://www.wikidata.org/wiki/Q98929991",
+			"Notes": null,
+			"uuid": "ad3b84da-154a-4ebb-b0c4-6bff01f7da10",
+			"@id": "https://w3id.org/locolligo/cae6ad7b-ab02-42ed-b8b0-9fe870dc965e/ad3b84da-154a-4ebb-b0c4-6bff01f7da10"
+		},
+		{
+			"VCH-term": "port",
+			"WD-label": "port",
+			"WD-identifier": "Q44782",
+			"WD-url": "https://www.wikidata.org/wiki/Q44782",
+			"Notes": null,
+			"uuid": "04732730-0928-4c04-91b4-6b2f21e92b9d",
+			"@id": "https://w3id.org/locolligo/cae6ad7b-ab02-42ed-b8b0-9fe870dc965e/04732730-0928-4c04-91b4-6b2f21e92b9d"
+		},
+		{
+			"VCH-term": "post-town",
+			"WD-label": "post town",
+			"WD-identifier": "Q1968403",
+			"WD-url": "https://www.wikidata.org/wiki/Q1968403",
+			"Notes": null,
+			"uuid": "bb5da155-10d9-41a1-83ce-07659c7fb6b9",
+			"@id": "https://w3id.org/locolligo/cae6ad7b-ab02-42ed-b8b0-9fe870dc965e/bb5da155-10d9-41a1-83ce-07659c7fb6b9"
+		},
+		{
+			"VCH-term": "posting-place",
+			"WD-label": "post town",
+			"WD-identifier": "Q1968403",
+			"WD-url": "https://www.wikidata.org/wiki/Q1968403",
+			"Notes": "Was this somewhere to change horses, rather than the location of a mail office?",
+			"uuid": "f01628a8-709d-4912-94eb-3104740ed30f",
+			"@id": "https://w3id.org/locolligo/cae6ad7b-ab02-42ed-b8b0-9fe870dc965e/f01628a8-709d-4912-94eb-3104740ed30f"
+		},
+		{
+			"VCH-term": "precinct",
+			"WD-label": "precinct",
+			"WD-identifier": "Q3301455",
+			"WD-url": "https://www.wikidata.org/wiki/Q3301455",
+			"Notes": "This lacks the specific sense of the jurisdiction of a cathedral precinct",
+			"uuid": "a5fa1143-5d77-49ad-a334-a220e35640aa",
+			"@id": "https://w3id.org/locolligo/cae6ad7b-ab02-42ed-b8b0-9fe870dc965e/a5fa1143-5d77-49ad-a334-a220e35640aa"
+		},
+		{
+			"VCH-term": "representative borough",
+			"WD-label": "electoral district",
+			"WD-identifier": "Q192611",
+			"WD-url": "https://www.wikidata.org/wiki/Q192611",
+			"Notes": "Loses some of the essence of an enfranchised borough",
+			"uuid": "a3c19717-2c73-4301-904f-547ce5b7ab10",
+			"@id": "https://w3id.org/locolligo/cae6ad7b-ab02-42ed-b8b0-9fe870dc965e/a3c19717-2c73-4301-904f-547ce5b7ab10"
+		},
+		{
+			"VCH-term": "sea-port",
+			"WD-label": "seaport",
+			"WD-identifier": "Q15310171",
+			"WD-url": "https://www.wikidata.org/wiki/Q15310171",
+			"Notes": null,
+			"uuid": "47e0be1a-61ad-4345-ae6a-f9b1181590c1",
+			"@id": "https://w3id.org/locolligo/cae6ad7b-ab02-42ed-b8b0-9fe870dc965e/47e0be1a-61ad-4345-ae6a-f9b1181590c1"
+		},
+		{
+			"VCH-term": "seat of a diocese",
+			"WD-label": "episcopal see",
+			"WD-identifier": "Q866196",
+			"WD-url": "https://www.wikidata.org/wiki/Q866196",
+			"Notes": null,
+			"uuid": "52015ce1-4cbd-4312-bed4-316a17142916",
+			"@id": "https://w3id.org/locolligo/cae6ad7b-ab02-42ed-b8b0-9fe870dc965e/52015ce1-4cbd-4312-bed4-316a17142916"
+		},
+		{
+			"VCH-term": "suburb",
+			"WD-label": "suburb",
+			"WD-identifier": "Q188509",
+			"WD-url": "https://www.wikidata.org/wiki/Q188509",
+			"Notes": null,
+			"uuid": "ae98720a-3a2b-4b8b-a4dd-19bc2a228a64",
+			"@id": "https://w3id.org/locolligo/cae6ad7b-ab02-42ed-b8b0-9fe870dc965e/ae98720a-3a2b-4b8b-a4dd-19bc2a228a64"
+		},
+		{
+			"VCH-term": "suburban district",
+			"WD-label": "suburb",
+			"WD-identifier": "Q188509",
+			"WD-url": "https://www.wikidata.org/wiki/Q188509",
+			"Notes": null,
+			"uuid": "86aa6b2f-c369-4fd2-a232-f624f6fe6c9d",
+			"@id": "https://w3id.org/locolligo/cae6ad7b-ab02-42ed-b8b0-9fe870dc965e/86aa6b2f-c369-4fd2-a232-f624f6fe6c9d"
+		},
+		{
+			"VCH-term": "town",
+			"WD-label": "town",
+			"WD-identifier": "Q3957",
+			"WD-url": "https://www.wikidata.org/wiki/Q3957",
+			"Notes": null,
+			"uuid": "796e0d21-d49b-4957-bc09-cf320e420c50",
+			"@id": "https://w3id.org/locolligo/cae6ad7b-ab02-42ed-b8b0-9fe870dc965e/796e0d21-d49b-4957-bc09-cf320e420c50"
+		},
+		{
+			"VCH-term": "tything",
+			"WD-label": "Tithing",
+			"WD-identifier": "Q5394548",
+			"WD-url": "https://www.wikidata.org/wiki/Q5394548",
+			"Notes": "This WD concept applies only to Germanic countries",
+			"uuid": "62e2bd52-5ae3-43de-8380-453fa48f6622",
+			"@id": "https://w3id.org/locolligo/cae6ad7b-ab02-42ed-b8b0-9fe870dc965e/62e2bd52-5ae3-43de-8380-453fa48f6622"
+		},
+		{
+			"VCH-term": "union",
+			"WD-label": "poor law union",
+			"WD-identifier": "Q3397866",
+			"WD-url": "https://www.wikidata.org/wiki/Q3397866",
+			"Notes": null,
+			"uuid": "f905a023-b6ef-409f-b90b-fb03bc3ab44e",
+			"@id": "https://w3id.org/locolligo/cae6ad7b-ab02-42ed-b8b0-9fe870dc965e/f905a023-b6ef-409f-b90b-fb03bc3ab44e"
+		},
+		{
+			"VCH-term": "united parishes",
+			"WD-label": "parish",
+			"WD-identifier": "Q102496",
+			"WD-url": "https://www.wikidata.org/wiki/Q102496",
+			"Notes": null,
+			"uuid": "2ca4a5f9-b5ae-4126-ab37-e4c820a9cc8c",
+			"@id": "https://w3id.org/locolligo/cae6ad7b-ab02-42ed-b8b0-9fe870dc965e/2ca4a5f9-b5ae-4126-ab37-e4c820a9cc8c"
+		},
+		{
+			"VCH-term": "village",
+			"WD-label": "village",
+			"WD-identifier": "Q532",
+			"WD-url": "https://www.wikidata.org/wiki/Q532",
+			"Notes": null,
+			"uuid": "52650f67-85e9-4ff4-8485-a6892495bf17",
+			"@id": "https://w3id.org/locolligo/cae6ad7b-ab02-42ed-b8b0-9fe870dc965e/52650f67-85e9-4ff4-8485-a6892495bf17"
+		},
+		{
+			"VCH-term": "ward",
+			"WD-label": "ward",
+			"WD-identifier": "Q1195098",
+			"WD-url": "https://www.wikidata.org/wiki/Q1195098",
+			"Notes": null,
+			"uuid": "ecf059db-317b-4ece-85fc-51fd466ad39b",
+			"@id": "https://w3id.org/locolligo/cae6ad7b-ab02-42ed-b8b0-9fe870dc965e/ecf059db-317b-4ece-85fc-51fd466ad39b"
+		},
+		{
+			"VCH-term": "watering-place",
+			"WD-label": "spa",
+			"WD-identifier": "Q1341387",
+			"WD-url": "https://www.wikidata.org/wiki/Q1341387",
+			"Notes": null,
+			"uuid": "b48d74d9-91e8-4c3b-ac3f-b195e5a1b441",
+			"@id": "https://w3id.org/locolligo/cae6ad7b-ab02-42ed-b8b0-9fe870dc965e/b48d74d9-91e8-4c3b-ac3f-b195e5a1b441"
+		}
+	]
+}
