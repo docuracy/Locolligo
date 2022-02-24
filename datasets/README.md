@@ -5,4 +5,4 @@ For example, the persistent identifer URL
 is redirected to
 * https://docuracy.github.io/Locolligo/datasets/#VCH-Places/9 
 
-Javascript within index.html selects and renders the referenced feature.
+... where javascript within index.html selects and renders the referenced feature from within the *VCH-Places.lp.json* dataset.
