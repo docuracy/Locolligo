@@ -594,7 +594,7 @@
          ]
       },
       {
-         "description":"***TO DO / DISCUSS***: Standard LP specification *requires* a 'when' property to to temporally scope a) an entire Feature; b) a name; c) a geometry (representative point or extent); d) a type; or e) a relation.",
+         "description":"***TO DO / DISCUSS***: Standard LP specification *requires* a 'when' property to temporally scope a) an entire Feature; b) a name; c) a geometry (representative point or extent); d) a type; or e) a relation.",
          "anyOf":[
             {
                
