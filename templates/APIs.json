@@ -14,7 +14,7 @@
 			{
 				"links": {
 					"type": "'closeMatch'",
-					"id": "'https://www.geonames.org/'+newbody.geonameId+'/'"
+					"identifier": "'https://www.geonames.org/'+newbody.geonameId+'/'"
 				}
 			}
 		] 
@@ -34,7 +34,7 @@
 			{
 				"links": {
 					"type": "'primaryTopicOf'",
-					"id": "'https://'+newbody.wikipediaUrl"
+					"identifier": "'https://'+newbody.wikipediaUrl"
 				}
 			},
 			{
@@ -61,7 +61,7 @@
 			{
 				"links": {
 					"type": "'primaryTopicOf'",
-					"id": "newbody.link"
+					"identifier": "newbody.link"
 				}
 			},
 			{
@@ -98,7 +98,7 @@
 			{
 				"links": {
 					"type": "'closeMatch'",
-					"id": "newbody.uri"
+					"identifier": "newbody.uri"
 				}
 			}
 		] 
@@ -119,7 +119,7 @@
 			{
 				"links": {
 					"type": "'closeMatch'",
-					"id": "newbody.place.value"
+					"identifier": "newbody.place.value"
 				}
 			}
 		] 
@@ -140,7 +140,7 @@
 			{
 				"links": {
 					"type": "'closeMatch'",
-					"id": "newbody.site.value"
+					"identifier": "newbody.site.value"
 				}
 			},
 			{
@@ -166,7 +166,7 @@
 			{
 				"links": {
 					"type": "'seeAlso'",
-					"id": "newbody.properties.url"
+					"identifier": "newbody.properties.url"
 				}
 			},
 			{
