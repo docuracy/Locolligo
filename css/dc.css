@@ -224,6 +224,7 @@ button.mapboxgl-ctrl-close-map span.mapboxgl-ctrl-icon{
 .expandingButton:hover, .expandingButton.pinned {
     max-width: 50vw;
     max-height: 50vh;
+    overflow-y: scroll;
 }
 .fence {
     width: 30px;
