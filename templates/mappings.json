@@ -8,28 +8,28 @@
 	},
 	{
 		"description":"Recogito-LD to geoJSON-T",
-		"expression": "{ \"citation\":citation, \"@id\": `@id`, \"type\": \"FeatureCollection\", \"@context\": \"https://w3id.org/locolligo/contexts/context-schemadotorg-linkedplaces.jsonld\", \"features\":data.body[purpose='georeferencing'][].{ \"@id\": %.%.`@id` & '/' & %.id, \"type\":\"Feature\", \"name\":value, \"geometry\":geometry, \"properties\":{ \"title\":value, \"transcription\":%.body[purpose='transcribing'].value, \"comments\":%.body[purpose='commenting'][].{ \"comment\":value } }, \"names\":%.body[purpose='identifying'][]#$i.{ \"toponym\":%.body[purpose='georeferencing'][$i].value, \"citations\":[{\"@id\":value}] }, \"links\":%.body[purpose='identifying'][].{ \"type\":\"exactMatch\", \"identifier\":value }, \"depictions\":%.target[].{ \"@id\":source, \"title\":label, \"type\":type, \"selector\":selector } }}",
+		"expression": "{ \"citation\":citation, \"@id\": `@id`, \"type\": \"FeatureCollection\", \"@context\": \"https://w3id.org/locolligo/contexts/linkedplaces.jsonld\", \"features\":data.body[purpose='georeferencing'][].{ \"@id\": %.%.`@id` & '/' & %.id, \"type\":\"Feature\", \"geometry\":geometry, \"properties\":{ \"title\":value, \"transcription\":%.body[purpose='transcribing'].value, \"comments\":%.body[purpose='commenting'][].{ \"comment\":value } }, \"names\":%.body[purpose='identifying'][]#$i.{ \"toponym\":%.body[purpose='georeferencing'][$i].value, \"citations\":[{\"@id\":value}] }, \"links\":%.body[purpose='identifying'][].{ \"type\":\"exactMatch\", \"identifier\":value }, \"depictions\":%.target[].{ \"@id\":source, \"title\":label, \"type\":type, \"selector\":selector } }}",
 	    "mappings": {},
 	    "CRS_conversions": [],
 		"fields":["rld"]
 	},
 	{
 		"description":"Peripleo-LD to geoJSON-T",
-		"expression": "{ \"name\": name, \"description\": description, \"created\": created, \"creator\": creator, \"isAccessibleForFree\": isAccessibleForFree, \"license\": license, \"@context\": \"https://raw.githubusercontent.com/LinkedPasts/linked-places/master/linkedplaces-context-v1.1.jsonld\", \"type\":\"FeatureCollection\", \"features\":traces.body[additionalType=\"Place\" and $exists(geometry.longitude) and $exists(geometry.latitude)][].{ \"type\":\"Feature\", \"geometry\":{ \"type\":\"Point\", \"coordinates\":[ geometry.longitude, geometry.latitude ] }, \"properties\":{ \"name\":%.target.title, \"uri\": title, \"url\": %.target.id, \"description\": %.target.description, \"feature_type\": properties.feature_type,\"feature_detail\": properties.feature_detail,\"geodata_source\": properties.geodata_source, \"OS_gridref\": properties.OS_gridref, \"links\": [ $exists(id)?{ \"additionalType\": \"Place\", \"linkRelationship\": \"identifying\", \"lpo:type\": \"SpecificResource\", \"identifier\": id }, %.body[ additionalType=\"LinkRole\" ] ] }, \"when\": when }}",
+		"expression": "{ \"name\": name, \"description\": description, \"created\": created, \"creator\": creator, \"isAccessibleForFree\": isAccessibleForFree, \"license\": license, \"@context\": \"https://w3id.org/locolligo/contexts/linkedplaces.jsonld\", \"type\":\"FeatureCollection\", \"features\":traces.body[additionalType=\"Place\" and $exists(geometry.longitude) and $exists(geometry.latitude)][].{ \"type\":\"Feature\", \"geometry\":{ \"type\":\"Point\", \"coordinates\":[ geometry.longitude, geometry.latitude ] }, \"properties\":{ \"name\":%.target.title, \"uri\": title, \"url\": %.target.id, \"description\": %.target.description, \"feature_type\": properties.feature_type,\"feature_detail\": properties.feature_detail,\"geodata_source\": properties.geodata_source, \"OS_gridref\": properties.OS_gridref, \"links\": [ $exists(id)?{ \"additionalType\": \"Place\", \"linkRelationship\": \"identifying\", \"lpo:type\": \"SpecificResource\", \"identifier\": id }, %.body[ additionalType=\"LinkRole\" ] ] }, \"when\": when }}",
 	    "mappings": {},
 	    "CRS_conversions": [],
 		"fields":["traces"]
 	},
 	{
 		"description":"lp.csv to geoJSON-T",
-		"expression": "{ \"citation\":citation, \"@id\": `@id`, \"type\": \"FeatureCollection\", \"@context\": \"https://w3id.org/locolligo/contexts/context-schemadotorg-linkedplaces.jsonld\", \"features\": $map(data,function($v){$merge([{\"type\": \"Feature\"},$v])})}",
+		"expression": "{ \"citation\":citation, \"@id\": `@id`, \"type\": \"FeatureCollection\", \"@context\": \"https://w3id.org/locolligo/contexts/linkedplaces.jsonld\", \"features\": $map(data,function($v){$merge([{\"type\": \"Feature\"},$v])})}",
 	    "mappings": {},
 	    "CRS_conversions": [],
 		"fields":["lp"]
 	},
 	{
 		"description":"KML to geoJSON-T",
-		"expression": "{ \"type\":\"FeatureCollection\", \"@context\": \"https://raw.githubusercontent.com/LinkedPasts/linked-places/master/linkedplaces-context-v1.1.jsonld\", \"features\":kml.Document.Folder.Placemark.{ \"properties\": $merge( $append( [{\"name\":name}], $map($split(description,\"<br>\"), function($v){( {$split($v,\": \")[0]: $split($v,\": \")[1]} )}) ) ), \"type\":\"Feature\", \"geometry\":{ \"type\":\"Point\", \"coordinates\":[$number($split(Point.coordinates,\",\")[0]),$number($split(Point.coordinates,\",\")[1])] }, \"when\": when }}",
+		"expression": "{ \"type\":\"FeatureCollection\", \"@context\": \"https://w3id.org/locolligo/contexts/linkedplaces.jsonld\", \"features\":kml.Document.Folder.Placemark.{ \"properties\": $merge( $append( [{\"name\":name}], $map($split(description,\"<br>\"), function($v){( {$split($v,\": \")[0]: $split($v,\": \")[1]} )}) ) ), \"type\":\"Feature\", \"geometry\":{ \"type\":\"Point\", \"coordinates\":[$number($split(Point.coordinates,\",\")[0]),$number($split(Point.coordinates,\",\")[1])] }, \"when\": when }}",
 	    "mappings": {},
 	    "CRS_conversions": [],
 		"fields":["kml"]
