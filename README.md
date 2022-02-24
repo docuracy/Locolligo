@@ -8,6 +8,8 @@
     <img src="/images/colligo.png" />
 </p>
 
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.6257615.svg)](https://doi.org/10.5281/zenodo.6257615)
+
 ***Locolligo* is a single-page, browser-based javascript application \[*in the early stages of development*\] for the formatting, linking, and geolocation of datasets, with a particular focus on Cultural Heritage.** The greatest barrier to the visualisation, sharing, and linking of datasets that have a locational facet is the variety of ways and formats in which information has been collected, recorded, and stored. *Locolligo* seeks to dissolve that barrier.
 
 >It will facilitate the linking of related records (*subjects* and *objects*) based on definable criteria (*predicates*):
