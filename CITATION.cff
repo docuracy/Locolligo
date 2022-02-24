@@ -1,0 +1,31 @@
+cff-version: 1.2.0
+title: 'Locolligo: Historical Geodata Curator'
+message: Please cite this software using these metadata.
+type: software
+authors:
+  - given-names: Stephen James
+    family-names: Gadd
+    email: stephen@docuracy.co.uk
+    affiliation: British Library
+    orcid: 'https://orcid.org/0000-0003-3060-0181'
+identifiers:
+  - type: url
+    value: 'https://w3id.org/locolligo'
+url: 'https://w3id.org/locolligo'
+abstract: >-
+  Locolligo is a single-page, browser-based
+  javascript application [in the early stages of
+  development] for the formatting, linking, and
+  geolocation of datasets, with a particular focus on
+  Cultural Heritage. The greatest barrier to the
+  visualisation, sharing, and linking of datasets
+  that have a locational facet is the variety of ways
+  and formats in which information has been
+  collected, recorded, and stored. Locolligo seeks to
+  dissolve that barrier.
+keywords:
+  - >-
+    historical, geodata, location, places, linked
+    open data, linked data, place-names, cultural
+    heritage, GeoJSON, Peripleo
+license: CC-BY-4.0
