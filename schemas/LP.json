@@ -17,10 +17,10 @@
       "pattern": "(?:^(?<start>(?:[<>]?=?~?(?:0|-?[1-9][\\d]{1,3}|[+-]{1}[1-9][\\d]{4,9})(-(?:0[1-9]|1[0-2]))?(-(?:[0-2][1-9]|3[0-1]))?)|\\?)?(?:/(?<end>(?:[<>]?=?~?(?:0|-?[1-9][\\d]{1,3}|[+-]{1}[1-9][\\d]{4,9})(-(?:0[1-9]|1[0-2]))?(-(?:[0-2][1-9]|3[0-1]))?)|\\?))?){1,2}$"
     },
     "ISO8601": {
-      "description": "Any valid ISO 8601 date or date+time expression. See https://en.wikipedia.org/wiki/ISO_8601#Dates.",
+      "description": "***TO DISCUSS***: LP Standard currently permits any ISO 8601 expression, but should perhaps be limited to date+time expressions.",
       "examples": ["1066","1981-04-05","-4","2007-04-05T14:30Z"],
       "type": "string",
-      "minLength": 4
+      "minLength": 1
     },
     "whenDelimiter": {
       "description": "***TO DISCUSS***: LP specification (https://github.com/LinkedPasts/linked-places-format#when-required) requires one of these three properties, but offers inconsistent examples.",
