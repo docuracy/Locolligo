@@ -9,7 +9,7 @@
   ],
   "type": "object",
   "definitions": {
-    "description": "***TO DO***: Add when, citations, and certainty to definitions and to geometries. Resolve xLP version of citations. Add more examples.",
+    "description": "***TO DO***: Add more examples in arrays.",
     "dates": {
       "description": "***TO DISCUSS***: a short-form temporal value which can either appear in a 'timespans' array or as the only value of a 'when' property.",
       "examples": "['1939/1945','>2010','>=2011','>=2010-04-01','/<=1660-06','/?','?/>=2022','c-2500/>=2022','c-4543000000/>=2022','1934-12-18/?']",
@@ -144,7 +144,7 @@
       ]
     },
     "when": {
-      "anyOf": [
+      "oneOf": [
         {
           "$ref": "#/definitions/whenExtended"
         },
