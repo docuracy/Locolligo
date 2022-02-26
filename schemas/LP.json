@@ -17,8 +17,8 @@
       "pattern": "(?:^(?<start>(?:[<>]?=?~?(?:0|-?[1-9][\\d]{1,3}|[+-]{1}[1-9][\\d]{4,9})(-(?:0[1-9]|1[0-2]))?(-(?:[0-2][1-9]|3[0-1]))?)|\\?)?(?:/(?<end>(?:[<>]?=?~?(?:0|-?[1-9][\\d]{1,3}|[+-]{1}[1-9][\\d]{4,9})(-(?:0[1-9]|1[0-2]))?(-(?:[0-2][1-9]|3[0-1]))?)|\\?))?){1,2}$"
     },
     "ISO8601": {
-      "description": "Any valid ISO 8601 expression. See https://en.wikipedia.org/wiki/ISO_8601#Dates.",
-      "example": "1066",
+      "description": "Any valid ISO 8601 date or date+time expression. See https://en.wikipedia.org/wiki/ISO_8601#Dates.",
+      "examples": ["1066","1981-04-05","-4","2007-04-05T14:30Z"],
       "type": "string",
       "minLength": 4
     },
