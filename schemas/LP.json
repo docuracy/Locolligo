@@ -353,11 +353,8 @@
 				"uuid": {
 					"description": "***TO DISCUSS***: Proposal for optional property that can be used in Geometry Collections to associate particular geometries with one or more of its parent feature's types. This might be used, for example, to indicate separate points for the creation, discovery, and repository of archaeological artefacts.",
 					"example": "8d6e0aa7-0b2c-403c-b27c-10c10dd7f10e",
-					"type": "object",
-					"properties": {
-						"type": "string",
-						"format": "uuid"
-					}
+					"type": "string",
+					"format": "uuid"
 				},
 				"geometries": {
 					"type": "array",
