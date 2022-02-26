@@ -16,6 +16,12 @@
          "type":"string",
          "minLength":4
       },
+      "dates":{
+         "description":"***TO DISCUSS***: a short-form temporal value which can either appear in a 'timespans' array or as the only value of a 'when' property.",
+         "examples":"['1939/1945','>2010','>=2011','>=2010-04-01','/<=1660-06','/?','?/>=2022','c-2500/>=2022','c-4543000000/>=2022','1934-12-18/?']",
+         "type":"string",
+         "pattern":"(?:^(?<start>(?:[<>]?=?c?(?:[\d]{4}|[+-]{1}[\d]{4,10})(?:-[\d]{2}){0,2})|\?)?(?:\/(?<end>(?:[<>]?=?c?(?:[\d]{4}|[+-]{1}[\d]{4,10})(?:-[\d]{2}){0,2})|\?))?){1,2}$"
+      },
       "whenDelimiter":{
          "description":"***TO DISCUSS***: LP specification (https://github.com/LinkedPasts/linked-places-format#when-required) requires one of these three properties, but offers inconsistent examples.",
          "type":"object",
