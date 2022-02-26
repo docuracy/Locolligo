@@ -70,7 +70,7 @@
       },
       "additionalProperties": false
     },
-    "when": {
+    "whenExtended": {
       "type": "object",
       "properties": {
         "timespans": {
@@ -141,6 +141,16 @@
       },
       "required": [
         "timespans"
+      ]
+    },
+    "when": {
+      "anyOf": [
+        {
+          "$ref": "#/definitions/whenExtended"
+        },
+        {
+          "$ref": "#/definitions/dates"
+        }
       ]
     },
     "lang": {
