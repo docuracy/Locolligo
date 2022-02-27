@@ -280,7 +280,7 @@
           "$ref": "#/definitions/when"
         },
         "geometries": {
-          "description": "***TO DISCUSS***: Proposal for optional array of UUIDs referencing particular geometries within a feature's Geometry Collection to which this feature type applies.",
+          "description": "***TO DISCUSS***: Proposal for optional array of URIs referencing particular geometries within a feature's Geometry Collection to which this feature type applies.",
           "type": "array",
           "items": {
             "type": "string",
@@ -375,8 +375,8 @@
           "description": "***TO DISCUSS***: Proposal for optional geometry property to indicate the precision of Point coordinate data.",
           "$ref": "#/definitions/precision"
         },
-        "uuid": {
-          "description": "***TO DISCUSS***: Proposal for optional property that can be used in Geometry Collections to associate particular geometries with one or more of its parent feature's types. This might be used, for example, to indicate separate points for the creation, discovery, and repository of archaeological artefacts.",
+        "@id": {
+          "description": "***TO DISCUSS***: Proposal for optional @id/URI that can be used in Geometry Collections to associate particular geometries with one or more of its parent feature's types. This might be used, for example, to indicate separate points for the creation, discovery, and repository of archaeological artefacts.",
           "example": "8d6e0aa7-0b2c-403c-b27c-10c10dd7f10e",
           "type": "string",
           "format": "uuid"
