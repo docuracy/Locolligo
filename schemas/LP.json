@@ -302,7 +302,7 @@
         "uncertain"
       ]
     },
-    "precision": {
+    "granularity": {
       "description": "An indication of the precision of Point coordinate data: Points lie somewhere within all of the resolved properties.",
       "type": "object",
       "properties": {
@@ -371,9 +371,9 @@
         "certainty": {
           "$ref": "#/definitions/certainty"
         },
-        "precision": {
+        "granularity": {
           "description": "***TO DISCUSS***: Proposal for optional geometry property to indicate the precision of Point coordinate data.",
-          "$ref": "#/definitions/precision"
+          "$ref": "#/definitions/granularity"
         },
         "@id": {
           "description": "***TO DISCUSS***: Proposal for optional @id/URI that can be used in Geometry Collections to associate particular geometries with one or more of its parent feature's types. This might be used, for example, to indicate separate points for the creation, discovery, and repository of archaeological artefacts.",
