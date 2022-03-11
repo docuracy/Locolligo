@@ -114,6 +114,28 @@ span.initial{
 .ui-menu-item {
 	font-size: .9em;
 }
+#typeLibrary-button {
+	float: right;
+    height: 24px;
+    top: 1px;
+}
+#typeList {
+    column-width: 120px;
+    column-rule: 1px solid gray;
+    border: 1px solid gray;
+    background-color: beige;
+	border-radius: 3px;
+	clear: both;
+    margin: 20px 5px 0px;
+}
+#typeList input {
+    float: left;
+    clear: both;
+}
+#typeList label {
+	display: block;
+    margin: 0 0 -20px 20px;
+}
 #source {
     background-image: linear-gradient(to top right, var(--ip-color) 70%, black);
 	color: var(--ip-color);
