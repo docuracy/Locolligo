@@ -174,6 +174,19 @@ const LibraryMappings = [// TO DO: Move this functionality to IndexedDB
 			}
 		] 
 	},
+	{ // VisitPlus (UK)
+		"type": "1646046999038",
+		"popup": "newbody.properties.title",
+		"lpMappings": [
+			{
+				"links": {
+					"type": "'subjectOf'",
+					"identifier": "newbody.properties.url",
+					"label": "newbody.properties.title"
+				}
+			}
+		] 
+	},
 	{ // National Trust Sites
 		"type": "1643556041346",
 		"popup": "newbody.properties.title",
@@ -986,6 +999,36 @@ function updateTrace(dataset=activeDatasetEl.data('data')[activeDataType]){
 		}
 		if(addBounds) bounds.extend(marker.getLngLat());
 	});	
+	
+	if($('#typeList').length>0 && dataset[index].hasOwnProperty('properties') && dataset[index].properties.hasOwnProperty('type')){
+		var labels = dataset[index].properties.type.split('/');
+		var unmatched = [];
+		labels.forEach(function(label,j){
+			var matched = false;
+			$.each($('#typeList input'), function(i,type){
+				if (label.toLowerCase() == $(type).labels().text()) {
+					$(type).prop('checked',true).trigger('change'); // Adds item to types list
+					matched = true;
+				}
+			});
+			if(!matched) unmatched.push(label);
+		});
+		if(unmatched.length>0){
+			dataset[index].properties.type = unmatched.join('/');
+		}
+		else {
+			delete dataset[index].properties.type;
+		}
+	}
+	if(dataset[index].hasOwnProperty('types')){
+		var typesArray = dataset[index].types;
+		$.each($('#typeList input'), function(i,type){
+			var exists = typesArray.findIndex(({ identifier }) => identifier === $(type).val());
+			$(type).prop('checked', exists>-1);
+		});
+	}
+	else $('#typeList input').prop('checked', false);
+	
 	$('#trace').data('formatter',new JSONFormatter(dataset[index],3,{theme:'light'}));
 	$('#trace').html($('#trace').data('formatter').render()).addClass('json-formatter');
 	showMap(true, bounds);
@@ -1010,7 +1053,7 @@ function updateFilter() {
 	filteredIndices=[];
 
 	$.each(activeDatasetEl.data('data')[activeDataType], function(i,feature){
-		if ((JSON.stringify(feature)).indexOf(filter)>-1) filteredIndices.push(i+1);
+		if ((JSON.stringify(feature).toUpperCase()).indexOf(filter)>-1) filteredIndices.push(i+1);
 	});
 	
 	$('#filtered').html('('+filteredIndices.length+')');
@@ -1055,6 +1098,11 @@ function explore(el) {
 		.eq(1).after($('<input id="index" />')
 			.val(1)
 			.button()
+			.keyup(function(){
+				$('#filter').val(''); // Clear filter
+				updateFilter();
+				selectedFilter = $('#index').val()-1;
+			})
 			.change(function(){$('#index').val(filteredIndices[selectedFilter]); updateTrace()})
 		).end()
 		.eq(2).before('<span>/'+activeDatasetEl.data('data')[activeDataType].length+'</span>').end()
@@ -1090,7 +1138,7 @@ function explore(el) {
 			}
 		}).end()
 		.slice(-5).insertAfter($('#navigation')).wrapAll('<div id="edit"/>');
-		;
+		$('#typeLibrary-button').appendTo($('#edit'));
 	updateFilter();
 	$('#index').change(); // Trigger updateTrace
 }
@@ -1502,10 +1550,11 @@ $( document ).ready(function() {
 									clone[property] = eval(mapping[mappingType][property]);	
 								}
 								if(!selectedItem.hasOwnProperty(mappingType)) selectedItem[mappingType] = [];
+								console.log(mappingType,selectedItem[mappingType],clone);
 								selectedItem[mappingType].push(clone);
 							}
-							catch{
-								console.log('Failed to map object.',mapping);
+							catch(err){
+								console.log('Failed to map object.',mapping,err);
 							}
 						}
 					});
@@ -1726,6 +1775,53 @@ $( document ).ready(function() {
 		});
 	});
 	
+	// Populate Types drop-down list
+	$.getJSON('https://api.github.com/repos/docuracy/Locolligo/git/trees/main?recursive=1&nocache='+Date.now(),function(data){
+		var options = [];
+		$.each(data.tree,function(i,pathobj){
+			if(pathobj.path.startsWith('types/')){
+				options.push('<option value="'+pathobj.url+'">'+pathobj.path.replace('types/','').replace('.csv','')+'</option>');
+			}
+		});
+		$('#typeLibrary')
+			.append(options.join(''))
+	    	.selectmenu().on('selectmenuchange',function () {
+				$('body').loadingModal({text: 'Processing...'});
+				$.ajax({
+				    url: $('#typeLibrary option:selected').val(),
+				    headers: {'accept': 'application/vnd.github.VERSION.raw'},
+				    success: function(data){
+				    	types = Papa.parse(data,{header:true,dynamicTyping:true,skipEmptyLines:true}).data;
+				    	var typeList = [];
+				    	types.forEach(function(type,i){
+				    		typeList.push('<input type="checkbox" name="types" id="type_'+i+'" value="'+type.identifier+'"><label for="type_'+i+'">'+type.label+'</label>');
+				    	});
+				    	$('#typeList').remove();
+				    	$('#trace').before('<div id="typeList">'+typeList.join('<br>')+'</div>');
+				    	updateTrace();
+				    },
+				    complete: function(){
+				    	$('body').loadingModal('destroy');
+				    }
+				});
+		});
+		$('body')
+		.on('change','#typeList input',function(e){
+			$('#history').data('states').push(JSON.stringify(activeDatasetEl.data("data")[activeDataType][filteredIndices[selectedFilter]-1]));
+			if(!activeDatasetEl.data("data")[activeDataType][filteredIndices[selectedFilter]-1].hasOwnProperty('types')) activeDatasetEl.data("data")[activeDataType][filteredIndices[selectedFilter]-1].types = [];
+			var typesArray = activeDatasetEl.data("data")[activeDataType][filteredIndices[selectedFilter]-1].types;
+			var exists = typesArray.findIndex(({ identifier }) => identifier === $(e.target).val());
+			if($(e.target).is(':checked') && exists==-1){
+				typesArray.push({'identifier':$(e.target).val(),'label':$(e.target).labels().text()});
+			}
+			else if(exists>-1){
+				typesArray.splice(exists,1);
+			}
+			if (typesArray.length==0) delete activeDatasetEl.data("data")[activeDataType][filteredIndices[selectedFilter]-1].types;
+			$('#trace').html($('#trace').data('formatter').render());
+		});
+	});
+	
 	// Fetch default schema.org indexing template
 	$.get('./templates/indexing.json?'+Date.now(), function(data) { // Do not use any cached file
 		indexing = data;
@@ -1776,6 +1872,17 @@ $( document ).ready(function() {
     				$.get('./vocabularies/VCH-terms.json?'+Date.now(), function(data) { // Do not use any cached file
     					data.data.forEach(function(term){
     						VCHVocabulary.terms[term['VCH-term']] = term;
+    					});
+					},'json');
+    				$.ajaxSetup({async:true});
+    			}
+    			
+    			if(filename=='PAS_Warwickshire.lt.csv'){ //  Load Vocabulary
+    				var PASMoDVocabulary = {'terms':[]};
+    				$.ajaxSetup({async:false});
+    				$.get('./vocabularies/PAS-MoDs.json?'+Date.now(), function(data) { // Do not use any cached file
+    					data.forEach(function(term){
+    						PASMoDVocabulary.terms[term.itemLabel] = term.item;
     					});
 					},'json');
     				$.ajaxSetup({async:true});
@@ -1880,7 +1987,7 @@ $( document ).ready(function() {
 	    				delete feature.northing;
         			}
         			else if(feature.hasOwnProperty('PAS_longitude') && feature.hasOwnProperty('PAS_latitude')){
-        				feature.geometry = {"type": "Point", "coordinates": scatter([feature.PAS_longitude,feature.PAS_latitude]), 'precision': {'tolerance':{'value':0.05,'units':'degrees'}}}; // Obfuscate PAS Coordinates plus/minus 0.5km lat & lng
+        				feature.geometry = {"type": "Point", "coordinates": scatter([feature.PAS_longitude,feature.PAS_latitude]), 'granularity': {'tolerance':{'value':0.05,'units':'degrees'}}}; // Obfuscate PAS Coordinates plus/minus 0.5km lat & lng
 	    				delete feature.PAS_longitude;
 	    				delete feature.PAS_latitude;
         			}
@@ -1905,8 +2012,14 @@ $( document ).ready(function() {
 //        				console.log(properties.join('.'));
         				if(properties.length>1 && properties[0]!==''){
             				var root = feature;
-            				properties.forEach(function(property){
-            					if(!root.hasOwnProperty(property)) root[property] = {};
+            				properties.forEach(function(property,i){
+            					if(!root.hasOwnProperty(property)){
+            						if(properties.length>i && /(0|[1-9]\d*)/.test(properties[i+1])){ // Array item next
+//                						console.log('Array '+property);
+            							root[property] = [];
+                					}
+                					else root[property] = {};
+            					}
             					root = root[property];
             				});
             				eval('feature.'+property.replaceAll(/(.@[^\.]*)/g,function(match){return '[\''+match.substring(1)+'\']';})+'=feature[property]'); // replaceAll required to handle properties starting with '@'
@@ -1930,7 +2043,8 @@ $( document ).ready(function() {
 	    				if(feature.properties.hasOwnProperty('KainOliverName') && feature.properties.KainOliverName !== '') feature.names.push({
 	    					'toponym':feature.properties.KainOliverName,
 	    					'citations':[{
-	    						'label':'Kain, R.J.P., Oliver, R.R. (2001). Historic Parishes of England and Wales : an Electronic Map of Boundaries before 1850 with a Gazetteer and Metadata. [data collection]. UK Data Service.',
+//	    						'label':'Kain, R.J.P., Oliver, R.R. (2001). Historic Parishes of England and Wales : an Electronic Map of Boundaries before 1850 with a Gazetteer and Metadata. [data collection]. UK Data Service.',
+	    						// Label omitted because duplication bloats the dataset. The DOI is sufficient to identify the source.
 	    						'@id':'DOI:10.5255/UKDA-SN-4348-1'
 	    					}]
 	    				});
@@ -2025,31 +2139,40 @@ $( document ).ready(function() {
 	        						if('type' in result.groups && result.groups.type!==undefined){
 		        						var type = result.groups.type.toLowerCase().trim();
 		        						VCHtypes.push(type);
-		        						console.log(type);
+//		        						console.log(type);
 	        						}
 	        						if('untyped' in result.groups && result.groups.untyped!==undefined){
 		        						var untyped = result.groups.untyped.toLowerCase().trim();
 		        						if(untyped!=='flemish') VCHtypes.push('unspecified');
-		        						console.log(type);
+//		        						console.log(type);
 	        						}
 		        				}
 	        					VCHtypes = VCHtypes.filter(arrayUnique).sort();
-	        					feature.properties.schools = VCHtypes;
+	        					if(VCHtypes.length>0) feature.properties.schools = VCHtypes;
 	        					
 	        				}
 	        				else{
 	        					console.log(i,parts.length, parts[0].length);
 	        				}
-	        				if(feature.descriptions[0].value.length>900) {
-//	        					console.log (i+': reduced from '+feature.descriptions[0].value.length);
-	        					feature.descriptions[0].value = feature.descriptions[0].value.substring(0,895)+'...';
-	        				}
+//	        				if(feature.descriptions[0].value.length>900) {
+////	        					console.log (i+': reduced from '+feature.descriptions[0].value.length);
+//	        					feature.descriptions[0].value = feature.descriptions[0].value.substring(0,895)+'...';
+//	        				}
         				}
         				else{
         					console.log("Deleted",i,feature.descriptions[0]);
         					delete feature.descriptions[0];
         				}
         				
+        			}
+        			
+        			if(filename=='PAS_Warwickshire.lt.csv'){
+        				if(feature.relations[1].hasOwnProperty('label')){
+        					if(feature.relations[1].label.toLowerCase() in PASMoDVocabulary.terms){
+        						feature.relations[1].relationTo = PASMoDVocabulary.terms[feature.relations[1].label.toLowerCase()];
+            				}
+        					else console.log('PAS MoD not found: '+feature.relations[1].label);
+        				}
         			}
         			
         			// TO DO: add .relations.broaderPartitive items based on feature.geometry.accuracy, using GeoNames API to identify settlements, counties, or countries based on Point location.
