@@ -582,6 +582,12 @@
                   "example": "The River Thames at Abingdon, Oxfordshire",
                   "type": "string"
                 },
+                "thumbnail": {
+                  "description": "A URL of a small representation of the same image resource. ***TO DISCUSS***: Not explicitly part of the existing LP standard, but found to be useful.",
+                  "type": "string",
+                  "format": "uri",
+                  "pattern": "^https?://"
+                },
                 "license": {
                   "description": "A URL or string giving the licence terms for the image.",
                   "type": "string",
