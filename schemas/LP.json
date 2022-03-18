@@ -478,6 +478,11 @@
                   "example": "https://www.wikidata.org/wiki/Q321381",
                   "type": "string",
                   "format": "uri"
+                },
+                "label": {
+                  "description": "***TO DISCUSS***: Not LPF standard, but found to be almost indispensible in implementing a visualisation tool. We're also looking at including the option of other standard feature properties to improve the advance information available about links.",
+                  "example": "See this feature described on Wikipedia.",
+                  "type": "string"
                 }
               },
               "required": [
