@@ -7244,7 +7244,7 @@
     {
       "id": "simple-tiles",
       "type": "raster",
-      "source": "nls-1885-1900",
+      "source": "nls-OS-6inch-1888-1913",
       "minzoom": 0,
       "maxzoom": 22
     }
