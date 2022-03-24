@@ -593,6 +593,11 @@
                   "format": "uri",
                   "pattern": "^https?://"
                 },
+                "accreditation": {
+                  "description": "A string giving any copyright details required to be displayed with the image. ***TO DISCUSS***: Not explicitly part of the existing LP standard, but found to be useful.",
+                  "type": "string",
+                  "minLength": 1
+                },
                 "license": {
                   "description": "A URL or string giving the licence terms for the image.",
                   "type": "string",
