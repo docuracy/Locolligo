@@ -7267,23 +7267,7 @@
           ],
           "tileSize": 256,
           "attribution": "Historical OS Map Layer, 1885-1900, by National Library of Scotland"
-        },
-    "outdoor": {
-      "url": "https://api.maptiler.com/tiles/outdoor/tiles.json?key=EwqevUSv6TJc7nvAa1Im",
-      "type": "vector"
-    },
-    "contours": {
-      "url": "https://api.maptiler.com/tiles/contours/tiles.json?key=EwqevUSv6TJc7nvAa1Im",
-      "type": "vector"
-    },
-    "terrain-rgb": {
-      "url": "https://api.maptiler.com/tiles/terrain-rgb/tiles.json?key=EwqevUSv6TJc7nvAa1Im",
-      "type": "raster-dem"
-    },
-    "maptiler_planet": {
-      "url": "https://api.maptiler.com/tiles/v3/tiles.json?key=EwqevUSv6TJc7nvAa1Im",
-      "type": "vector"
-    }
+        }
   },
   "version": 8,
   "metadata": {
