@@ -7243,7 +7243,7 @@
     },
     {
       "id": "simple-tiles",
-      "type": "raster",
+      "type": "vector",
       "source": "outdoor",
       "minzoom": 0,
       "maxzoom": 22
