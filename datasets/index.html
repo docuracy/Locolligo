@@ -12,6 +12,8 @@ The script searches the dataset for features or traces with an @id matching the 
 -->
 <head>
 	<title>Locolligo API</title>
+	<script src='https://docuracy.github.io/Locolligo/js/maplibre-gl@2.1.7.js'></script>
+	<link href='https://docuracy.github.io/Locolligo/css/maplibre-gl@2.1.7.css' rel='stylesheet' />
 	<script>
 			
 	// Minified function below from From https://github.com/mohsen1/json-formatter-js
@@ -28,6 +30,17 @@ The script searches the dataset for features or traces with an @id matching the 
 			var result = data[type].filter(obj => {
 				return obj['@id'].split('/').pop().split('#').pop() === itemID;
 			})
+			var map = new maplibregl.Map({
+				container: 'map',
+				style: 'https://api.maptiler.com/maps/streets/style.json?key=Rasw4ZNSlW7jEXP7UdLQ',
+				center: result[0].geometry.coordinates,
+				zoom: 13
+			});
+			var nav = new maplibregl.NavigationControl();
+			map.addControl(nav, 'top-right');
+			var marker = new maplibregl.Marker()
+		    		.setLngLat(result[0].geometry.coordinates)
+     				.addTo(map); 
 			if(data.hasOwnProperty('citation')) result[0].citation = data.citation;
 			var formatter = new JSONFormatter(result[0],10,{theme:'dark'});
 			document.body.appendChild(formatter.render());
