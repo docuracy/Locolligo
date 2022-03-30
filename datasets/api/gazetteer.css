@@ -1,0 +1,84 @@
+:root {
+  --ip-color: darkslategrey;
+  --op-color: #520303;
+  --bg-color: lightcyan;
+}
+body {
+	font-family: Arial, Helvetica, sans-serif;
+}
+body > div {
+	width: 400px;
+	height: 300px;
+	border-radius: 4px;
+	border: 1px solid #000;
+	margin-bottom: 4px;
+}
+#title, #json {
+	padding: 4px;
+	width: 392px;
+	height: auto;
+	background-color: #ffeeaa61;
+	position: relative;
+}
+#json {
+	max-height: 300px;
+	overflow: auto;
+	background-color: #f7f2e5;
+}
+h4 {
+	margin: 0 4px 0 0;
+}
+h6 {
+	display: contents;
+}
+.description {
+	font-size: small;
+}
+.indexing {
+	border-radius: 4px;
+    border: 1px solid #000;
+    padding: 0 4px;
+    margin: 4px 0;
+    background-color: #3fb1ce1a;
+}
+.toponym, .link, .creator, .source {
+	display: contents;
+	font-style: italic;
+    font-size: x-small;
+}
+#thumbnails {
+	display: inline-block;
+}
+.thumbnail {
+	border-radius: 4px;
+    border: 1px solid #000;
+    margin: 2px 2px 0 0;
+	height: 75px;
+	object-fit: contain;
+	float: left;
+}
+.logo {
+	font-family: 'Montserrat', sans-serif;
+    font-weight: bold;
+    font-size: 1.2em;
+	color: var(--ip-color);
+    text-decoration: none;
+	float: right;
+	text-shadow: 0.07em 0.07em 0.15em rgb(10 10 10 / 45%);
+	white-space: nowrap;
+}
+.logo span{
+	color: var(--op-color);
+}
+.logo span::after {
+	content: 'Gazetteer';
+	position: absolute;
+	font-size: .35em;
+    padding: 0.1em 0.2em;
+    top: 0.8em;
+    right: 11.3em;
+	background-color: rgb(255 255 0 / 60%);
+	-webkit-transform: rotate(-15deg); 
+	-moz-transform: rotate(-15deg);    
+	transform:rotate(-15deg);
+}
