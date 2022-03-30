@@ -6,7 +6,7 @@ function lpHTML(property,item=feature) {
 	var aggregator=[];
 	switch(property) {
 	case 'title':
-		return '<h4>'+((item.hasOwnProperty('properties') && item.properties.hasOwnProperty('title'))?item.properties.title:'(No Title)')+'</h4>';
+		return '<h3>'+((item.hasOwnProperty('properties') && item.properties.hasOwnProperty('title'))?item.properties.title:'(No Title)')+'</h3>';
 		break;
 	case 'description':
 		if(!item.hasOwnProperty('descriptions')) return '';
