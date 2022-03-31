@@ -97,10 +97,13 @@ Dataset size is limited by local device memory, although a PC with 16GB of memor
 ## LaNC Project Partners
 Thanks to various project partners and others, who may retain copyright in their respective sample datasets used in this software:
 
-* [Historic Environment Scotland](https://www.historicenvironment.scot/) - Scottish Charity No. SC045925 © Crown copyright and database right 2020.
+* [English Heritage](https://www.english-heritage.org.uk/)
 * [Historic England](http://www.HistoricEngland.org.uk) - contains Ordnance Survey data © Crown copyright and database right 2020.
-* [The Portable Antiquities Scheme](https://finds.org.uk/) - linked images Courtesy of the Portable Antiquities Scheme - © The British Museum.
+* [Historic Environment Scotland](https://www.historicenvironment.scot/) - Scottish Charity No. SC045925 © Crown copyright and database right 2020.
+* [Historic Royal Palaces](https://www.hrp.org.uk/)
+* [Museum of London Archaeology](https://www.mola.org.uk/)
 * [The National Trust](https://www.nationaltrust.org.uk/) - Registered Charity in England & Wales No. 205846
+* [The Portable Antiquities Scheme](https://finds.org.uk/) - linked images Courtesy of the Portable Antiquities Scheme - © The British Museum.
 * [Viae Regiae](https://viaeregiae.org/) - a volunteer-driven member project of the Pelagios Network
 
 ## Other Acknowledgements
