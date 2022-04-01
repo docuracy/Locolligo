@@ -11,7 +11,7 @@ function lpHTML(property,item=feature) {
 	case 'description':
 		if(!item.hasOwnProperty('descriptions')) return '';
 		item.descriptions.forEach(function(description){
-			aggregator.push('<p class="description">'+description.value+' [<a href="'+description.source+'">source</a>]</p>');
+			aggregator.push('<p class="description">'+description.value+(description.hasOwnProperty('source')?' [<a href="'+description.source+'">source</a>]':'')+'</p>');
 		});
 		return aggregator.length>0?aggregator.join(''):'';
 		break;
