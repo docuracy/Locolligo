@@ -26,28 +26,6 @@
     },
     "layers": [
     	{
-		"id": "background",
-		"type": "background",
-		"paint": {
-			"background-color": {
-				"stops": [
-					[
-					  5,
-					  "rgba(239, 245, 231, 1)"
-					],
-					[
-					  14,
-					  "rgba(242, 243, 242, 1)"
-					]
-				]
-			}
-		},
-		"layout": {
-			"visibility": "visible"
-		},
-		"minzoom": 0
-	},
-    	{
 		"id": "simple-tiles",
 		"type": "raster",
 		"source": "nls-OS-6inch-1888-1913",
