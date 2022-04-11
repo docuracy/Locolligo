@@ -1,12 +1,10 @@
 {
-  "id": "outdoor",
-  "name": "Outdoor",
-  "zoom": 7,
-  "pitch": 0,
-  "center": [
-    8.299512182724584,
-    46.67124020906036
-  ],
+  "name": "NLS 6-inch",
+	"center": [
+		-3.111,
+		53.731
+	],
+	"zoom": 12.5,
   "glyphs": "https://api.maptiler.com/fonts/{fontstack}/{range}.pbf?key=Rasw4ZNSlW7jEXP7UdLQ",
   "layers": [
     {
