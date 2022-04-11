@@ -5,7 +5,6 @@
 		53.731
 	],
 	"zoom": 12.5,
-  "glyphs": "https://api.maptiler.com/fonts/{fontstack}/{range}.pbf?key=Rasw4ZNSlW7jEXP7UdLQ",
   "layers": [
     {
       "id": "background",
@@ -38,7 +37,6 @@
       "maxzoom": 22
     }
   ],
-  "sprite": "https://api.maptiler.com/maps/outdoor/sprite",
   "bearing": 0,
   "sources": {
     "nls-OS-6inch-1888-1913": {
