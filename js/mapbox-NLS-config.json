@@ -31,51 +31,6 @@
       "minzoom": 0
     },
     {
-      "id": "continent",
-      "type": "symbol",
-      "paint": {
-        "text-color": "rgba(58, 59, 67, 1)",
-        "text-halo-color": "rgba(241, 242, 233, 1)",
-        "text-halo-width": 1.3
-      },
-      "filter": [
-        "all",
-        [
-          "==",
-          "class",
-          "continent"
-        ]
-      ],
-      "layout": {
-        "text-font": [
-          "Nunito Bold"
-        ],
-        "text-size": {
-          "stops": [
-            [
-              1,
-              12
-            ],
-            [
-              4,
-              24
-            ]
-          ]
-        },
-        "text-field": "{name:latin}",
-        "visibility": "visible",
-        "text-justify": "center",
-        "text-padding": 0,
-        "text-transform": "uppercase"
-      },
-      "source": "maptiler_planet",
-      "maxzoom": 3,
-      "metadata": {
-        
-      },
-      "source-layer": "place"
-    },
-    {
       "id": "simple-tiles",
       "type": "raster",
       "source": "nls-OS-6inch-1888-1913",
