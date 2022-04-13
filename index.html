@@ -27,15 +27,16 @@ For details see https://github.com/docuracy/Locolligo/blob/main/LICENSE.md
 	<script src="./js/shp2geojson-preview-v2.js">// Adapted from https://github.com/gipong/shp2geojson.js to accommodate uploaded files</script>
 	<script src="./js/polylabel.js">// From https://github.com/mapbox/polylabel</script>
 	<script src="./js/citation-js-software-formats.min.js" type="text/javascript">// From https://github.com/citation-js</script>
+	<script src="./js/fuse.js" type="text/javascript">// From https://fusejs.io/</script>
 	<script src="./js/data-converter.js"></script>
 	<link rel="stylesheet" href="./css/jquery-ui.min.css">
 	<link rel="stylesheet" href="./css/jquery-ui.theme.min.css">
 	<link rel="stylesheet" href="./css/jquery.loadingModal.min.css">
 	<link rel="stylesheet" href="./css/dc.css">
-	<link href="./css/mapbox-gl.css" rel="stylesheet">
+	<link href="./css/maplibre-gl@2.1.7.css" rel="stylesheet">
 	<link rel="shortcut icon" type="image/x-icon" href="favicon.ico">
 	<style>@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@100&display=swap');</style>
-	<script src="./js/mapbox-gl.js"></script>
+	<script src="./js/maplibre-gl@2.1.7.js"></script>
 	<base target="_blank">
 </head>
 <body>
@@ -82,7 +83,7 @@ For details see https://github.com/docuracy/Locolligo/blob/main/LICENSE.md
 			<div class="layerGroup"></div>
 		</div>
 		<div id="geocodeWrapper" class="expandingButton">
-			<input id="geocode" class="mapboxgl-ctrl" title="First set the search bounds by zooming and panning map, then begin typing." placeholder="Find within map bounds" type="find" />
+			<input id="geocode" class="maplibregl-ctrl" title="First set the search bounds by zooming and panning map, then begin typing." placeholder="Find within map bounds" type="find" />
 			<div id="geoResults"></div>
 		</div>
 		<div id="datastore" title="Local Geodata Library">
@@ -100,15 +101,13 @@ For details see https://github.com/docuracy/Locolligo/blob/main/LICENSE.md
     </script>
 	<script>
 		// Initialise map
-		mapboxgl.accessToken = 'pk.eyJ1IjoiZG9jdXJhY3kiLCJhIjoiY2t3dnp0NmhkMDhwNzMwczhwa2VicGJoeSJ9.Gf3x44EB9xZfotN-gC0DBQ';
-		map = new mapboxgl.Map({
+		// mapboxgl.accessToken = 'pk.eyJ1IjoiZG9jdXJhY3kiLCJhIjoiY2t3dnp0NmhkMDhwNzMwczhwa2VicGJoeSJ9.Gf3x44EB9xZfotN-gC0DBQ';
+		map = new maplibregl.Map({
 		    container: 'map',
-		    style: 'https://raw.githubusercontent.com/docuracy/Locolligo/main/js/mapbox-config.json',
-		    center: [0, 51],
-		    zoom: 9 
+		    style: './js/mapbox-NLS-config.json'
 		});
 		map
-			.addControl(new mapboxgl.NavigationControl())
+			.addControl(new maplibregl.NavigationControl())
 			.on('idle',function(){ map.resize(); });
 	</script>
 </body>
