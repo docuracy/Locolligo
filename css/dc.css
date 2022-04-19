@@ -210,6 +210,15 @@ button.mapboxgl-ctrl-close-map span.mapboxgl-ctrl-icon{
     text-align: center;
     z-index: 1;
 }
+.facetmarker {
+	width: 16px;
+	height: 16px;
+	border: 1px var(--op-color) solid;
+	border-radius: 50%;
+	cursor: pointer;
+    text-align: center;
+    z-index: 2;
+}
 .mapboxgl-popup {
 	max-width: 200px;
     z-index: 4;

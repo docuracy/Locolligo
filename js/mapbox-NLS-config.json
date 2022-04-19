@@ -1,11 +1,11 @@
 {
-  "id": "outdoor",
-  "name": "Outdoor",
-  "zoom": 7,
+  "id": "NLS",
+  "name": "NLS",
+  "zoom": 9,
   "pitch": 0,
   "center": [
-    8.299512182724584,
-    46.67124020906036
+    0,
+    51
   ],
   "layers": [
     {
