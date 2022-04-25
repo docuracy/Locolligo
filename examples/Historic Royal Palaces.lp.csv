@@ -1,0 +1,7 @@
+SITE {properties.title},Region,Type ,Period,Charged/free,OS co-ords,OS co-ords 2,Notes,Link  {properties.url},X {longitude},Y {latitude},"{$.@id=""https://w3id.org/locolligo/Historic-Royal-Palaces""}"
+Tower of London,London,Castle/Palace,Medieval,charged,TQ 336 806,,,https://www.hrp.org.uk/tower-of-london/,-0.07573787,51.50854694,
+Hampton Court,London,Palace,Post medieval,charged,TQ 157 685,,,https://www.hrp.org.uk/hampton-court-palace/,-0.337691804,51.40374037,
+Banqueting House Whitehall,London,Palace,17th century,charged,TQ 301 800,,,https://www.hrp.org.uk/banqueting-house/,-0.126405135,51.50397086,
+Kensington Palace,London,Palace,17th century,charged,TQ 258 800,,,https://www.hrp.org.uk/kensington-palace/,-0.188374381,51.50494344,
+Kew Palace,London,Palace,17th century,charged,TQ 187 776,,,https://www.hrp.org.uk/kew-palace/,-0.291503292,51.48490788,
+Hilsborough Castle and Gardens,Norther Ireland,House,18th century,charged,NW 352 150,,Government/royal Residence,https://www.hrp.org.uk/hillsborough-castle/,-6.093020031,54.46112567,
