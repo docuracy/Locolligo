@@ -1526,8 +1526,7 @@ function drawMap(el,render=true){
 	catch{
 		
 	}
-//	const bounds = new maplibregl.LngLatBounds(geoJSON.features[0].geometry.coordinates,geoJSON.features[0].geometry.coordinates);
-	const bounds = false;
+	var bounds = false;
 	for (const feature of geoJSON.features) {
 		if(!feature.hasOwnProperty('geometry') || firstPoint(feature.geometry)==null) continue;
 		if(!bounds){
