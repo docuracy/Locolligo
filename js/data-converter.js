@@ -2193,7 +2193,7 @@ function GGLP(el){
 					if(!items[i].hasOwnProperty('links')) items[i].links = [];
 					items[i].links.push({'type':'primaryTopicOf','identifier':geograph.link,'label':geograph.title,'types':[{'label':'Geograph','identifier':'https://www.wikidata.org/wiki/Q17301324'},{'label':'photograph','identifier':'https://www.wikidata.org/wiki/Q125191'}]});
 					if(!items[i].hasOwnProperty('depictions')) items[i].depictions = [];
-					items[i].depictions.push({'@id':geograph.thumb.replace('_120x120',''),'title':geograph.title,'accreditation':'� '+geograph.author,'thumbnail':geograph.thumb,'license':geograph.licence});
+					items[i].depictions.push({'@id':geograph.thumb.replace('_120x120',''),'title':geograph.title,'accreditation':'©'+geograph.author,'thumbnail':geograph.thumb,'license':geograph.licence});
 				});
 				
 				itemIndex++;
