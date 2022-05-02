@@ -562,14 +562,16 @@ function assign(){
 		    		request.onsuccess = event => {
 		    			db = event.target.result;
 		    			db.transaction("assignmentStore").objectStore("assignmentStore").get(input.meta.filename).onsuccess = event => {
-		    				event.target.result.selections.forEach(function(selection){
-								if(selection.id.startsWith('assignment_')){ // Columns of CSV may have been rearranged since previous upload
-									var field = event.target.result.fields[selection.id.split('_')[1]];
-									var target = 'assignment_'+input.meta.fields.indexOf(field);
-								}
-								else target = selection.id;
-								$('#'+target).val(selection.value).filter('select').selectmenu('refresh');
-							});
+		    				if(event.target.result !== undefined) {
+		    					event.target.result.selections.forEach(function(selection){
+									if(selection.id.startsWith('assignment_')){ // Columns of CSV may have been rearranged since previous upload
+										var field = event.target.result.fields[selection.id.split('_')[1]];
+										var target = 'assignment_'+input.meta.fields.indexOf(field);
+									}
+									else target = selection.id;
+									$('#'+target).val(selection.value).filter('select').selectmenu('refresh');
+								});
+		    				}
 		    			};
 
 		    		}
@@ -3637,7 +3639,7 @@ $( document ).ready(function() {
 					}
 				}
 				catch{
-					console.log('Removing '+database.name);
+//					console.log('Removing '+database.name);
 //					indexedDB.deleteDatabase(database.name);
 				}
 			};
