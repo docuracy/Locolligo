@@ -556,35 +556,26 @@ function assign(){
 	    width: 'auto',
 	    resizable: false,
 	    open: function( event, ui ) {
-	    	// Load values from IndexedDB storage
-	    	var db;
-			var request = indexedDB.open('_assignments');
-			request.onerror = event => {
-				console.log('Failure with indexedDB: ' + event.target.errorCode);
-			};
-			request.onsuccess = event => {
-				console.log('indexedDB opened.');
-				db = event.target.result;
-				var transaction = db.transaction(["assignmentStore"]);
-				var assignmentStore = transaction.objectStore("assignmentStore");
-				var storeRequest = assignmentStore.get(input.meta.filename);
-				storeRequest.onsuccess = event => {
-					console.log('Data fetched.',storeRequest.result);
-					if(storeRequest.result !== undefined){
-						storeRequest.result.selections.forEach(function(selection){
-							if(selection.id.startsWith('assignment_')){ // Columns of CSV may have been rearranged since previous upload
-								var field = storeRequest.result.fields[selection.id.split('_')[1]];
-								var target = 'assignment_'+input.meta.fields.indexOf(field);
-							}
-							else target = selection.id;
-							$('#'+target).val(selection.value).filter('select').selectmenu('refresh');
-						});
-					}
-				};
-				storeRequest.onerror = event => {
-					console.log('Failure with indexedDB storeRequest: ' + event.target.errorCode);
-				};
-			};
+	    	async function loadAssignments() { // Load values from IndexedDB storage
+		    	if((await window.indexedDB.databases()).map(db => db.name).includes('_assignments')){
+		    		var request = indexedDB.open('_assignments');
+		    		request.onsuccess = event => {
+		    			db = event.target.result;
+		    			db.transaction("assignmentStore").objectStore("assignmentStore").get(input.meta.filename).onsuccess = event => {
+		    				event.target.result.selections.forEach(function(selection){
+								if(selection.id.startsWith('assignment_')){ // Columns of CSV may have been rearranged since previous upload
+									var field = event.target.result.fields[selection.id.split('_')[1]];
+									var target = 'assignment_'+input.meta.fields.indexOf(field);
+								}
+								else target = selection.id;
+								$('#'+target).val(selection.value).filter('select').selectmenu('refresh');
+							});
+		    			};
+
+		    		}
+		    	}
+	    	}
+	    	loadAssignments();
 	    },
 	    buttons: [
 	    	{
