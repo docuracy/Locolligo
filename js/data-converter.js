@@ -66,8 +66,9 @@
 var geoNamesID = 'locolligo';
 
 // Custom variables
-//var facet = false;
-var facet = ".relations[1].relationTo";
+var facet = false;
+//var facet = ".relations[1].relationTo";
+//var NTCollections;
 
 // Global variables
 var testmode=false,
@@ -185,7 +186,7 @@ const LibraryMappings = [// TO DO: Move this functionality to IndexedDB
 		] 
 	},
 	{ // National Trust Sites
-		"type": "1643556041346",
+		"type": "1650911090995",
 		"popup": "newbody.properties.title",
 		"lpMappings": [
 			{
@@ -260,7 +261,7 @@ const LibraryMappings = [// TO DO: Move this functionality to IndexedDB
 		] 
 	},
 	{ // VCH Places
-		"type": "1647272723362",
+		"type": "1650911846117",
 		"popup": "newbody.properties.title",
 		"lpMappings": [
 			{
@@ -269,7 +270,7 @@ const LibraryMappings = [// TO DO: Move this functionality to IndexedDB
 		] 
 	},
 	{ // CAMPOP Places
-		"type": "1647691533988",
+		"type": "1650461833709",
 		"popup": "newbody.properties.title",
 		"radius": 6,
 		"textMatch": true,
@@ -283,7 +284,7 @@ const LibraryMappings = [// TO DO: Move this functionality to IndexedDB
 		] 
 	},
 	{ // GB1900
-		"type": "1647692879877",
+		"type": "1650548291192",
 		"popup": "newbody.properties.title",
 		"citations": [{'label':'Great Britain Historical GIS (GB1900): CC-BY_SA','year':'~1900','@id':'https://www.visionofbritain.org.uk/data/'}],
 		"radius": 15,
@@ -466,6 +467,340 @@ function convert(){
 	renderJSON($('#output'),output_formatter,output);
 }
 
+function assign(){
+	$('#assign').removeClass('throb');
+	var assignmentOptions = [
+		['(ignore)'],
+		['@id','identifier|uuid|id|@id'],
+		['properties.title','title|name'],
+		['properties.%%%'],
+		['geometry.coordinates','coords'],
+		['geometry.coordinates[0]','longitude|long|lng|easting|westing|X'],
+		['geometry.coordinates[1]','latitude|lat|northing|southing|Y'],
+		['names[0].toponym','toponym'],
+		['links[0].type'],
+		['links[0].identifier'],
+		['depictions[0].@id'],
+		['depictions[0].title'],
+		['descriptions[0].@id'],
+		['descriptions[0].value'],
+		['types[0].identifier'],
+		['types[0].label'],
+		['{custom}']
+	];
+	
+	var assignmentSelector=[];
+	assignmentOptions.forEach(function(option,i){
+		assignmentSelector.push('<option'+(option.length>1?' title="'+option[1]+'"':'')+' value="'+i+'"'+(i==0?' selected':'')+'>'+option[0]+'</option>');
+	});
+	assignmentSelector = '<select class="featureProperty" name="assignment_###" id="assignment_###">'+assignmentSelector.join('')+'</select>'
+	
+	var CRSOptions = [
+		['Select'],
+		['WGS84'],
+		['OSGB'],
+		['Easting/Westing (GB)'],
+		['Easting/Westing (NI)']
+	];
+	var CRSSelector=[];
+	CRSOptions.forEach(function(option,i){
+		CRSSelector.push('<option value="'+option[0]+'"'+(i==0?' selected disabled="true"':'')+'>'+option[0]+'</option>');
+	});
+	CRSSelector = '<select name="CRS" id="CRS">'+CRSSelector.join('')+'</select>'
+	function checkCRS(){
+		var WGS84 = 0;
+		function getRange(field){
+			return Math.max.apply(Math, input.data.map(function(o) { return Math.abs(o[field]); }))
+		}
+		input.meta.fields.forEach(function(field,j){
+			if ($('#assignment_'+j).val()!==null){
+				if(assignmentOptions[$('#assignment_'+j).val()][0]=='geometry.coordinates[0]'){
+					if (getRange(field)<=180) WGS84++;
+				}
+				else if(assignmentOptions[$('#assignment_'+j).val()][0]=='geometry.coordinates[1]'){
+					if (getRange(field)<=90) WGS84++;
+				}
+			}
+		});
+		if (WGS84==2) $('#CRS').val('WGS84').selectmenu('refresh');
+	}
+	
+	function truncate(text){
+		try{
+			return ((text.length>50?text.substring(0,50)+'...':text));
+		}
+		catch{
+			return '-';
+		}
+	}
+	
+	$('<table id="assignments"><tr><th>Original Header&nbsp;</th><th>LPF Translation&nbsp;<span class="mini">(Sample)</span></th></td></table>')
+	.appendTo('body');
+	input.meta.fields.forEach(function(field,j){
+		$('<tr class="assignment"><td><label for="assignment_'+j+'">'+field+':</td><td>'+assignmentSelector.replaceAll('%%%',field.toLowerCase().replaceAll(' ','_').replaceAll('\'','')).replaceAll('###',j)+'<span class="mini">('+truncate(input.data[0][field])+')</span></td></tr>')
+		.appendTo('#assignments');
+	});
+	$('#assignments')
+	.append($('<tr><td>Dataset name:</td><td><input id="_name" placeholder=">10 Characters (optional)" title="Schema.org requires both a name and a description." value="'+input.meta.filename.replace('.csv','').replaceAll('_',' ')+'" /></td></tr>'))
+	.append($('<tr><td>Dataset description:</td><td><input id="_description" placeholder=">50 Characters (optional)" title="Schema.org requires both a name and a description." value="" /></td></tr>'))
+	.append($('<tr><td>Dataset creator(s):</td><td><textarea id=\'_creators\' placeholder=\'[{\"@type\":\"Organisation\",\"url\":\"https://organisation.org\"},{\"@type\":\"Person\",\"name\":\"J.S. Bach\",\"url\":\"https://orcid.org/****-****-****-****\"},{\"@type\":\"Person\",\"name\":\"Giuseppe Verdi\"}]\' title=\'Enter as JSON - follow the template, with as few or as many Organisations and Persons as necessary, each contained in curly brackets and separated by commas. Enclose the whole collection in square brackets.\' value=\'\'></textarea></td></tr>'))
+	.append($('<tr><td>Dataset id:</td><td><input id="_id" placeholder="Automatic if blank." value="'+encodeURI(input.meta.filename.replace('.csv',''))+'" /></td></tr>'))
+	.append($('<tr><td>Dataset base URL:</td><td><input id="_baseURL" placeholder="Optional" title="Delete this value if the dataset is not a web resource." value="https://w3id.org/" /></td></tr>'))
+	.append($('<tr><td>Dataset CRS:</td><td>'+CRSSelector+'</td></tr>'))
+	.append($('<tr><td>Coordinate obfuscation:</td><td><input id="_obfuscation" placeholder="Optional (km)" title="Randomise coordinates +/- the distance entered here. Might be used to conceal exact archaeological findspots." /></td></tr>'))
+    .dialog({
+    	modal: true,
+    	title: 'Assign LPF Feature Properties from CSV Columns',
+	    zIndex: 10000,
+	    autoOpen: true,
+	    width: 'auto',
+	    resizable: false,
+	    open: function( event, ui ) {
+	    	// Load values from IndexedDB storage
+	    	var db;
+			var request = indexedDB.open('_assignments');
+			request.onerror = event => {
+				console.log('Failure with indexedDB: ' + event.target.errorCode);
+			};
+			request.onsuccess = event => {
+				console.log('indexedDB opened.');
+				db = event.target.result;
+				var transaction = db.transaction(["assignmentStore"]);
+				var assignmentStore = transaction.objectStore("assignmentStore");
+				var storeRequest = assignmentStore.get(input.meta.filename);
+				storeRequest.onsuccess = event => {
+					console.log('Data fetched.',storeRequest.result);
+					if(storeRequest.result !== undefined){
+						storeRequest.result.selections.forEach(function(selection){
+							if(selection.id.startsWith('assignment_')){ // Columns of CSV may have been rearranged since previous upload
+								var field = storeRequest.result.fields[selection.id.split('_')[1]];
+								var target = 'assignment_'+input.meta.fields.indexOf(field);
+							}
+							else target = selection.id;
+							$('#'+target).val(selection.value).filter('select').selectmenu('refresh');
+						});
+					}
+				};
+				storeRequest.onerror = event => {
+					console.log('Failure with indexedDB storeRequest: ' + event.target.errorCode);
+				};
+			};
+	    },
+	    buttons: [
+	    	{
+	    		text: 'Convert',
+	    		click: function(){
+
+	    			var validation = [];
+	    			var validationGeo = [];
+	    			var validationGeoConvert = [];
+	    			var coordinatesAssigned = true;
+	    			var duplicateValues = $('#assignments select').map(function(){return $(this).find('option:selected').text();}).get().filter(function(value, index, self){return value!=="(ignore)" && self.indexOf(value) !== index;}).filter(function(value, index, self){return self.indexOf(value) === index;});
+	    			duplicateValues.forEach(function(value){
+	    				validation.push('More than one assignment was found for "'+value+'". Only the last assignment will be processed.');
+	    			});
+	    			var selectionValues = $('#assignments select').map(function(){return $(this).val();}).get().filter(function(value, index, self){return self.indexOf(value) === index;});
+	    			var searchIndex = assignmentOptions.map(a => a[0]).indexOf('properties.title').toString();
+	    			if(!selectionValues.includes(searchIndex)) validation.push('No title has been assigned, which may be problematic for map visualisation of this dataset.');
+	    			var searchIndex = assignmentOptions.map(a => a[0]).indexOf('@id').toString();
+	    			console.log(searchIndex,selectionValues,selectionValues.includes(searchIndex));
+	    			if(!selectionValues.includes(searchIndex)) validation.push('Feature ids will be generated automatically (no CSV field was assigned for this purpose).');
+	    			var searchIndex = assignmentOptions.map(a => a[0]).indexOf('geometry.coordinates').toString();
+	    			var searchIndexLng = assignmentOptions.map(a => a[0]).indexOf('geometry.coordinates[0]').toString();
+	    			var searchIndexLat = assignmentOptions.map(a => a[0]).indexOf('geometry.coordinates[1]').toString();
+	    			if(!selectionValues.includes(searchIndex) && !(selectionValues.includes(searchIndexLng) && selectionValues.includes(searchIndexLat))) {
+	    				validation.push('No coordinates have been assigned. Map visualisation will be impossible until these have been added.');
+	    				coordinatesAssigned = false;
+	    			}
+	    			
+	    			// Initiate asynchronous IndexedDB storage
+	    			input.meta.selections = $('#assignments select, #assignments input, #assignments textarea').map(function(){return {'id':this.id,'value':$(this).val()};}).get();
+	    			var db;
+	    			var request = indexedDB.open('_assignments');
+	    			request.onupgradeneeded = event => {
+						console.log('indexedDB upgrade needed.');
+	    				db = event.target.result;
+	    				var objectStore = db.createObjectStore("assignmentStore", { keyPath: "filename" });
+	    			};
+    				request.onsuccess = event => {
+						console.log('indexedDB opened.');
+    					db = event.target.result;
+    					var transaction = db.transaction(["assignmentStore"], "readwrite");
+    					var assignmentStore = transaction.objectStore("assignmentStore");
+    					var storeRequest = assignmentStore.put(input.meta);
+    					storeRequest.onsuccess = event => {
+    						console.log('Data stored.',event.target.result);
+    					};
+    					storeRequest.onerror = event => {
+    						console.log('Failure with indexedDB storeRequest: ' + event.target.errorCode);
+    						validation.push('Failed to store selections in indexedDB. They will not be recalled next time a file with the same name is loaded.');
+    					};
+    				};
+	    			request.onerror = event => {
+	    				console.log('Failure with indexedDB: ' + event.target.errorCode);
+    				};
+    				
+	    			$('#output').html('');
+	    			output = {'@id':$('#_baseURL').val()+($('#_id').val()==''?input['@id']:$('#_id').val()),'type':'FeatureCollection','@context':'https://w3id.org/locolligo/contexts/linkedplaces.jsonld','features':[],'indexing':indexing};
+	    			if($('#_name').val().length<10 || $('#_description').val().length<50){
+	    				delete output.indexing['@context'];
+	    				validation.push('Dataset name and description did not meet the minimum length requirements for Google indexing via schema.org.');
+	    			}
+    				output.indexing.identifier = output['@id'];
+	    			output.indexing.name = $('#_name').val();
+    				output.indexing.description = $('#_description').val();
+	    			delete output.indexing.significantLink;
+	    			delete output.indexing.relatedLink;
+	    			delete output.indexing.spatialCoverage.geoCoveredBy;
+	    			input.data.forEach(function(item,i){
+	    				var feature = {'@id':'','type':'Feature','properties':{'title':''},'geometry':{'type':'Point'}};
+	    				
+	    				input.meta.fields.forEach(function(field,j){
+	    					if ($('#assignment_'+j).val()!==null && $('#assignment_'+j).val()!=='0'){	  
+		    					try{  
+		    						var properties = $( '#assignment_'+j+' option:selected' ).text().replaceAll('[','.').replaceAll(']','').split('.');
+		    						root = feature;
+		            				properties.forEach(function(property,i){
+		            					if(!root.hasOwnProperty(property)){
+		            						if(properties.length>i && /(0|[1-9]\d*)/.test(properties[i+1])){ // Array item next
+		            							root[property] = [];
+		                					}
+		                					else root[property] = {};
+		            					}
+		            					root = root[property];
+		            				});
+		            				eval('feature'+('.'+$( '#assignment_'+j+' option:selected' ).text()).replaceAll(/(.@[^\.]*)/g,function(match){return '[\''+match.substring(1)+'\']';})+' = item[field]'); // replaceAll required to handle properties starting with '@'						
+		    					}
+		    					catch(err){
+		    						validation.push('Record #'+j+': Failed to assign field "'+field+'" ('+err+').');
+		    					}
+	    					}
+	    				});
+    					
+	    				if(coordinatesAssigned) {
+	    					try{
+			    				var wgs84;
+			    				switch($('#CRS').val()){
+		    					case 'OSGB':
+		    						feature.geometry.coordinates = OSGB_WGS84(feature.geometry.coordinates);
+		    						break;
+		    					case 'Easting/Westing (GB)':
+		    						// Projection definition from https://epsg.io/27700 (copy and paste Proj4js Definition)
+		            				proj4.defs("EPSG:27700","+proj=tmerc +lat_0=49 +lon_0=-2 +k=0.9996012717 +x_0=400000 +y_0=-100000 +ellps=airy +towgs84=446.448,-125.157,542.06,0.15,0.247,0.842,-20.489 +units=m +no_defs");
+		            				wgs84 = proj4('EPSG:27700','WGS84',feature.geometry.coordinates);
+		            				feature.geometry.coordinates = [parseFloat(wgs84[0].toFixed(6)),parseFloat(wgs84[1].toFixed(6))];
+		    						break;
+		    					case 'Easting/Westing (NI)':
+		            				// Projection definition from https://epsg.io/29900 (copy and paste Proj4js Definition)
+		            				proj4.defs('EPSG:29900','+proj=tmerc +lat_0=53.5 +lon_0=-8 +k=1.000035 +x_0=200000 +y_0=250000 +ellps=mod_airy +towgs84=482.5,-130.6,564.6,-1.042,-0.214,-0.631,8.15 +units=m +no_defs');
+		            				wgs84 = proj4('EPSG:29900','WGS84',feature.geometry.coordinates);
+		            				feature.geometry.coordinates = [parseFloat(wgs84[0].toFixed(6)),parseFloat(wgs84[1].toFixed(6))];
+		    						break;
+		    					}  
+	    					}
+	    					catch{
+	    						validationGeoConvert.push(i);
+	    					}  					
+	    					
+		    				if(firstPoint(feature.geometry)==null) {
+		    					feature.geometry=null;
+		    					validationGeo.push(i);
+		    				}
+		    				else if(typeof +$('#_obfuscation').val() == 'number') {
+		    					feature.geometry.coordinates = scatter(feature.geometry.coordinates,+$('#_obfuscation').val());
+		    				}
+	    				}
+	    				else feature.geometry=null;
+	    				
+	    				if(feature['@id']=='') feature['@id'] = output['@id']+'/'+item['uuid'];
+	    				
+	    				output.features.push(feature);
+	    			});
+
+	    			try{
+		    			var bbox=[];
+		    			var validCoordinates = output.features.filter(function(f){return f.geometry!==null});
+		    			bbox.push(Math.min.apply(Math,validCoordinates.map(function(f){return Math.abs(f.geometry.coordinates[1]);})));
+		    			bbox.push(Math.min.apply(Math,validCoordinates.map(function(f){return Math.abs(f.geometry.coordinates[0]);})));
+		    			bbox.push(Math.max.apply(Math,validCoordinates.map(function(f){return Math.abs(f.geometry.coordinates[1]);})));
+		    			bbox.push(Math.max.apply(Math,validCoordinates.map(function(f){return Math.abs(f.geometry.coordinates[0]);})));
+	    				output.indexing.spatialCoverage.geo = {'@type':'GeoShape','box':bbox.join(' ')};
+	    			}
+	    			catch(err){
+	    				console.log(err);
+	    				delete output.indexing.spatialCoverage;
+	    				validation.push('It was not possible to calculate a bounding box for this dataset, due '+(coordinatesAssigned?'probably to some invalid':'to the absence of')+' geometry.');
+	    			}
+	    			
+	    			try{
+	    				output.indexing.creator = JSON.parse($('#_creators').val());
+	    			}
+	    			catch{ // Fails with any invalid JSON
+	    				validation.push('The JSON supplied for identifying the Dataset Creator(s) is invalid.');
+	    				delete output.indexing.creator;
+	    			} 
+	    			
+	    			// Validation Report
+	    			
+	    			output_formatter = new JSONFormatter(output,1,{theme:'dark'});
+	    			renderJSON($('#output'),output_formatter,output);
+	    			$(this).dialog("close");
+	    			
+	    			if(validationGeoConvert.length>0) validation.push('CRS conversion failed for the following items: '+validationGeoConvert.join(',')+'.');
+	    			if(validationGeo.length>0) validation.push('Geometry is invalid for the following items: '+validationGeo.join(',')+'.');
+	    			$('<div id="validation"><ul><li>'+validation.join('</li><li>')+'</li></ul></div>')
+	    			.appendTo('body')
+	    			.dialog({
+	    		    	modal: true,
+	    		    	title: 'Validation Report',
+	    			    zIndex: 10000,
+	    			    autoOpen: true,
+	    			    width: 'auto',
+	    			    resizable: false,
+	    			    buttons: [
+	    			    	{
+	    			    		text: 'Close',
+	    			    		click: function(){
+	    			    			$(this).dialog("close");
+	    			    		}
+	    			    	}
+	    			    ]
+	    			});
+	    		}
+	    	},
+	    	{
+	    		text: 'Cancel',
+	    		click: function(){
+	    			$(this).dialog("close");
+	    		}
+	    	}
+	    ],
+	    close: function(event, ui) {
+	        $(this).remove();
+	    }
+    });
+	$('#assignments input, #assignments textarea').addClass("ui-widget ui-widget-content ui-corner-all ui-button").css({'text-align':'left'});
+	$('#assignments select').selectmenu();
+	$('#assignments select.featureProperty')
+	.each(function(j,property){
+		var index = assignmentOptions.findIndex(option => option[0]==input.meta.fields[j] || (option.length>1 && option[1].split('|').includes(input.meta.fields[j])));
+		if(index>-1) $(property).val(index).selectmenu("refresh");
+	})
+	.on('selectmenuchange',function (event,ui) {
+		// Configure link & description types from drop-down
+		// Notify auto UUID generation if no @id selected.
+		// Warn for missing standard LPF fields or when data is non-compliant.
+		// Find centroid for non-Point geometry
+		if(assignmentOptions[ui.item.value][0]=='{custom}'){
+			alert('Sorry, custom property configuration is not yet implemented.');
+		}
+		else if(['geometry.coordinates','geometry.coordinates[0]','geometry.coordinates[1]'].includes(assignmentOptions[ui.item.value][0])){
+			checkCRS();
+		}
+	});
+	checkCRS();
+}
+
 function cleanupDataset(data){
 	console.log('Cleaning Dataset');
 	if(data.hasOwnProperty('features')) data.features.forEach(function(feature,j){
@@ -487,6 +822,22 @@ function cleanupDataset(data){
 					console.log('Fixed accreditation: '+depiction.accreditation);
 				}
 			});
+		}
+		if(feature.hasOwnProperty('descriptions')){
+			if(!Array.isArray(feature.descriptions)){
+				feature.descriptions = [feature.descriptions['0']];
+			}
+			if(feature.descriptions[0]==undefined){
+				console.log(j+': undefined',feature.descriptions);
+				delete feature.descriptions;
+			}
+			else{
+				feature.descriptions.forEach(function(description){
+					if(!description.hasOwnProperty('value') || description.value==null){
+						console.log(j+': no .value',description);
+					}
+				});
+			}
 		}
 		['names','types','links'].forEach(function(property){ // Remove null and duplicate values from arrays
 			if(feature.hasOwnProperty(property)){
@@ -542,7 +893,7 @@ function indexingLinks(data){
 
 // Scatter point within c.1km square
 function scatter(coordinates,tolerance=1) {
-	tolerance = {'lng':tolerance/66,'lat':tolerance/111}; // convert to degrees
+	tolerance = {'lng':tolerance/(111*Math.cos(coordinates[1]*Math.PI/180)),'lat':tolerance/111}; // convert to degrees (approximately spherical)
 	return [+(coordinates[0]+tolerance.lng*(Math.random()-.5)).toFixed(6),+(coordinates[1]+tolerance.lat*(Math.random()-.5)).toFixed(6)];
 }
 
@@ -1178,10 +1529,22 @@ function drawMap(el,render=true){
 		const jsonata_expression = jsonata( PLDtoGJT[0].expression ); // Convert Peripleo-LD to geoJSON-T
 		geoJSON = jsonata_expression.evaluate(el.parent('div').data('data'));
 	}
-	const bounds = new maplibregl.LngLatBounds(geoJSON.features[0].geometry.coordinates,geoJSON.features[0].geometry.coordinates);
+	try{
+		
+	}
+	catch{
+		
+	}
+//	const bounds = new maplibregl.LngLatBounds(geoJSON.features[0].geometry.coordinates,geoJSON.features[0].geometry.coordinates);
+	const bounds = false;
 	for (const feature of geoJSON.features) {
 		if(!feature.hasOwnProperty('geometry') || firstPoint(feature.geometry)==null) continue;
-		bounds.extend(feature.geometry.coordinates);
+		if(!bounds){
+			bounds = new maplibregl.LngLatBounds(firstPoint(feature.geometry),firstPoint(feature.geometry));
+		}
+		else{
+			bounds.extend(feature.geometry.coordinates);
+		}
 		const el = document.createElement('div');
 		el.className = 'marker';
 		if(render){
@@ -1216,7 +1579,12 @@ function drawMap(el,render=true){
 		}
 		markers.push(marker);
 	}
-	if(render) showMap(true,bounds);
+	if(render) {
+		if(!bounds){
+			bounds = new maplibregl.LngLatBounds([-180,-85],[180,85]);
+		}
+		showMap(true,bounds);
+	}
 	$('body').loadingModal('destroy');
 }
 
@@ -1421,6 +1789,9 @@ function updateTrace(dataset=activeDatasetEl.data('data')[activeDataType]){
 	
 	$('#trace').data('formatter',new JSONFormatter(dataset[index],3,{theme:'light'}));
 	$('#trace').html($('#trace').data('formatter').render()).addClass('json-formatter');
+	if(!("bounds" in window)){
+		bounds = new maplibregl.LngLatBounds([-180,-85],[180,85]);
+	}
 	showMap(true, bounds);
 	if(!addBounds) updateLinkMarkers();
 	updateFacetMarkers();
@@ -2124,6 +2495,66 @@ function addAPIdata(el){
 
 $( document ).ready(function() {
 	
+	map = new maplibregl.Map({
+	    container: 'map',
+	    style: './js/maplibre-config.json'
+	});	
+	map.on('load', () => {
+		console.log('Map loading...');
+		map.addControl(new maplibregl.NavigationControl())
+		.on('idle',function(){ map.resize(); })
+		.addSource('point', {
+			'type': 'geojson',
+			'data': traceGeoJSON
+		})
+		.addLayer({
+			'id': 'point',
+			'type': 'circle',
+			'source': 'point',
+			'paint': {
+				'circle-radius': 12,
+				'circle-color': '#FF0000', // red color
+				'circle-opacity': 0.7,
+				'circle-stroke-color': '#FFFF00', // yellow outline
+				'circle-stroke-width': 2
+			}
+		})
+		.on('mouseenter', 'point', () => {
+			map.setPaintProperty('point', 'circle-opacity', 0.4);
+			canvas.style.cursor = 'move';
+		})
+		.on('mouseleave', 'point', () => {
+			map.setPaintProperty('point', 'circle-opacity', 0.7);
+			canvas.style.cursor = '';
+		})
+		.on('mousedown', 'point', (e) => {
+			recordState();
+			e.preventDefault();
+			canvas.style.cursor = 'grab';
+			map.on('mousemove', onMove);
+			map.once('mouseup', onUp);
+		})
+		.on('touchstart', 'point', (e) => {
+			if (e.points.length !== 1) return;
+			e.preventDefault();
+			map.on('touchmove', onMove);
+			map.once('touchend', onUp);
+		});
+		$('<button>', { // Add close button to map controls
+		    class: 'mapboxgl-ctrl-close-map',
+		    title: 'Close map'
+		})
+			.button()
+			.click(function(){showMap(false);})
+			.prependTo('div.maplibregl-ctrl-top-right div.maplibregl-ctrl-group')
+			.append('<span class="mapboxgl-ctrl-icon"></span>');
+		$('.maplibregl-ctrl-top-right')
+			.prepend($('.logo:first').clone())
+			.append($('#geocodeWrapper').addClass('maplibregl-ctrl').on('keyup',function(){geocode();}).button())
+			.append($('#layerSelector').addClass('maplibregl-ctrl').button());
+		console.log('Map loaded.',map);
+	});
+	
 	// Check browser file upload capability
 	if (!window.File || !window.FileReader || !window.FileList || !window.Blob) {
         alert('The File APIs are not fully supported in this browser.');
@@ -2134,18 +2565,7 @@ $( document ).ready(function() {
 	$(window).resize(function () {
 		map.resize();
 	}).resize();
-	$('<button>', { // Add close button to map controls
-	    class: 'mapboxgl-ctrl-close-map',
-	    title: 'Close map'
-	})
-		.button()
-		.click(function(){showMap(false);})
-		.prependTo('div.maplibregl-ctrl-top-right div.maplibregl-ctrl-group')
-		.append('<span class="mapboxgl-ctrl-icon"></span>');
-	$('.maplibregl-ctrl-top-right')
-		.prepend($('.logo:first').clone())
-		.append($('#geocodeWrapper').addClass('maplibregl-ctrl').on('keyup',function(){geocode();}).button())
-		.append($('#layerSelector').addClass('maplibregl-ctrl').button());
+	
 	$('#layerSelector').on('click','label',function(e){
 		var checkbox = $(e.target).prev('input');
 		checkbox.prop('checked',!checkbox.prop('checked'));
@@ -2379,55 +2799,21 @@ $( document ).ready(function() {
 			}
 		});
 	}
-	map.on('load', () => {
-		map.addSource('point', {
-			'type': 'geojson',
-			'data': traceGeoJSON
-		});
-		map.addLayer({
-			'id': 'point',
-			'type': 'circle',
-			'source': 'point',
-			'paint': {
-				'circle-radius': 12,
-				'circle-color': '#FF0000', // red color
-				'circle-opacity': 0.7,
-				'circle-stroke-color': '#FFFF00', // yellow outline
-				'circle-stroke-width': 2
-			}
-		});
-		map.on('mouseenter', 'point', () => {
-			map.setPaintProperty('point', 'circle-opacity', 0.4);
-			canvas.style.cursor = 'move';
-		});
-		map.on('mouseleave', 'point', () => {
-			map.setPaintProperty('point', 'circle-opacity', 0.7);
-			canvas.style.cursor = '';
-		});
-		map.on('mousedown', 'point', (e) => {
-			recordState();
-			e.preventDefault();
-			canvas.style.cursor = 'grab';
-			map.on('mousemove', onMove);
-			map.once('mouseup', onUp);
-		});
-		map.on('touchstart', 'point', (e) => {
-			if (e.points.length !== 1) return;
-			e.preventDefault();
-			map.on('touchmove', onMove);
-			map.once('touchend', onUp);
-		});
-		console.log('Map loaded.',map);
-	});
 	
 	// Apply jquery-ui styling
 	$('#choose_input').selectmenu().on('selectmenuchange',function () {
 		$('#choose_input-button').removeClass('throb');
 		$('#inputs').removeClass().addClass($('#choose_input option:selected').val());
 	});
-	$('#choose_input-button').addClass('throb');
-	$('#expression').after('<button onclick="convert();" title="Convert uploaded dataset using chosen type">Convert</button><button onclick="$(\'#datafields\').text(fields);$(\'#modal\').dialog(\'open\')"  title="Paste new JSONata expression to be used for this conversion type">Edit JSONata</button><button onclick="download(mappings,\'mappings.json\');" title="Download all conversion definitions to local filesystem">Download mappings.json</button>');
+	$('#conversions').append('<button id="assign" onclick="assign();" title="Assign CSV columns to Linked Places Format properties.">Assign CSV Columns</button>')
+// These lines for functionality now deprecated:	
+//	$('#expression')
+//	.after('<button onclick="convert();" title="Convert uploaded dataset using chosen type">Convert</button>')
+//	.after('<button onclick="$(\'#datafields\').text(fields);$(\'#modal\').dialog(\'open\')"  title="Paste new JSONata expression to be used for this conversion type">Edit JSONata</button>')
+//	.after('<button onclick="download(mappings,\'mappings.json\');" title="Download all conversion definitions to local filesystem">Download mappings.json</button>')
+//	;
 	$('button,input:file').button();
+	$('#choose_input-button,#assign').addClass('throb');
 	$('#datafile_url').addClass('ui-button ui-corner-all ui-widget datafile_url');
 	$( "#modal" ).dialog({
 		autoOpen: false,
@@ -2528,6 +2914,12 @@ $( document ).ready(function() {
 		indexing = data;
 	},'json');
 	
+//	// Fetch NT Collections data
+//	$.get('./vocabularies/NT-Collections.json?'+Date.now(), function(data) { // Do not use any cached file
+//		NTCollections = data.data;
+//		console.log('NTCollections',NTCollections);
+//	},'json');
+	
 	// Populate JSONata expressions drop-down list
 	$.get('./templates/mappings.json?'+Date.now(), function(data) { // Do not use any cached file
 		mappings = data;
@@ -2564,7 +2956,9 @@ $( document ).ready(function() {
 		var fileparts = filename.split(/[#?]/)[0].split('.');
 		console.log(filename,fileparts);
     	const fileExtension = fileparts.pop().trim();
+		$('#assign').hide();
     	if(delimited.includes(fileExtension)){ // Delimited text input
+    		$('#assign').show();
     		if(fileparts.length>1 && ['lp','lt'].includes(fileparts.pop().trim())){ // Convert to Linked Places format (geoJSON-T)
     			
     			if(filename=='VCH-Places.lp.csv'){ //  Load Vocabulary
@@ -2578,12 +2972,20 @@ $( document ).ready(function() {
     				$.ajaxSetup({async:true});
     			}
     			
-    			if(filename=='PAS_Warwickshire.lt.csv'){ //  Load Vocabulary
+    			if(filename=='PAS_Warwickshire_v2.lt.csv'){ //  Load Vocabularies
     				var PASMoDVocabulary = {'terms':[]};
     				$.ajaxSetup({async:false});
     				$.get('./vocabularies/PAS-MoDs.json?'+Date.now(), function(data) { // Do not use any cached file
     					data.forEach(function(term){
     						PASMoDVocabulary.terms[term.itemLabel] = term.item;
+    					});
+					},'json');
+    				$.ajaxSetup({async:true});
+    				var PASObjVocabulary = {'terms':[]};
+    				$.ajaxSetup({async:false});
+    				$.get('./vocabularies/PAS-objects.json?'+Date.now(), function(data) { // Do not use any cached file
+    					data.forEach(function(term){
+    						PASObjVocabulary.terms[term.value] = term;
     					});
 					},'json');
     				$.ajaxSetup({async:true});
@@ -2910,12 +3312,20 @@ $( document ).ready(function() {
         				
         			}
         			
-        			if(filename=='PAS_Warwickshire.lt.csv'){
+        			if(filename=='PAS_Warwickshire_v2.lt.csv'){
         				if(feature.relations[1].hasOwnProperty('label')){
         					if(feature.relations[1].label.toLowerCase() in PASMoDVocabulary.terms){
         						feature.relations[1].relationTo = PASMoDVocabulary.terms[feature.relations[1].label.toLowerCase()];
             				}
         					else console.log('PAS MoD not found: '+feature.relations[1].label);
+        				}
+        				try{
+        					var PAS_type = PASObjVocabulary.terms[feature.properties.type.replace(' ','+')];
+            				feature.types = [{'label':PAS_type.itemLabel,'identifier':PAS_type.item,'sourceLabels':[{'label':feature.properties.type,'lang':'en'}]}];
+            				delete feature.properties.type;
+        				}
+        				catch{
+            				feature.types = [{'label':'Not linked to vocabulary','identifier':'https://www.wikidata.org/wiki/Q83564242','sourceLabels':[{'label':feature.properties.type,'lang':'en'}]}];
         				}
         			}
         			
@@ -2960,6 +3370,7 @@ $( document ).ready(function() {
     		else{ // Regular delimited text
     			input = Papa.parse(filecontent.replace(/[{}]/g, '_'),{header:true,dynamicTyping:true,skipEmptyLines:true}); // Replace curly braces, which break JSONata when used in column headers
     			input['@id'] = 'https://w3id.org/locolligo/'+uuidv4(); // Create PID for dataset
+        		input.meta.filename = filename;
     			$.each(input.data, function(key,value){ // Create uuid for each item/Trace
     				if(!input.data[key].hasOwnProperty('uuid')) input.data[key].uuid = uuidv4();
         			if(!input.data[key].hasOwnProperty('@id')) input.data[key]['@id'] = input['@id']+'/'+input.data[key].uuid;
@@ -3064,6 +3475,24 @@ $( document ).ready(function() {
 			}
 			getArtUK(0);
 		}	
+		
+//		if(filename.startsWith("VisitPlus")){
+//	//		NTCollections
+//			input.features.forEach(function(feature){
+//				if(feature.relations[0].relationTo=='www.nationaltrust.org.uk'){
+//					var collection = NTCollections.filter(obj => {return obj['Website'] === feature.properties.url})[0];
+//					console.log(collection);
+//					if(collection!==undefined){
+//						var url = collection['Collections Trust Place Page '] || collection['Collection Search Page'] || false;
+//						if (url!==false){
+//							if(!feature.hasOwnProperty('links')) feature.links = [];
+//							feature.links.push({'type':'seeAlso','identifier':url,'label':'National Trust Collection: '+collection.NT_Name});
+//							console.log(url);
+//						}
+//					}
+//				}
+//			});
+//		}	
 		
 		if(filename.startsWith("Mapping-Museums")){
 			function moveDescription(i){

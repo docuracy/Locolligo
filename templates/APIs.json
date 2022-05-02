@@ -1,5 +1,27 @@
 [
 	{
+		"label": "OSM Roads",
+		"type": "J", 
+		"title": "Roads from OpenStreetMap",
+		"radius": 1,
+		"style": "junctionmarker",
+		"url": "'https://overpass.kumi.systems/api/interpreter?data=[out:json];way[\"highway\"~\".\"]('+(mapCentre.lat-tolerance.lat)+','+(mapCentre.lng-tolerance.lng)+','+(mapCentre.lat+tolerance.lat)+','+(mapCentre.lng+tolerance.lng)+');(._;node(w););out;'",
+		"headers": {
+			"Accept": "application/json" 
+		},
+		"datakey": "junctions",
+		"coordinates": "[feature.lon,feature.lat]",
+		"name": "feature.id",
+		"lpMappings": [
+			{
+				"links": "{\"type\": \"exactMatch\",\"identifier\": \"http://www.openstreetmap.org/node/\"+newbody.id+\"/\"}"
+			},
+			{
+				"geometry.citations": "{\"@id\":\"http://www.openstreetmap.org/node/\"+newbody.id+\"/\",\"label\":\"© OpenStreetMap contributors\"}"
+			}
+		] 
+	},
+	{
 		"label": "GeoNames Toponyms",
 		"type": "GT", 
 		"title": "Toponyms from the GeoNames database",
@@ -12,12 +34,9 @@
 		"name": "feature.toponymName",
 		"lpMappings": [
 			{
-				"links": {
-					"type": "'closeMatch'",
-					"identifier": "'https://www.geonames.org/'+newbody.geonameId+'/'"
-				}
+				"links": "{\"type\": \"closeMatch\",\"identifier\": \"https://www.geonames.org/\"+newbody.geonameId+\"/\"}"		
 			}
-		] 
+		]
 	},
 	{
 		"label": "Wikipedia (from GeoNames)",
@@ -32,17 +51,10 @@
 		"name": "feature.title",
 		"lpMappings": [
 			{
-				"links": {
-					"type": "'primaryTopicOf'",
-					"identifier": "'https://'+newbody.wikipediaUrl"
-				}
+				"links": "{\"type\": \"primaryTopicOf\",\"identifier\": \"https://\"+newbody.wikipediaUrl}"
 			},
 			{
-				"descriptions": {
-					"@id": "'https://'+newbody.wikipediaUrl",
-					"value": "newbody.summary",
-					"lang": "'en'"
-				}
+				"descriptions": "{\"@id\": \"https://\"+newbody.wikipediaUrl,\"value\": newbody.summary,\"lang\": \"en\"}"
 			}
 		] 
 	},
@@ -59,17 +71,10 @@
 		"name": "'<img class=\"popupimage\" src=\"'+feature.thumb+'\" /><br/>'+feature.title",
 		"lpMappings": [
 			{
-				"links": {
-					"type": "'primaryTopicOf'",
-					"identifier": "newbody.link"
-				}
+				"links": "{\"type\": \"primaryTopicOf\",\"identifier\": newbody.link}"
 			},
 			{
-				"depictions": {
-					"@id": "newbody.link",
-					"title": "newbody.title",
-					"license": "newbody.licence"
-				}
+				"depictions": "{\"@id\": newbody.link,\"title\": newbody.title,\"license\": newbody.licence}"
 			}
 		] 
 	},
@@ -96,10 +101,7 @@
 		"name": "feature.properties.title",
 		"lpMappings": [
 			{
-				"links": {
-					"type": "'closeMatch'",
-					"identifier": "newbody.uri"
-				}
+				"links": "{\"type\": \"closeMatch\",\"identifier\": newbody.uri}"
 			}
 		] 
 	},
@@ -117,10 +119,7 @@
 		"name": "feature.placeLabel.value",
 		"lpMappings": [
 			{
-				"links": {
-					"type": "'closeMatch'",
-					"identifier": "newbody.place.value"
-				}
+				"links": "{\"type\": \"closeMatch\",\"identifier\": newbody.place.value}"
 			}
 		] 
 	},
@@ -138,16 +137,10 @@
 		"name": "feature.siteLabel.value",
 		"lpMappings": [
 			{
-				"links": {
-					"type": "'closeMatch'",
-					"identifier": "newbody.site.value"
-				}
+				"links": "{\"type\": \"closeMatch\",\"identifier\": newbody.site.value}"
 			},
 			{
-				"depictions": {
-					"@id": "newbody.image.value",
-					"title": "newbody.siteLabel.value"
-				}
+				"depictions": "{\"@id\": newbody.image.value,\"title\": newbody.siteLabel.value}"
 			}
 		] 
 	},
@@ -164,16 +157,10 @@
 		"name": "feature.properties.description",
 		"lpMappings": [
 			{
-				"links": {
-					"type": "'seeAlso'",
-					"identifier": "newbody.properties.url"
-				}
+				"links": "{\"type\": \"seeAlso\",\"identifier\": newbody.properties.url}"
 			},
 			{
-				"depictions": {
-					"@id": "newbody.properties.thumbnail",
-					"title": "newbody.properties.description"
-				}
+				"depictions": "{\"@id\": newbody.properties.thumbnail,\"title\": newbody.properties.description}"
 			}
 		] 
 	},
