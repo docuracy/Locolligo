@@ -294,7 +294,6 @@
       "http://www.wikidata.org/entity/Q2343935",
       "https://www.geonames.org/6286982/",
       "https://sounds.bl.uk/Accents-and-dialects/Survey-of-English-dialects/021M-C0908X0051XX-0300V1",
-      "https://w3id.org/locolligo/eddd181d-bc2b-4767-8c3d-eb4c99395603/643b6242-be3b-4590-9fa5-03db9b5b2f45",
       "http://www.wikidata.org/entity/Q5884534",
       "http://www.wikidata.org/entity/Q5884520",
       "http://cadwpublic-api.azurewebsites.net/reports/listedbuilding/FullReport?lang=en&id=1595",
@@ -307,7 +306,6 @@
       "http://britishlibrary.georeferencer.com/id/11223729954",
       "https://historicengland.org.uk/listing/the-list/list-entry/1003523",
       "https://historicengland.org.uk/listing/the-list/list-entry/1003526",
-      "https://w3id.org/locolligo/eddd181d-bc2b-4767-8c3d-eb4c99395603/b37d85d1-2039-43cd-b5af-c427b35ad167",
       "http://www.wikidata.org/entity/Q17645367",
       "http://www.wikidata.org/entity/Q17645341",
       "http://www.wikidata.org/entity/Q6226",
@@ -360,7 +358,6 @@
       "http://www.wikidata.org/entity/Q26601995",
       "https://historicengland.org.uk/listing/the-list/list-entry/1375850",
       "https://historicengland.org.uk/listing/the-list/list-entry/1006771",
-      "https://w3id.org/locolligo/eddd181d-bc2b-4767-8c3d-eb4c99395603/a3f42480-edab-4ef9-a4ff-88105e73a8bf",
       "http://www.wikidata.org/entity/Q7083836",
       "https://whgazetteer.org/api/place/6369156",
       "http://www.wikidata.org/entity/Q170263",
@@ -530,12 +527,10 @@
       "http://www.wikidata.org/entity/Q3403676",
       "http://www.wikidata.org/entity/Q1013633",
       "https://www.geonames.org/6286881/",
-      "https://w3id.org/locolligo/eddd181d-bc2b-4767-8c3d-eb4c99395603/5e95a656-7ee6-47b3-ab78-54c3054b5aa4",
       "http://cadwpublic-api.azurewebsites.net/reports/sam/FullReport?lang=en&id=3804",
       "http://cadwpublic-api.azurewebsites.net/reports/listedbuilding/FullReport?lang=en&id=825",
       "https://historicengland.org.uk/listing/the-list/list-entry/1015540",
       "https://historicengland.org.uk/listing/the-list/list-entry/1149914",
-      "https://w3id.org/locolligo/eddd181d-bc2b-4767-8c3d-eb4c99395603/6bbaa307-c963-418e-b569-e41d604fe8dd",
       "http://www.wikidata.org/entity/Q370127",
       "http://www.wikidata.org/entity/Q2398901",
       "https://www.geonames.org/6287274/",
@@ -3504,11 +3499,6 @@
           "identifier": "https://sounds.bl.uk/Accents-and-dialects/Survey-of-English-dialects/021M-C0908X0051XX-0300V1"
         },
         {
-          "type": "seeAlso",
-          "label": "Holt Castle",
-          "identifier": "https://w3id.org/locolligo/eddd181d-bc2b-4767-8c3d-eb4c99395603/643b6242-be3b-4590-9fa5-03db9b5b2f45"
-        },
-        {
           "type": "closeMatch",
           "identifier": "http://www.wikidata.org/entity/Q5884534"
         },
@@ -3749,11 +3739,6 @@
           "type": "seeAlso",
           "label": "St Albans Abbey, site of conventual buildings",
           "identifier": "https://historicengland.org.uk/listing/the-list/list-entry/1003526"
-        },
-        {
-          "type": "seeAlso",
-          "label": "St Albans",
-          "identifier": "https://w3id.org/locolligo/eddd181d-bc2b-4767-8c3d-eb4c99395603/b37d85d1-2039-43cd-b5af-c427b35ad167"
         },
         {
           "type": "closeMatch",
@@ -5034,11 +5019,6 @@
           "type": "seeAlso",
           "label": "Dee Bridge",
           "identifier": "https://historicengland.org.uk/listing/the-list/list-entry/1006771"
-        },
-        {
-          "type": "seeAlso",
-          "label": "Dee Bridge",
-          "identifier": "https://w3id.org/locolligo/eddd181d-bc2b-4767-8c3d-eb4c99395603/a3f42480-edab-4ef9-a4ff-88105e73a8bf"
         },
         {
           "type": "closeMatch",
@@ -9183,11 +9163,6 @@
         },
         {
           "type": "seeAlso",
-          "label": "RUTHIN",
-          "identifier": "https://w3id.org/locolligo/eddd181d-bc2b-4767-8c3d-eb4c99395603/5e95a656-7ee6-47b3-ab78-54c3054b5aa4"
-        },
-        {
-          "type": "seeAlso",
           "label": "Ruthin Castle",
           "identifier": "http://cadwpublic-api.azurewebsites.net/reports/sam/FullReport?lang=en&id=3804"
         },
@@ -9391,11 +9366,6 @@
         {
           "type": "exactMatch",
           "identifier": "http://www.pastplace.org/gb1900/527c15f3f77b482a19000016"
-        },
-        {
-          "type": "seeAlso",
-          "label": "PARISH: HAWARDEN",
-          "identifier": "https://w3id.org/locolligo/eddd181d-bc2b-4767-8c3d-eb4c99395603/6bbaa307-c963-418e-b569-e41d604fe8dd"
         },
         {
           "type": "closeMatch",
