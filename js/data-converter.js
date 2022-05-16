@@ -90,217 +90,30 @@ var testmode=false,
 	linkMarkers={},
 	linkMarkerPopup,
 	radius=5, 
-	sparql_heritage_sites, 
+	sparql_heritage_sites,
+	LibraryMappings,
+	libraryList = [],
 	APIJSON,
 	indexing,
 	timeout,
 	activeAjaxConnections = 0,
 	settings = {
 		headers: { Accept: 'application/sparql-results+json' }
-    };	 
-
-const LibraryMappings = [// TO DO: Move this functionality to IndexedDB
-	// Droplist of properties for popup, id, and label when adding to Library
-	// Check that deletion from Library also deletes these mappings
-	// The "type" is an identifier generated ad hoc when a user adds to their Library
-	
-	{ // Battlefields (HE)
-		"type": "1643552320559",
-		"popup": "newbody.properties.Name",
-		"lpMappings": [
-			{
-				"links": "{\"type\": \"subjectOf\",\"identifier\": newbody.properties.Hyperlink,\"label\":newbody.properties.Name,\"types\":[{\"label\":\"battlefield\",\"identifier\":\"https://www.wikidata.org/wiki/Q4895508\"}],\"geometry\": {\"type\":\"Point\",\"coordinates\":[newbody._longitude,newbody._latitude]}}"
-			}
-		] 
-	},
-	{ // Scheduled Monuments (HE)
-		"type": "1643552619613",
-		"popup": "newbody.properties.Name",
-		"lpMappings": [
-			{
-				"links": "{\"type\": \"subjectOf\",\"identifier\": newbody.properties.Hyperlink,\"label\":newbody.properties.Name,\"types\":[{\"label\":\"scheduled monument\",\"identifier\":\"https://www.wikidata.org/wiki/Q219538\"}],\"geometry\": {\"type\":\"Point\",\"coordinates\":[newbody._longitude,newbody._latitude]}}"
-			}
-		] 
-	},
-	{ // Scheduled Monuments (Scotland)
-		"type": "1649757449538",
+    },
+    defaultMappingSet = { // Default LPF settings, if not otherwise defined in libraryMappings.json
 		"popup": "newbody.properties.title",
-		"lpMappings": [
-			{
-				"links": "{\"type\": \"seeAlso\",\"identifier\": ['@id'],\"label\":newbody.properties.title}"
-			}
-		] 
-	},
-	{ // NI Scheduled Zones
-		"type": "1649755930436",
-		"popup": "newbody.properties.title",
-		"lpMappings": [
-			{
-				"links": "{\"type\": \"seeAlso\",\"identifier\": ['@id'],\"label\":newbody.properties.title}"
-			}
-		] 
-	},
-	{ // World Heritage Sites (HE)
-		"type": "1643552662447",
-		"popup": "newbody.properties.Name",
-		"lpMappings": [
-			{
-				"links": "{\"type\": \"subjectOf\",\"identifier\": newbody.properties.Hyperlink,\"label\":newbody.properties.Name,\"types\":[{\"label\":\"UNESCO World Heritage Site\",\"identifier\":\"https://www.wikidata.org/wiki/Q9259\"}],\"geometry\": {\"type\":\"Point\",\"coordinates\":[newbody._longitude,newbody._latitude]}}"
-			}
-		] 
-	},
-	{ // Listed Buildings (HE)
-		"type": "1643552381677",
-		"popup": "newbody.properties.Name",
-		"lpMappings": [
-			{
-				"links": "{\"type\": \"subjectOf\",\"identifier\": newbody.properties.Hyperlink,\"label\":newbody.properties.Name,\"types\":[{\"label\":\"listed building in the United Kingdom\",\"identifier\":\"https://www.wikidata.org/wiki/Q570600\"}],\"geometry\": {\"type\":\"Point\",\"coordinates\":[newbody._longitude,newbody._latitude]}}"
-			}
-		] 
-	},
-	{ // Parks & Gardens (HE)
-		"type": "1643552574429",
-		"popup": "newbody.properties.Name",
-		"lpMappings": [
-			{
-				"links": "{\"type\": \"subjectOf\",\"identifier\": newbody.properties.Hyperlink,\"label\":newbody.properties.Name,\"types\":[{\"label\":\"garden\",\"identifier\":\"https://www.wikidata.org/wiki/Q1107656\"}],\"geometry\": {\"type\":\"Point\",\"coordinates\":[newbody._longitude,newbody._latitude]}}"
-			}
-		] 
-	},
-	{ // Visitor Sites (EH)
-		"type": "1643556165046",
-		"popup": "newbody.properties.title",
-		"lpMappings": [
-			{
-				"links": "{\"type\": \"seeAlso\",\"identifier\": newbody.properties.url,\"label\": newbody.properties.title}"
-			}
-		] 
-	},
-	{ // VisitPlus (UK)
-		"type": "1646046999038",
-		"popup": "newbody.properties.title",
-		"lpMappings": [
-			{
-				"links": "{\"type\": \"subjectOf\",\"identifier\": newbody.properties.url,\"label\": newbody.properties.title}"
-			}
-		] 
-	},
-	{ // National Trust Sites
-		"type": "1650911090995",
-		"popup": "newbody.properties.title",
-		"lpMappings": [
-			{
-				"links": "{\"type\": \"seeAlso\",\"identifier\": newbody.properties.url,\"label\": newbody.properties.title}"
-			}
-		] 
-	},
-	{ // Historic Royal Palaces
-		"type": "1643556797139",
-		"popup": "newbody.properties.title",
-		"lpMappings": [
-			{
-				"links": "{\"type\": \"seeAlso\",\"identifier\": newbody.properties.url,\"label\": newbody.properties.title}"
-			}
-		] 
-	},
-	{ // Open Plaques
-		"type": "1643631473450",
-		"popup": "newbody.properties.title",
-		"lpMappings": [
-			{
-				"links": "{\"type\": \"seeAlso\",\"identifier\": newbody['@id'],\"label\":newbody.properties.title,\"types\":[{\"label\":\"blue plaque\",\"identifier\":\"https://www.wikidata.org/wiki/Q885849\"}],\"geometry\": {\"type\":\"Point\",\"coordinates\":[newbody._longitude,newbody._latitude]}}"
-			}
-		] 
-	},
-	{ // State Care Sites (Northern Ireland)
-		"type": "1643557447337",
-		"popup": "newbody.properties.title",
-		"lpMappings": [
-			{
-				"links": "{\"type\": \"seeAlso\",\"identifier\": newbody.properties.url,\"label\": newbody.properties.title}"
-			}
-		] 
-	},
-	{ // Leland Wales (Viae Regiae)
-		"type": "1643553322355",
-		"popup": "newbody.name",
-		"lpMappings": [
-			{
-				"links": "{\"type\": \"seeAlso\",\"identifier\": newbody['@id'],\"label\": newbody.name}"
-			},
-			{
-				"depictions": "{\"@id\": newbody.depictions[0]['@id'],\"title\": newbody.name,\"selector\": newbody.depictions[0].selector,\"type\": newbody.depictions[0].type,\"license\": \"https://creativecommons.org/licenses/by/4.0/\"}"
-			}
-		] 
-	},
-	{ // BL & BM Objects (Victoria Morris)
-		"type": "1643543754541",
-		"popup": "newbody.properties.title",
-		"lpMappings": [
-			{
-				"links": "{\"type\": \"seeAlso\",\"identifier\": newbody.properties.resource_url,\"label\":newbody.properties.title,\"types\":[{\"label\":\"item of collection or exhibition\",\"identifier\":\"https://www.wikidata.org/wiki/Q18593264\"}]}"
-			}
-		] 
-	},
-	{ // Listed Buildings (CADW)
-		"type": "1643905705879",
-		"popup": "newbody.properties.name",
-		"lpMappings": [
-			{
-				"links": "{\"type\": \"subjectOf\",\"identifier\": newbody['@id'],\"label\":newbody.properties.name,\"types\":[{\"label\":\"listed building in the United Kingdom\",\"identifier\":\"https://www.wikidata.org/wiki/Q570600\"}],\"geometry\": {\"type\":\"Point\",\"coordinates\":[newbody._longitude,newbody._latitude]}}"
-			}
-		] 
-	},
-	{ // Scheduled Ancient Monuments (CADW)
-		"type": "1643906262026",
-		"popup": "newbody.properties.name",
-		"lpMappings": [
-			{
-				"links": "{\"type\": \"subjectOf\",\"identifier\": newbody['@id'],\"label\":newbody.properties.name,\"types\":[{\"label\":\"scheduled monument\",\"identifier\":\"https://www.wikidata.org/wiki/Q219538\"}],\"geometry\": {\"type\":\"Point\",\"coordinates\":[newbody._longitude,newbody._latitude]}}"
-			}
-		] 
-	},
-	{ // VCH Places
-		"type": "1650911846117",
-		"popup": "newbody.properties.title",
-		"lpMappings": [
-			{
-				"links": "{\"type\": \"seeAlso\",\"identifier\": newbody['@id'],\"label\":newbody.properties.title,\"types\":[{\"label\":\"Historical Gazetteer of England's Place Names\",\"identifier\":\"https://www.wikidata.org/wiki/Q105436896\"}]}"
-			}
-		] 
-	},
-	{ // CAMPOP Places
-		"type": "1650461833709",
-		"popup": "newbody.properties.title",
-		"radius": 6,
-		"textMatch": true,
+		"radius": 25,
+		"textMatch": false,
 		"maxScore": 4,
-		"autoConfirm": true,
+		"autoConfirm": false,
 		"maxResults": 1,
+		"fuse": false,
 		"lpMappings": [
 			{
-				"links": "{\"type\": \"exactMatch\",\"identifier\": newbody['@id'],\"label\":newbody.properties.title,\"types\":[{\"label\":\"town centre\",\"identifier\":\"https://www.wikidata.org/wiki/Q7830048\"}]}"
-			}
-		] 
-	},
-	{ // GB1900
-		"type": "1650548291192",
-		"popup": "newbody.properties.title",
-		"citations": [{'label':'Great Britain Historical GIS (GB1900): CC-BY_SA','year':'~1900','@id':'https://www.visionofbritain.org.uk/data/'}],
-		"radius": 15,
-		"textMatch": true,
-		"maxScore": 4,
-		"autoConfirm": true,
-		"maxResults": 1,
-		"fuse": true,
-		"lpMappings": [
-			{
-				"links": "{\"type\": \"exactMatch\",\"identifier\": \"https://w3id.org/locolligo/GB1900/\"+newbody.uuid,\"label\":newbody.properties.title,\"types\":[{\"label\":\"Historical Gazetteer\",\"identifier\":\"https://www.wikidata.org/wiki/Q38814612\"}]}",
-				"names": "{\"toponym\":newbody.properties.title,\"citations\":mappingSet.citations}"
+				"links": "{\"type\": \"exactMatch\",\"identifier\": newbody['@id'],\"label\":newbody.properties.title}"
 			}
 		] 
 	}
-]
 
 function levenshtein(r,e){if(r===e)return 0;var t=r.length,o=e.length;if(0===t||0===o)return t+o;var a,h,n,c,f,A,d,C,v=0,i=new Array(t);for(a=0;a<t;)i[a]=++a;for(;v+3<o;v+=4){var u=e.charCodeAt(v),l=e.charCodeAt(v+1),g=e.charCodeAt(v+2),s=e.charCodeAt(v+3);for(c=v,n=v+1,f=v+2,A=v+3,d=v+4,a=0;a<t;a++)C=r.charCodeAt(a),(h=i[a])<c||n<c?c=h>n?n+1:h+1:u!==C&&c++,c<n||f<n?n=c>f?f+1:c+1:l!==C&&n++,n<f||A<f?f=n>A?A+1:n+1:g!==C&&f++,f<A||d<A?A=f>d?d+1:f+1:s!==C&&A++,i[a]=d=A,A=f,f=n,n=c,c=h}for(;v<o;){var w=e.charCodeAt(v);for(c=v,f=++v,a=0;a<t;a++)f=(h=i[a])<c||f<c?h>f?f+1:h+1:w!==r.charCodeAt(a)?c+1:c,i[a]=f,c=h;d=f}return d}
 
@@ -431,7 +244,10 @@ function convert(){
 			$('#source').data('data').data[j].geoWithins.push(result[2]);
 		});
 	});
-	var expression = mappings[$('#expression option:selected').val()].expression;
+	try{
+		var expression = mappings[$('#expression option:selected').val()].expression;
+	}
+	catch{return;}
 	var jsonata_expression = jsonata(expression);
 	output = JSON.parse(JSON.stringify(jsonata_expression.evaluate($('#source').data('data')))); // Strip JSONata artefacts
 	// Check selectors
@@ -649,7 +465,7 @@ function assign(){
 	    				var feature = {'@id':'','type':'Feature','properties':{'title':''},'geometry':{'type':'Point'}};
 	    				
 	    				input.meta.fields.forEach(function(field,j){
-	    					if ($('#assignment_'+j).val()!==null && $('#assignment_'+j).val()!=='0'){	  
+	    					if ($('#assignment_'+j).val()!==null && $('#assignment_'+j).val()!=='0' && item[field]!==null){	  
 		    					try{  
 		    						var properties = $( '#assignment_'+j+' option:selected' ).text().replaceAll('[','.').replaceAll(']','').split('.');
 		    						root = feature;
@@ -795,10 +611,34 @@ function assign(){
 }
 
 function cleanupDataset(data){
-	console.log('Cleaning Dataset');
+	console.log('Cleaning Dataset');	
+	
 	if(data.hasOwnProperty('features')) data.features.forEach(function(feature,j){
+	
+		try{
+			if(data.indexing.name=='MonasteryQuest'){
+				if(!feature.properties.hasOwnProperty('title') && feature.properties.hasOwnProperty('name')){
+					feature.properties.title = feature.properties.name;
+					delete feature.properties.name;
+				}
+				delete feature.properties.lat;
+				delete feature.properties.long;
+				feature.properties.when = {"timespans": [{"start": {"in":feature.properties.Founded},"end": {"in":feature.properties.Dissolved}}],"label":"Period from Foundation to Dissolution"}
+				feature['@id']=data.indexing.identifier+'/'+j;
+//				if(feature.hasOwnProperty('depictions') && feature.depictions[0]['@id'].startsWith('https://maps.google.com/maps?q=&layer=c&cbll=')){
+//					if(!feature.hasOwnProperty('links')) feature.links = [];
+//					feature.links.push({"type":"seeAlso","identifier":feature.depictions[0]['@id'],"label":feature.depictions[0].title});
+//					delete feature.depictions;
+//				}
+//				feature.depictions = [{"@id":"https://maps.google.com/maps?q=&layer=c&cbll="+feature.geometry.coordinates[1]+","+feature.geometry.coordinates[0],"title":"Google Street View"}];
+				delete feature.depictions;
+			}
+		}
+		catch(err){console.log(err);}
+		
 		delete feature._longitude;
 		delete feature._latitude;
+		
 //		if(feature.hasOwnProperty('descriptions') && !Array.isArray(feature.descriptions)){
 //		feature.descriptions = [feature.descriptions[0]];
 //	}
@@ -832,12 +672,16 @@ function cleanupDataset(data){
 				});
 			}
 		}
-		['names','types','links'].forEach(function(property){ // Remove null and duplicate values from arrays
+		['names','types','links','depictions'].forEach(function(property){ // Remove null and duplicate values from arrays
 			if(feature.hasOwnProperty(property)){
 				var deletions=[]
 				feature[property].forEach(function(link,i){
 //					if (link==null) deletions.push(i);
-					if (link==null || (link.hasOwnProperty('identifier') && link.identifier == 'https://www.wikidata.org/wiki/Q570116')) deletions.push(i);
+					if (
+						link==null || 
+						(link.hasOwnProperty('identifier') && (link.identifier == 'wd:Q570116' || link.identifier == '@id')) ||
+						(link.hasOwnProperty('@id') && link['@id'] == null)
+					) deletions.push(i);
 //					if (property=='links' && link.hasOwnProperty('identifier') && feature['@id'].indexOf('/locolligo/ArtUK/')>-1) feature['@id'] = 'http://'+link.identifier;
 				});
 				deletions.reverse().forEach(function(i){
@@ -858,8 +702,15 @@ function cleanupDataset(data){
 					  ))
 					);
 				}
+				if (feature[property].length == 0) delete feature[property];
 			}
 		});
+
+		if(feature.hasOwnProperty('types')){
+			feature.types.forEach(function(type){
+				if(type.hasOwnProperty('identifier')) type.identifier = type.identifier.replace(/https?:\/\/www.wikidata.org\/(?:wiki|entity)\//,'wd:');
+			});
+		}
 	});
 }
 
@@ -1001,6 +852,7 @@ function undoEdit(){
 }
 
 function addLibraryItem(name, label){
+	libraryList[name] = label;
 	$('#datastore')
 	.append('<span class="libraryItem"><input type="radio" id="'+name+'" name="datastore" value="'+name+'">&nbsp;<label for="'+name+'">'+label+'</label><button class="libraryDelete" title="Remove from Library"><span class="ui-icon ui-icon-trash"></span></button></span>')
 	.find('.libraryDelete')
@@ -1104,6 +956,7 @@ function library(el){
 			},
 			"Link to Library": function() {
 				var libraryType = $('input[name="datastore"]:checked').val();
+				var libraryLabel = $('input[name="datastore"]:checked').next('label').text();
 				var library = indexedDB.open(libraryType);
 				library.onsuccess = function(){
 					var db = library.result;
@@ -1115,7 +968,7 @@ function library(el){
 						var lpMappings = APIJSON.filter(obj => {return obj.type === libraryType})[0].lpMappings;
 					}
 					catch{
-						mappingSet = LibraryMappings.filter(obj => {return obj.type === libraryType})[0];
+						mappingSet = LibraryMappings.filter(obj => {return obj.name === libraryList[type]})[0];
 						var lpMappings = mappingSet.lpMappings;
 					}
 					var radius = (mappingSet!=false && mappingSet.hasOwnProperty('radius')) ? mappingSet.radius : 5;
@@ -1201,6 +1054,14 @@ function library(el){
 							else{
 								var results = selections;
 								selections.sort((a, b) => a[1] - b[1]);
+								
+								try{
+									// Filter out links to LaNC Partner URLs
+									var partners = ['nationaltrust.org.uk','english-heritage.org.uk','historicenvironment.scot','communities-ni.gov.uk','cadw.gov.wales','nts.org.uk','hrp.org.uk'];
+									selections = selections.filter(obj => {	return !partners.includes(obj[0]['@id'].split('//')[1].split('/')[0].replaceAll('www.',''))	});	
+								}
+								catch{}						
+								
 								selections = selections.slice(0,maxResults); // Limit to closest results
 							}
 							if(maxResults==1 && autoConfirm) item.geometry.certainty = 'uncertain';
@@ -1297,6 +1158,7 @@ function library(el){
 				}
 				var dataset = el.parent('div').data('data');
 				var newDB = Date.now();
+				libraryList[newDB] = $('#newDatastoreName').val();
 				var open = indexedDB.open(newDB);
 				open.onupgradeneeded = function() {
 					var db = open.result;
@@ -1621,7 +1483,61 @@ function updateLinkMarkers(root=$('#layerSelector')){ // TO DO: Update each newb
 		try {
 			$(layer).closest('.layer').addClass('loading');
 			var result = APIJSON.filter(obj => {return obj.type === type})[0];
-			$.ajax({url:eval(result.url),headers:result.headers,data:{query:(result.hasOwnProperty('query') ? eval(result.query) : '')}}).then(function(data){
+			var tolerance = result.hasOwnProperty('radius')?result.radius:radius // km beyond bounds
+			tolerance = {'lng':tolerance/66,'lat':tolerance/111}; // convert to degrees
+			$.ajax({url:eval(result.url),headers:result.headers,data:{query:(result.hasOwnProperty('query') ? eval(result.query) : '')}})
+			.then(function(data){
+				
+				if(result.type=='J'){ // OSM Roads: draw lines and mark intersections
+					var nodes = data.elements.filter(obj => {return obj.type === 'node'});
+					var ways = data.elements.filter(obj => {return obj.type === 'way'});
+					var roads = {'type':'Feature','geometry':{'type':'MultiLineString','coordinates':[]}};
+					var waynodes = [];
+					var junctions = [];
+					data.junctions = [];
+					ways.forEach(function(way){
+						roads.geometry.coordinates.push([]);
+						way.nodes.forEach(function(node){
+							var node_properties = nodes.filter(obj => {return obj.id === node})[0];
+							roads.geometry.coordinates[roads.geometry.coordinates.length-1].push([node_properties.lon,node_properties.lat]);
+						});
+						var node = way.nodes.shift();
+						if (!junctions.includes(node)){junctions.push(node);}
+						var node = way.nodes.pop();
+						if (!junctions.includes(node)){junctions.push(node);}
+						way.nodes.forEach(function(node){
+							if (waynodes.includes(node) && !junctions.includes(node)){
+								junctions.push(node);
+							}
+							else waynodes.push(node);
+						});
+					});
+					junctions.forEach(function(node){
+						data.junctions.push(nodes.filter(obj => {return obj.id === node})[0]);
+					});
+					if(typeof map.getSource('roads')=='undefined'){
+						console.log('Adding OSM roads.');
+						map.addSource('roads', {'type': 'geojson','data': roads});
+						map.addLayer({
+							'id': 'road_lines',
+							'type': 'line',
+							'source': 'roads',
+							'layout': {},
+							'paint': {
+								'line-color': '#0F0',
+								'line-opacity': 0.7,
+								'line-width': 2
+							}
+						});
+					}
+					else {
+						map.getSource('roads').setData({
+							"type": "FeatureCollection",
+							"features": [roads]
+						});
+					}
+				}
+				
 				$.each(eval('data.'+result.datakey), function(i,feature){
 					console.log(i,feature,result.coordinates);
 					linkMarker(feature,result.type,colour,eval(result.coordinates),false,eval(result.name));
@@ -1629,20 +1545,18 @@ function updateLinkMarkers(root=$('#layerSelector')){ // TO DO: Update each newb
 			});
 		}
 		catch(err) {// Assume GeoData Library
+			console.log('API failed, so GeoData Library assumed.',err);
 			var open = indexedDB.open(type);
 			open.onsuccess = function(){
 				var db = open.result;
 				var tx = db.transaction('dataset');
 				var index = tx.objectStore('dataset').index('coordinates');
 				
-				try{
-					var mappingSet = LibraryMappings.filter(obj => {return obj.type === type})[0];
-					var popupRule = mappingSet.popup;
-				}
-				catch{
-					var mappingSet = {};
-					var popupRule = "'Popup not yet configured for this dataset (type='+type+')'";
-				}
+				var mappingSet = LibraryMappings.filter(obj => {return obj.name === libraryList[type]})[0];
+				if(mappingSet==undefined) mappingSet = defaultMappingSet;
+				
+				console.log(libraryList,type,mappingSet);
+				var popupRule = mappingSet.popup;
 				
 				if(mappingSet.hasOwnProperty('radius')) radius = mappingSet.radius;
 				var fuse = (mappingSet.hasOwnProperty('fuse') && mappingSet.fuse!=false) ? true : false;
@@ -2095,8 +2009,8 @@ function WDLP(el){
 				if(!items[i].hasOwnProperty('links')) items[i].links = [];
 				items[i].links.push({'type':linkCertainty==1?'exactMatch':'closeMatch','identifier':data.results.bindings[indexMin].place.value,'certainty':linkCertainty,'distance':parseFloat(data.results.bindings[indexMin].distance.value)});
 				if(!items[i].hasOwnProperty('types')) items[i].types = [];
-				items[i].types.push({'identifier':'aat:300008375','label':'town'});
-				items[i].types.push({'identifier':'https://www.wikidata.org/wiki/Q486972','label':'human settlement'});
+//				items[i].types.push({'identifier':'aat:300008375','label':'town'});
+//				items[i].types.push({'identifier':'wd:Q486972','label':'human settlement'});
 				
 				itemIndex++;
 				if(itemIndex<items.length){
@@ -2191,9 +2105,9 @@ function GGLP(el){
 								
 				data.items.forEach(function(geograph){
 					if(!items[i].hasOwnProperty('links')) items[i].links = [];
-					items[i].links.push({'type':'primaryTopicOf','identifier':geograph.link,'label':geograph.title,'types':[{'label':'Geograph','identifier':'https://www.wikidata.org/wiki/Q17301324'},{'label':'photograph','identifier':'https://www.wikidata.org/wiki/Q125191'}]});
+					items[i].links.push({'type':'primaryTopicOf','identifier':geograph.link,'label':geograph.title,'types':[{'label':'Geograph','identifier':'wd:Q17301324'},{'label':'photograph','identifier':'wd:Q125191'}]});
 					if(!items[i].hasOwnProperty('depictions')) items[i].depictions = [];
-					items[i].depictions.push({'@id':geograph.thumb.replace('_120x120',''),'title':geograph.title,'accreditation':'©'+geograph.author,'thumbnail':geograph.thumb,'license':geograph.licence});
+					items[i].depictions.push({'@id':geograph.thumb.replace('_120x120',''),'title':geograph.title,'accreditation':'© '+geograph.author,'thumbnail':geograph.thumb,'license':geograph.licence});
 				});
 				
 				itemIndex++;
@@ -2265,7 +2179,7 @@ function WPLP(el){
 				
 				sorted.forEach(function(geoname){
 					if(!items[i].hasOwnProperty('links')) items[i].links = [];
-					items[i].links.push({'type':'primaryTopicOf','identifier':data.geonames[geoname[1]].wikipediaUrl,'label':data.geonames[geoname[1]].title,'types':[{'label':'Wikipedia article page','identifier':'https://www.wikidata.org/wiki/Q50081413'}]});
+					items[i].links.push({'type':'primaryTopicOf','identifier':data.geonames[geoname[1]].wikipediaUrl,'label':data.geonames[geoname[1]].title,'types':[{'label':'Wikipedia article page','identifier':'wd:Q50081413'}]});
 					if(!items[i].hasOwnProperty('descriptions')) items[i].descriptions = [];
 					items[i].descriptions.push({'@id':'https://'+data.geonames[geoname[1]].wikipediaUrl,'value':data.geonames[geoname[1]].summary,'lang':'en'});
 				});
@@ -2333,7 +2247,7 @@ function PASLP(el){
 				
 				data.features.forEach(function(feature){
 					if(!items[i].hasOwnProperty('links')) items[i].links = [];
-					items[i].links.push({'type':'seeAlso','identifier':feature.properties.url,'label':feature.properties.description,'types':[{'label':'archaeological artifact','identifier':'https://www.wikidata.org/wiki/Q220659'}]});
+					items[i].links.push({'type':'seeAlso','identifier':feature.properties.url,'label':feature.properties.description,'types':[{'label':'archaeological artifact','identifier':'wd:Q220659'}]});
 				});
 				
 				itemIndex++;
@@ -2617,12 +2531,15 @@ $( document ).ready(function() {
 				    			recordState();
 				    			var selectedItem = activeDatasetEl.data('data').features[filteredIndices[selectedFilter]-1];
 				    			
-								var mappingSet = false;
+								var mappingSet;
 								try{
 									var lpMappings = APIJSON.filter(obj => {return obj.type === $(e.target).data('type')})[0].lpMappings;
 								}
 								catch{
-									mappingSet = LibraryMappings.filter(obj => {return obj.type === $(e.target).data('type')})[0];
+									if(libraryList.hasOwnProperty($(e.target).data('type'))){
+										mappingSet = LibraryMappings.filter(obj => {return obj.name === libraryList[$(e.target).data('type')]})[0];
+									}
+									if(mappingSet==undefined) mappingSet = defaultMappingSet;
 									var lpMappings = mappingSet.lpMappings;
 								}
 								
@@ -2799,11 +2716,11 @@ $( document ).ready(function() {
 	});
 	$('#conversions').append('<button id="assign" onclick="assign();" title="Assign CSV columns to Linked Places Format properties.">Assign CSV Columns</button>')
 // These lines for functionality now deprecated:	
-//	$('#expression')
-//	.after('<button onclick="convert();" title="Convert uploaded dataset using chosen type">Convert</button>')
-//	.after('<button onclick="$(\'#datafields\').text(fields);$(\'#modal\').dialog(\'open\')"  title="Paste new JSONata expression to be used for this conversion type">Edit JSONata</button>')
-//	.after('<button onclick="download(mappings,\'mappings.json\');" title="Download all conversion definitions to local filesystem">Download mappings.json</button>')
-//	;
+	$('#expression')
+	.after('<button onclick="convert();" title="Convert uploaded dataset using chosen type">Convert</button>')
+	.after('<button onclick="$(\'#datafields\').text(fields);$(\'#modal\').dialog(\'open\')"  title="Paste new JSONata expression to be used for this conversion type">Edit JSONata</button>')
+	.after('<button onclick="download(mappings,\'mappings.json\');" title="Download all conversion definitions to local filesystem">Download mappings.json</button>')
+	;
 	$('button,input:file').button();
 	$('#choose_input-button,#assign').addClass('throb');
 	$('#datafile_url').addClass('ui-button ui-corner-all ui-widget datafile_url');
@@ -2919,6 +2836,11 @@ $( document ).ready(function() {
 			$('#expression').append('<option value="'+key+'">'+value.description+'</option>');
 		});
 		$('select#expression').selectmenu().on('selectmenuchange',function () {console.log(mappings[$('#expression option:selected').val()].expression)});
+	},'json');
+	
+	// Load LibraryMappings
+	$.get('./templates/libraryMappings.json?'+Date.now(), function(data) { // Do not use any cached file
+		LibraryMappings = data;
 	},'json');
 	
 	// Populate link layer options
@@ -3141,29 +3063,29 @@ $( document ).ready(function() {
 	        				var glyphs = feature.properties.glyphs.split('|');
 	        				glyphs.forEach(function(glyph){
 	        					if(glyph.startsWith('settlement')){
-	        						feature.types.push({'label':'human settlement','identifier':'https://www.wikidata.org/wiki/Q486972','sourceLabels':[{'label':glyph}]});
+	        						feature.types.push({'label':'human settlement','identifier':'wd:Q486972','sourceLabels':[{'label':glyph}]});
 	        					}
 	        					else if(glyph.startsWith('seat')){
-	        						feature.types.push({'label':'family seat','identifier':'https://www.wikidata.org/wiki/Q168719','sourceLabels':[{'label':glyph}]});
+	        						feature.types.push({'label':'family seat','identifier':'wd:Q168719','sourceLabels':[{'label':glyph}]});
 	        					}
 	        					else if(glyph.startsWith('market')){
-	        						feature.types.push({'label':'market town','identifier':'https://www.wikidata.org/wiki/Q18511725','sourceLabels':[{'label':glyph}]});
+	        						feature.types.push({'label':'market town','identifier':'wd:Q18511725','sourceLabels':[{'label':glyph}]});
 	        					}
 	        					else if(glyph.startsWith('parish')){
-	        						feature.types.push({'label':'parish','identifier':'https://www.wikidata.org/wiki/Q102496','sourceLabels':[{'label':glyph}]});
+	        						feature.types.push({'label':'parish','identifier':'wd:Q102496','sourceLabels':[{'label':glyph}]});
 	        					}
 	        					else if(glyph.startsWith('parliament')){
-	        						feature.types.push({'label':'electoral district','identifier':'https://www.wikidata.org/wiki/Q192611','sourceLabels':[{'label':glyph}]});
+	        						feature.types.push({'label':'electoral district','identifier':'wd:Q192611','sourceLabels':[{'label':glyph}]});
 	        					}
 	        					else if(glyph.startsWith('society')){
-	        						feature.types.push({'label':'college','identifier':'https://www.wikidata.org/wiki/Q189004','sourceLabels':[{'label':glyph}]});
+	        						feature.types.push({'label':'college','identifier':'wd:Q189004','sourceLabels':[{'label':glyph}]});
 	        					}
 	        					else if(glyph.startsWith('seaport')){
-	        						feature.types.push({'label':'seaport','identifier':'https://www.wikidata.org/wiki/Q15310171','sourceLabels':[{'label':glyph}]});
+	        						feature.types.push({'label':'seaport','identifier':'wd:Q15310171','sourceLabels':[{'label':glyph}]});
 	        					}
 	        				});
         				}
-        				else feature.types.push({'label':'place','identifier':'https://www.wikidata.org/wiki/Q98929991'});
+        				else feature.types.push({'label':'place','identifier':'wd:Q98929991'});
         			}
         			
         			if(filename=='VCH-Places.lp.csv'){
@@ -3198,7 +3120,7 @@ $( document ).ready(function() {
 	    				
         				if(!feature.hasOwnProperty('types')) feature.types = [];
         				feature.types.push({
-        					"identifier":"https://www.wikidata.org/wiki/Q7884789",
+        					"identifier":"wd:Q7884789",
         					"label":"toponym",
         					"when":{"timespans":[{"start":{"latest":"1848"}}]}
         				});
@@ -3249,7 +3171,7 @@ $( document ).ready(function() {
 //	        						VCHtypes.push(key);
 //	        						console.log(key);
 	        						feature.types.push({
-        	        					"identifier":"https://www.wikidata.org/wiki/Q109258987",
+        	        					"identifier":"wd:Q109258987",
         	        					"label":"railway node",
         	        					"sourceLabels":[{"label":"railway"}],
         	        					"when":{"timespans":[{"start":{"latest":"1848"}}]}
@@ -3317,7 +3239,7 @@ $( document ).ready(function() {
             				delete feature.properties.type;
         				}
         				catch{
-            				feature.types = [{'label':'Not linked to vocabulary','identifier':'https://www.wikidata.org/wiki/Q83564242','sourceLabels':[{'label':feature.properties.type,'lang':'en'}]}];
+            				feature.types = [{'label':'Not linked to vocabulary','identifier':'wd:Q83564242','sourceLabels':[{'label':feature.properties.type,'lang':'en'}]}];
         				}
         			}
         			
@@ -3404,6 +3326,127 @@ $( document ).ready(function() {
     	}
     	else{ // Assume generic JSON input
     		input = JSON.parse(filecontent);
+    		if(filename.startsWith('MonasteryQuest')){
+    			input.features.forEach(function(feature,i){
+    				
+    				feature.properties.when.timespans[0].start.in = feature.properties.Founded;
+    				
+    				if(feature.hasOwnProperty('types')){
+        				var deletions=[];
+        				feature.types.forEach(function(type,i){
+        					if(type.hasOwnProperty('identifier') && ['aat:300008375','wd:Q486972'].includes(type.identifier)) deletions.push(i);
+        				});
+        				deletions.reverse().forEach(function(i){
+        					feature.types.splice(i,1);
+        				});
+        			}
+    				else feature.types = [];
+    				
+    				var founded = String(feature.properties.Founded).replaceAll('~','').replaceAll(',','').split('.')[0].split('-')[0].split('/')[0];
+    				if(founded>=1500){
+    					feature.types.push({'identifier':'wd:Q7017','label':'16th-century'});
+    				}
+    				else if(founded>=1400){
+    					feature.types.push({'identifier':'wd:Q7018','label':'15th-century'});
+    				}
+    				else if(founded>=1300){
+    					feature.types.push({'identifier':'wd:Q7034','label':'14th-century'});
+    				}
+    				else if(founded>=1200){
+    					feature.types.push({'identifier':'wd:Q7049','label':'13th-century'});
+    				}
+    				else if(founded>=1100 || feature.properties.Founded.includes('Temp Henry')){
+    					feature.types.push({'identifier':'wd:Q7061','label':'12th-century'});
+    				}
+    				else if(founded>=1000){
+    					feature.types.push({'identifier':'wd:Q7063','label':'11th-century'});
+    				}
+    				else if(founded>=900){
+    					feature.types.push({'identifier':'wd:Q8052','label':'10th-century'});
+    				}
+    				else if(founded>=800){
+    					feature.types.push({'identifier':'wd:Q8083','label':'9th-century'});
+    				}
+    				else if(founded>=700){
+    					feature.types.push({'identifier':'wd:Q8086','label':'8th-century'});
+    				}
+    				else if(founded>=600){
+    					feature.types.push({'identifier':'wd:Q8089','label':'7th-century'});
+    				}
+    				else if(founded>=500){
+    					feature.types.push({'identifier':'wd:Q8090','label':'6th-century'});
+    				}
+    				else {
+    					feature.types.push({'identifier':'wd:Q12069528','label':'Foundation undated'});
+    					console.log('Foundation not categorised: '+feature.properties.title+' (#'+i+') '+feature.properties.Founded);
+    				}
+
+    				if(feature.properties.Type.includes('Cathedral')){
+    					feature.types.push({'identifier':'wd:Q2977','label':'Cathedral'});
+    				}
+    				if(feature.properties.Type.includes('Priory')){
+    					feature.types.push({'identifier':'wd:Q2750108','label':'Priory'});
+    				}
+    				else if(feature.properties.Type.includes('Abbey')){
+    					feature.types.push({'identifier':'wd:Q160742','label':'Abbey'});
+    				}
+
+//    				if(feature.properties.Order.includes('Double House')){
+//    					feature.types.push({'identifier':'wd:Q6021560','label':'nunnery'});
+//    					feature.types.push({'identifier':'wd:Q44613','label':'monastery'});
+//    				}
+//    				else if(feature.properties.Order.includes('(Women)')){
+//    					feature.types.push({'identifier':'wd:Q6021560','label':'nunnery'});
+//    				}
+//    				else feature.types.push({'identifier':'wd:Q44613','label':'monastery'});
+//
+//    				if(feature.properties.Order.includes('Augustinian')){
+//    					feature.types.push({'identifier':'wd:Q214528','label':'Augustinian'});
+//    				}
+//    				else if(feature.properties.Order.includes('Benedictine')){
+//    					feature.types.push({'identifier':'wd:Q131132','label':'Benedictine'});
+//    				}
+//    				else if(feature.properties.Order.includes('Cistercian')){
+//    					feature.types.push({'identifier':'wd:Q166861','label':'Cistercian'});
+//    				}
+//    				else if(feature.properties.Order.includes('Premonstratensian')){
+//    					feature.types.push({'identifier':'wd:Q339332','label':'Premonstratensian'});
+//    				}
+//    				else if(feature.properties.Order.includes('Cluniac')){
+//    					feature.types.push({'identifier':'wd:Q1529391','label':'Cluniac'});
+//    				}
+//    				else if(feature.properties.Order.includes('Knights Hospitaller')){
+//    					feature.types.push({'identifier':'wd:Q187549','label':'Knights Hospitaller'});
+//    				}
+//    				else if(feature.properties.Order=='Carthusian'){
+//    					feature.types.push({'identifier':'wd:Q220979','label':'Carthusian'});
+//    				}
+//    				else if(feature.properties.Order.includes('Gilbertine')){
+//    					feature.types.push({'identifier':'wd:Q770486','label':'Gilbertine'});
+//    				}
+//    				else if(feature.properties.Order=='Knights Hospitaller (Formerly Templar)'){
+//    					feature.types.push({'identifier':'wd:Q41300','label':'Templar'});
+//    				}
+//    				else if(feature.properties.Order=='Trinitarian'){
+//    					feature.types.push({'identifier':'wd:Q917518','label':'Trinitarian'});
+//    				}
+//    				else if(feature.properties.Order=='Tironensian'){
+//    					feature.types.push({'identifier':'wd:Q33645010','label':'Tironensian'});
+//    				}
+//    				else if(feature.properties.Order=='Bonhommes'){
+//    					feature.types.push({'identifier':'wd:Q4975709','label':'Bonhommes'});
+//    				}
+//    				else if(feature.properties.Order=='Bethlemite'){
+//    					feature.types.push({'identifier':'wd:Q2588888','label':'Bethlemite'});
+//    				}
+//    				else if(feature.properties.Order=='Bridgettine Double House'){
+//    					feature.types.push({'identifier':'wd:Q952578','label':'Bridgettine'});
+//    				}
+//    				else console.log('Not categorised: '+feature.properties.Order);
+//    				delete feature.properties.Order;
+    				
+    			});
+    		}
     		
     		cleanupDataset(input);
 //    		indexingLinks(input);

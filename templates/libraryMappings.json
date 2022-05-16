@@ -1,0 +1,218 @@
+[	
+	{
+		"name": "Battlefields (HE)",
+		"popup": "newbody.properties.Name",
+		"lpMappings": [
+			{
+				"links": "{\"type\": \"subjectOf\",\"identifier\": newbody.properties.Hyperlink,\"label\":newbody.properties.Name,\"types\":[{\"label\":\"battlefield\",\"identifier\":\"wd:Q4895508\"}],\"geometry\": {\"type\":\"Point\",\"coordinates\":[newbody._longitude,newbody._latitude]}}"
+			}
+		] 
+	},
+	{
+		"name": "Scheduled Monuments (HE)",
+		"popup": "newbody.properties.Name",
+		"lpMappings": [
+			{
+				"links": "{\"type\": \"subjectOf\",\"identifier\": newbody.properties.Hyperlink,\"label\":newbody.properties.Name,\"types\":[{\"label\":\"scheduled monument\",\"identifier\":\"wd:Q219538\"}],\"geometry\": {\"type\":\"Point\",\"coordinates\":[newbody._longitude,newbody._latitude]}}"
+			}
+		] 
+	},
+	{
+		"name": "Mapping Museums",
+		"popup": "newbody.properties.title",
+		"radius": 2,
+		"lpMappings": [
+			{
+				"links": "{\"type\": \"seeAlso\",\"identifier\": newbody['@id'],\"label\":newbody.properties.title}"
+			}
+		] 
+	},
+	{
+		"name": "ArtUK",
+		"popup": "newbody.properties.title",
+		"radius": 2,
+		"lpMappings": [
+			{
+				"links": "{\"type\": \"seeAlso\",\"identifier\": newbody['@id'],\"label\":newbody.properties.title}"
+			}
+		] 
+	},
+	{
+		"name": "Scheduled Monuments (Scotland)",
+		"popup": "newbody.properties.title",
+		"lpMappings": [
+			{
+				"links": "{\"type\": \"seeAlso\",\"identifier\": ['@id'],\"label\":newbody.properties.title}"
+			}
+		] 
+	},
+	{
+		"name": "NI Scheduled Zones",
+		"popup": "newbody.properties.title",
+		"lpMappings": [
+			{
+				"links": "{\"type\": \"seeAlso\",\"identifier\": ['@id'],\"label\":newbody.properties.title}"
+			}
+		] 
+	},
+	{
+		"name": "World Heritage Sites (HE)",
+		"popup": "newbody.properties.Name",
+		"lpMappings": [
+			{
+				"links": "{\"type\": \"subjectOf\",\"identifier\": newbody.properties.Hyperlink,\"label\":newbody.properties.Name,\"types\":[{\"label\":\"UNESCO World Heritage Site\",\"identifier\":\"wd:Q9259\"}],\"geometry\": {\"type\":\"Point\",\"coordinates\":[newbody._longitude,newbody._latitude]}}"
+			}
+		] 
+	},
+	{
+		"name": "Listed Buildings (HE)",
+		"popup": "newbody.properties.Name",
+		"lpMappings": [
+			{
+				"links": "{\"type\": \"subjectOf\",\"identifier\": newbody.properties.Hyperlink,\"label\":newbody.properties.Name,\"types\":[{\"label\":\"listed building in the United Kingdom\",\"identifier\":\"wd:Q570600\"}],\"geometry\": {\"type\":\"Point\",\"coordinates\":[newbody._longitude,newbody._latitude]}}"
+			}
+		] 
+	},
+	{
+		"name": "Parks & Gardens (HE)",
+		"popup": "newbody.properties.Name",
+		"lpMappings": [
+			{
+				"links": "{\"type\": \"subjectOf\",\"identifier\": newbody.properties.Hyperlink,\"label\":newbody.properties.Name,\"types\":[{\"label\":\"garden\",\"identifier\":\"wd:Q1107656\"}],\"geometry\": {\"type\":\"Point\",\"coordinates\":[newbody._longitude,newbody._latitude]}}"
+			}
+		] 
+	},
+	{
+		"name": "Visitor Sites (EH)",
+		"popup": "newbody.properties.title",
+		"lpMappings": [
+			{
+				"links": "{\"type\": \"seeAlso\",\"identifier\": newbody.properties.url,\"label\": newbody.properties.title}"
+			}
+		] 
+	},
+	{
+		"name": "VisitPlus (UK)",
+		"popup": "newbody.properties.title",
+		"lpMappings": [
+			{
+				"links": "{\"type\": \"subjectOf\",\"identifier\": newbody.properties.url,\"label\": newbody.properties.title}"
+			}
+		] 
+	},
+	{
+		"name": "National Trust Sites",
+		"popup": "newbody.properties.title",
+		"lpMappings": [
+			{
+				"links": "{\"type\": \"seeAlso\",\"identifier\": newbody.properties.url,\"label\": newbody.properties.title}"
+			}
+		] 
+	},
+	{
+		"name": "Historic Royal Palaces",
+		"popup": "newbody.properties.title",
+		"lpMappings": [
+			{
+				"links": "{\"type\": \"seeAlso\",\"identifier\": newbody.properties.url,\"label\": newbody.properties.title}"
+			}
+		] 
+	},
+	{
+		"name": "Open Plaques",
+		"popup": "newbody.properties.title",
+		"lpMappings": [
+			{
+				"links": "{\"type\": \"seeAlso\",\"identifier\": newbody['@id'],\"label\":newbody.properties.title,\"types\":[{\"label\":\"blue plaque\",\"identifier\":\"wd:Q885849\"}],\"geometry\": {\"type\":\"Point\",\"coordinates\":[newbody._longitude,newbody._latitude]}}"
+			}
+		] 
+	},
+	{
+		"name": "State Care Sites (Northern Ireland)",
+		"popup": "newbody.properties.title",
+		"lpMappings": [
+			{
+				"links": "{\"type\": \"seeAlso\",\"identifier\": newbody.properties.url,\"label\": newbody.properties.title}"
+			}
+		] 
+	},
+	{
+		"name": "Leland Wales (Viae Regiae)",
+		"popup": "newbody.name",
+		"lpMappings": [
+			{
+				"links": "{\"type\": \"seeAlso\",\"identifier\": newbody['@id'],\"label\": newbody.name}"
+			},
+			{
+				"depictions": "{\"@id\": newbody.depictions[0]['@id'],\"title\": newbody.name,\"selector\": newbody.depictions[0].selector,\"type\": newbody.depictions[0].type,\"license\": \"https://creativecommons.org/licenses/by/4.0/\"}"
+			}
+		] 
+	},
+	{
+		"name": "BL & BM Objects (Victoria Morris)",
+		"popup": "newbody.properties.title",
+		"lpMappings": [
+			{
+				"links": "{\"type\": \"seeAlso\",\"identifier\": newbody.properties.resource_url,\"label\":newbody.properties.title,\"types\":[{\"label\":\"item of collection or exhibition\",\"identifier\":\"wd:Q18593264\"}]}"
+			}
+		] 
+	},
+	{
+		"name": "Listed Buildings (CADW)",
+		"popup": "newbody.properties.name",
+		"lpMappings": [
+			{
+				"links": "{\"type\": \"subjectOf\",\"identifier\": newbody['@id'],\"label\":newbody.properties.name,\"types\":[{\"label\":\"listed building in the United Kingdom\",\"identifier\":\"wd:Q570600\"}],\"geometry\": {\"type\":\"Point\",\"coordinates\":[newbody._longitude,newbody._latitude]}}"
+			}
+		] 
+	},
+	{
+		"name": "Scheduled Ancient Monuments (CADW)",
+		"popup": "newbody.properties.name",
+		"lpMappings": [
+			{
+				"links": "{\"type\": \"subjectOf\",\"identifier\": newbody['@id'],\"label\":newbody.properties.name,\"types\":[{\"label\":\"scheduled monument\",\"identifier\":\"wd:Q219538\"}],\"geometry\": {\"type\":\"Point\",\"coordinates\":[newbody._longitude,newbody._latitude]}}"
+			}
+		] 
+	},
+	{
+		"name": "VCH Places",
+		"popup": "newbody.properties.title",
+		"lpMappings": [
+			{
+				"links": "{\"type\": \"seeAlso\",\"identifier\": newbody['@id'],\"label\":newbody.properties.title,\"types\":[{\"label\":\"Historical Gazetteer of England's Place Names\",\"identifier\":\"wd:Q105436896\"}]}"
+			}
+		] 
+	},
+	{
+		"name": "CAMPOP Places",
+		"popup": "newbody.properties.title",
+		"radius": 6,
+		"textMatch": true,
+		"maxScore": 4,
+		"autoConfirm": true,
+		"maxResults": 1,
+		"lpMappings": [
+			{
+				"links": "{\"type\": \"exactMatch\",\"identifier\": newbody['@id'],\"label\":newbody.properties.title,\"types\":[{\"label\":\"town centre\",\"identifier\":\"wd:Q7830048\"}]}"
+			}
+		] 
+	},
+	{
+		"name": "GB1900",
+		"popup": "newbody.properties.title",
+		"citations": [{"label":"Great Britain Historical GIS (GB1900): CC-BY_SA","year":"~1900","@id":"https://www.visionofbritain.org.uk/data/"}],
+		"radius": 15,
+		"textMatch": true,
+		"maxScore": 4,
+		"autoConfirm": true,
+		"maxResults": 1,
+		"fuse": true,
+		"lpMappings": [
+			{
+				"links": "{\"type\": \"exactMatch\",\"identifier\": \"https://w3id.org/locolligo/GB1900/\"+newbody.uuid,\"label\":newbody.properties.title,\"types\":[{\"label\":\"Historical Gazetteer\",\"identifier\":\"wd:Q38814612\"}]}",
+				"names": "{\"toponym\":newbody.properties.title,\"citations\":mappingSet.citations}"
+			}
+		] 
+	}
+]
