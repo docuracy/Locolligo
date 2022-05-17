@@ -44,6 +44,9 @@ If you already have a file in Linked Places Format, you can simply upload it and
 ### Upload CSV & Convert to Linked Places Format (LPF)
 > **Documentation yet to be written.**
 
+### Annotate CSV Column Headers and Upload `.lp.csv`
+> **Documentation yet to be written.**
+
 ### Manually Link & Georeference Dataset
 1. Click on `Link/Georeference`.
 2. A JSON object representing the first feature in your dataset is loaded into the Feature Explorer overlay.
@@ -76,7 +79,7 @@ There are two options for 'downloading' your dataset to your local filesystem (a
 1. Click on `Download` to save the file in JSON format.
 2. Click on `CSV` to convert your dataset to CSV format (Comma Separated Values, as used by spreadsheet software).
 
-> **CSV download needs to be rewritten to capture entire JSON object structure.**
+> **CSV download needs to be rewritten to capture entire JSON object structure, together with annotation headings.**
 
 ### Map Dataset
 Click on the `Map` button for a very basic map showing all of the points in the dataset.
