@@ -28,6 +28,9 @@ This software originates as an output of the AHRC-funded [**Locating a National 
     <img border="black 1px" src="/images/Locolligo-screenshot.png" />
 </p>
 
+> Please note that after a period of development and experimentation with other formats, *Locolligo* now generates datasets exclusively in the extended Linked Places Format (LPF) detailed [here](https://github.com/docuracy/Locolligo/blob/main/schemas/LP.json). Some of the features listed below were implemented but have now been deprecated.
+
+
 ## Feature development:
 - [x] Convert the following dataset types to JSON:
     - [x] CSV / TSV (from upload or URL)
