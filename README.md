@@ -23,7 +23,7 @@
 
 This software originates as an output of the AHRC-funded [**Locating a National Collection**](https://www.nationalcollection.org.uk/Foundation-Projects#:~:text=Locating%20a%20National%20Collection) (LaNC) project. Based at the British Library in London, the project is part of the AHRC programme [Towards a National Collection: Opening UK Heritage to the World](https://www.nationalcollection.org.uk/). Initial development of *Locolligo* addresses the LaNC project's aim of helping cultural heritage organisations to use geospatial data, and together with development of *Peripleo* is a major step in scoping 'technical recommendations for the development of a national discovery system whereby objects about a topic of interest can be readily discovered from a variety of sources, represented in the context of their historic environment, and referenced in time and landscape'. 
 
-**An active demonstration of the *Locolligo* prototype is at https://docuracy.github.io/Locolligo/**
+**Please read the [User Guide](./User-Guide.md), and try out the active demonstration of the *Locolligo* prototype at https://docuracy.github.io/Locolligo/**.
 <p align="center" width="100%">
     <img border="black 1px" src="/images/Locolligo-screenshot.png" />
 </p>
