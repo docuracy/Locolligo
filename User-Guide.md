@@ -8,7 +8,7 @@
 > This guide is based on the initial configuration set up in the [master repository](https://github.com/docuracy/Locolligo), as outlined [below](./User-Guide.md#configuration). If you want to customise the configuration, you will need to 'fork' the repository into your own GitHub account.
 
 ### Load Example Dataset
-1. Point your browser to https://docuracy.github.io/Locolligo/.
+1. Point your browser to https://docuracy.github.io/Locolligo/ (*right-click this link to avoid losing your place in this Guide*).
 2. Click on `Choose Input`, then 
 3. `Try Example`, and 
 4. Select `Hollar-1660.lp.json` from the drop-down list.
