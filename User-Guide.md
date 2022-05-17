@@ -11,6 +11,11 @@ This guide is based on the initial configuration set up in the [master repositor
 1. Point your browser to https://docuracy.github.io/Locolligo/.
 2. Click on `Choose Input`, then `Try Example`, and select `Hollar-1660.lp.json` from the drop-down list. You can explore this ready-made file (in Linked Places Format) by clicking on the triangular icons to expand and collapse the various 'object' properties.
 
+### Download Dataset
+There are two options for 'downloading' your dataset to your local filesystem (although in fact it is already held and processed locally in your device's memory):
+1. Click on `Download` to save the file in JSON format.
+2. Click on `CSV` to convert your dataset to CSV format (Comma Separated Values, as used by spreadsheet software).
+
 ### Local GeoData Library
 
 ### Link & Georeference Dataset
