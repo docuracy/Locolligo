@@ -7,9 +7,16 @@
 ## Key Features
 > This guide is based on the initial configuration set up in the [master repository](https://github.com/docuracy/Locolligo), as outlined [below](./User-Guide.md#configuration). If you want to customise the configuration, you will need to 'fork' the repository into your own GitHub account.
 
-### Load Dataset
+### Load Example Dataset
 1. Point your browser to https://docuracy.github.io/Locolligo/.
-2. Click on `Choose Input`, then `Try Example`, and select `Hollar-1660.lp.json` from the drop-down list. You can explore this ready-made file (in Linked Places Format) by clicking on the triangular icons to expand and collapse the various 'object' properties.
+2. Click on `Choose Input`, then 
+3. `Try Example`, and 
+4. Select `Hollar-1660.lp.json` from the drop-down list.
+
+You can explore this ready-made file (in Linked Places Format) by clicking on the triangular icons to expand and collapse the various 'object' properties.
+
+### Clear Dataset
+Click on `Clear` at any time to reload *Locolligo*. Any dataset that you have been working on will be lost unless you first download it.
 
 ### Local GeoData Library
 Any dataset (once converted to Linked Places Format) can be saved to your browser's internal storage ([IndexedDB](https://developer.mozilla.org/en-US/docs/Web/API/IndexedDB_API)), ready to be linked to other datasets.
@@ -31,7 +38,11 @@ Automatically link all features in the currently-loaded dataset to features in a
 1. Click on `Library`, then 
 2. Click on the bin icon next to the name of the dataset you wish to delete.
 
+### Upload Linked Places Format (LPF) file
+If you already have a file in Linked Places Format, you can simply upload it and begin work on it. Click on `Choose Input`, then on `Upload`, and follow the usual steps for locating a file on your device.
+
 ### Upload CSV & Convert to Linked Places Format (LPF)
+> Documentation yet to be written.
 
 ### Manually Link & Georeference Dataset
 1. Click on `Link/Georeference`.
@@ -51,10 +62,12 @@ There are two options for 'downloading' your dataset to your local filesystem (a
 > CSV download needs to be rewritten to capture entire JSON object structure.
 
 ### Map Dataset
-Click on the `Map` button for a basic map showing all of the points in the dataset (not recommended for large datasets).
+Click on the `Map` button for a very basic map showing all of the points in the dataset.
+
+> This feature to be removed as the same can be achieved (with greater functionality) with `Link\Georeference`.
 
 ### JSON Editing
-There is basic support for editing the JSON objects displayed in *Locolligo*: hover over a property's name to reveal a clickable bin for its deletion, or over a property's value to reveal a clickable pencil for editing mode. For more complex editing or additions to the object structure, you should download the dataset and use a dedicated JSON editor: try [Notepad++](https://notepad-plus-plus.org/) with its JSON Viewer plugin. 
+There is basic support for editing the JSON objects displayed in *Locolligo*: hover over a property's name to reveal a clickable bin for its deletion, or over a property's value to reveal a clickable pencil for editing mode. For more complex editing or additions to the object structure, you should download the dataset and use a dedicated JSON editor: try [Notepad++](https://notepad-plus-plus.org/) with its JSON Viewer plugin. After editing, you can simply upload your dataset back into *Locolligo*.
 
 ## Configuration
 Much of the configuration is determined by the files listed below, which can easily be edited if you have your own copy of the master repository. More complex configuration can be achieved by editing the main JavaScript file ([data-converter.js](./js/data-converter.js)), which includes many now-disabled sections of code used during development that might be customised and re-deployed.
