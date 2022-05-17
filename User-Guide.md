@@ -5,7 +5,7 @@
 # User Guide
 
 ## Key Features
-This guide is based on the initial configuration set up in the [master repository](https://github.com/docuracy/Locolligo), as outlined [below](./User-Guide.md#configuration). If you want to customise the configuration, you will need to 'fork' the repository into your own GitHub account.
+> This guide is based on the initial configuration set up in the [master repository](https://github.com/docuracy/Locolligo), as outlined [below](./User-Guide.md#configuration). If you want to customise the configuration, you will need to 'fork' the repository into your own GitHub account.
 
 ### Load Dataset
 1. Point your browser to https://docuracy.github.io/Locolligo/.
@@ -17,6 +17,26 @@ There are two options for 'downloading' your dataset to your local filesystem (a
 2. Click on `CSV` to convert your dataset to CSV format (Comma Separated Values, as used by spreadsheet software).
 
 ### Local GeoData Library
+Any dataset (once converted to Linked Places Format) can be saved to your browser's internal storage ([IndexedDB](https://developer.mozilla.org/en-US/docs/Web/API/IndexedDB_API)), ready to be linked to other datasets.
+#### Add to Library
+1. Click on `Library`, then 
+2. Type a name for your dataset, and then 
+3. Click on `Update Library`.
+#### Link to Library
+Automatically link all features in the currently-loaded dataset to features in a selected GeoData Library dataset, based on configurable combinations of geographical distance and textual similarity.
+
+> Needs to be fixed following breaking changes.
+ 
+> Default configuration might not suit your dataset: for best results copy the software to your own GitHub repository and edit the configuration files.
+
+1. Click on `Library`, then 
+2. Select the radio button next to the name of the dataset to which you wish to create links, and then
+3. Click on `Link to Library`.
+#### Delete from Library
+1. Click on `Library`, then 
+2. Click on the bin icon next to the name of the dataset you wish to delete.
+
+### Upload CSV & Convert to Linked Places Format (LPF)
 
 ### Manually Link & Georeference Dataset
 
