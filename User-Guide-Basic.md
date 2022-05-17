@@ -5,8 +5,6 @@
 # Basic User Guide
 > This User Guide will take you through the steps required to generate a location-based dataset that you can see mapped in *Peripleo*. The linking of features to other web-resources is explained in the [Advanced User Guide](./User-Guide-Advanced.md)
 
-> This User Guide is based on the initial configuration set up in the [master repository](https://github.com/docuracy/Locolligo), as outlined [below](./User-Guide.md#configuration). If you want to customise the configuration, you will need to 'fork' the repository into your own GitHub account.
-
 ## CSV Columns
 *This step is not essential, but it will make things easier later in the process.*
 
