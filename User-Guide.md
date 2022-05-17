@@ -46,7 +46,19 @@ If you already have a file in Linked Places Format, you can simply upload it and
 
 ### Manually Link & Georeference Dataset
 1. Click on `Link/Georeference`.
-2. If it already has coordinates, the first feature in your dataset is shown on the map; 
+2. A JSON object representing the first feature in your dataset is loaded into the Feature Explorer overlay.
+3. If it already has coordinates, the first feature in your dataset is shown on the map.
+4. Navigate around your dataset by one of the following methods:
+    1. Use the left/right arrow buttons in the Feature Explorer, or
+    2. Type some text into the `Filter by Title` box, or
+    3. Drag and zoom the map and click on a feature of interest.
+5. A download button is provided (a down arrow) which replicated the functionality described [below](./User-Guide.md#download-dataset).
+6. The orange bin button will delete the current feature: use with caution as this action cannot be undone.
+7. The back-arrow button will revert recent changes made to the current feature; the edit history is lost if you switch to another feature.
+8. The magnifying glass button can be used to search a modern gazetteer (GeoNames) for places *within the current map view*.
+9. The layers button reveals lists of configured APIs and GeoData Library datasets to which you can link the current feature. *Requirements for remote APIs are prone to change, and if the system seems unresponsive you are advised to check your browser's console for Network response data (press [F12]).*
+
+> Documentation yet to be completed.
 
 ### Automatically Link Dataset via APIs
 The API buttons are used to programmatically link all dataset features to remote web resources, based on configurable combinations of geographical distance and textual similarity. API calls are throttled to respect providers' usage limits. The preconfigured APIs are:
