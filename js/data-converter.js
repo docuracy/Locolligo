@@ -870,90 +870,90 @@ function library(el){
 		modal: true,
 		width: 'auto',
 		buttons: {
-			"Adjust Points": function() { // Used to move uncertain points based on the displacement of nearby certain matches
-				var dataset = $('#source').data('data');
-				$.each(dataset.features,function(i,feature){
-					var coordinates = feature.properties.original_coordinates;
-					if (typeof coordinates === 'string' || coordinates instanceof String) {
-						coordinates = JSON.parse(coordinates);
-						feature.properties.original_coordinates = [+coordinates[1],+coordinates[0]];
-					}
-					var coordinates = feature.properties.tps_coordinates;
-					if (typeof coordinates === 'string' || coordinates instanceof String) {
-						coordinates = JSON.parse(coordinates);
-						feature.properties.tps_coordinates = [+coordinates[1],+coordinates[0]];
-					}
-				});
-				var newDB = 'IV_temp';
-				try{
-					indexedDB.deleteDatabase(newDB);
-				}
-				catch{}
-				var open = indexedDB.open(newDB);
-				open.onupgradeneeded = function() {
-					var db = open.result;
-					var dbname = db.createObjectStore("dataname", { keyPath: "name" });
-					var namerequest = dbname.put({'name':newDB});
-					var store = db.createObjectStore('dataset', {autoIncrement: true});
-					store.createIndex('coordinates', ['_longitude','_latitude'], {unique: false});
-					addLibraryItem(newDB, $('#newDatastoreName').val() );
-					// Create new IV index based on IV properties.tps_coordinates
-					$.each(dataset.features,function(i,feature){
-						try{
-							feature._longitude = feature.properties.tps_coordinates[0];
-							feature._latitude = feature.properties.tps_coordinates[1];
-							store.put(feature);
-						}
-						catch{
-							console.log('Failed to store feature.',feature);
-						}
-					});
-				}
-				open.onsuccess = function(){
-					function adjustFeature(i){
-						if(i>dataset.features.length){
-							console.log('Adjustment complete');
-							indexedDB.deleteDatabase(newDB); // Delete IV index
-							return;
-						}
-						feature = dataset.features[i];
-						if(feature.geometry.certainty=='uncertain'){
-							// Find all features within +/- 25km with geometry.certainty=='certain'
-							var db = open.result;
-							var tx = db.transaction('dataset');
-							var index = tx.objectStore('dataset').index('coordinates');
-							var range = 0.01 * 25; //km
-							var lngDiffs = [];
-							var latDiffs = [];
-							select(index, [IDBKeyRange.bound(feature.geometry.coordinates[0]-range, feature.geometry.coordinates[0]+range),IDBKeyRange.bound(feature.geometry.coordinates[1]-range, feature.geometry.coordinates[1]+range)], function(value){
-								if(value.geometry.certainty=='certain'){// Calculate and store in array the shift in lat & lng
-									lngDiffs.push(value.geometry.coordinates[0]-value._longitude);
-									latDiffs.push(value.geometry.coordinates[1]-value._latitude);
-								}
-							}, function(){
-								var foundCount = lngDiffs.length;
-								if(foundCount>=5){ // Sort by size and discard highest and lowest 20%, and apply average of remaining values
-									const average = arr => arr.reduce((a,b) => a + b, 0) / arr.length;
-									lngDiffs = lngDiffs.sort(function(a,b){return a-b;});
-									lngDiffs = lngDiffs.slice(Math.floor(lngDiffs.length*.2),Math.ceil(lngDiffs.length*.8));
-									lngDiffs = average(lngDiffs);
-									feature.geometry.coordinates[0] = +(feature.geometry.coordinates[0]+lngDiffs).toFixed(6);
-									latDiffs = latDiffs.sort(function(a,b){return a-b;});
-									latDiffs = latDiffs.slice(Math.floor(latDiffs.length*.2),Math.ceil(latDiffs.length*.8));
-									latDiffs = average(latDiffs);
-									feature.geometry.coordinates[1] = +(feature.geometry.coordinates[1]+latDiffs).toFixed(6);
-									console.log(i+': ['+lngDiffs+','+latDiffs+'] (average of '+foundCount+' point differences)');
-								}
-								else console.log(i+': Only '+foundCount+' reference points found.');
-								adjustFeature(i+1);
-							});
-						}
-						else adjustFeature(i+1);
-					}
-					adjustFeature(0);
-				}
-				$( this ).dialog( "close" );
-			},
+//			"Adjust Points": function() { // Used to move uncertain points based on the displacement of nearby certain matches
+//				var dataset = $('#source').data('data');
+//				$.each(dataset.features,function(i,feature){
+//					var coordinates = feature.properties.original_coordinates;
+//					if (typeof coordinates === 'string' || coordinates instanceof String) {
+//						coordinates = JSON.parse(coordinates);
+//						feature.properties.original_coordinates = [+coordinates[1],+coordinates[0]];
+//					}
+//					var coordinates = feature.properties.tps_coordinates;
+//					if (typeof coordinates === 'string' || coordinates instanceof String) {
+//						coordinates = JSON.parse(coordinates);
+//						feature.properties.tps_coordinates = [+coordinates[1],+coordinates[0]];
+//					}
+//				});
+//				var newDB = 'IV_temp';
+//				try{
+//					indexedDB.deleteDatabase(newDB);
+//				}
+//				catch{}
+//				var open = indexedDB.open(newDB);
+//				open.onupgradeneeded = function() {
+//					var db = open.result;
+//					var dbname = db.createObjectStore("dataname", { keyPath: "name" });
+//					var namerequest = dbname.put({'name':newDB});
+//					var store = db.createObjectStore('dataset', {autoIncrement: true});
+//					store.createIndex('coordinates', ['_longitude','_latitude'], {unique: false});
+//					addLibraryItem(newDB, $('#newDatastoreName').val() );
+//					// Create new IV index based on IV properties.tps_coordinates
+//					$.each(dataset.features,function(i,feature){
+//						try{
+//							feature._longitude = feature.properties.tps_coordinates[0];
+//							feature._latitude = feature.properties.tps_coordinates[1];
+//							store.put(feature);
+//						}
+//						catch{
+//							console.log('Failed to store feature.',feature);
+//						}
+//					});
+//				}
+//				open.onsuccess = function(){
+//					function adjustFeature(i){
+//						if(i>dataset.features.length){
+//							console.log('Adjustment complete');
+//							indexedDB.deleteDatabase(newDB); // Delete IV index
+//							return;
+//						}
+//						feature = dataset.features[i];
+//						if(feature.geometry.certainty=='uncertain'){
+//							// Find all features within +/- 25km with geometry.certainty=='certain'
+//							var db = open.result;
+//							var tx = db.transaction('dataset');
+//							var index = tx.objectStore('dataset').index('coordinates');
+//							var range = 0.01 * 25; //km
+//							var lngDiffs = [];
+//							var latDiffs = [];
+//							select(index, [IDBKeyRange.bound(feature.geometry.coordinates[0]-range, feature.geometry.coordinates[0]+range),IDBKeyRange.bound(feature.geometry.coordinates[1]-range, feature.geometry.coordinates[1]+range)], function(value){
+//								if(value.geometry.certainty=='certain'){// Calculate and store in array the shift in lat & lng
+//									lngDiffs.push(value.geometry.coordinates[0]-value._longitude);
+//									latDiffs.push(value.geometry.coordinates[1]-value._latitude);
+//								}
+//							}, function(){
+//								var foundCount = lngDiffs.length;
+//								if(foundCount>=5){ // Sort by size and discard highest and lowest 20%, and apply average of remaining values
+//									const average = arr => arr.reduce((a,b) => a + b, 0) / arr.length;
+//									lngDiffs = lngDiffs.sort(function(a,b){return a-b;});
+//									lngDiffs = lngDiffs.slice(Math.floor(lngDiffs.length*.2),Math.ceil(lngDiffs.length*.8));
+//									lngDiffs = average(lngDiffs);
+//									feature.geometry.coordinates[0] = +(feature.geometry.coordinates[0]+lngDiffs).toFixed(6);
+//									latDiffs = latDiffs.sort(function(a,b){return a-b;});
+//									latDiffs = latDiffs.slice(Math.floor(latDiffs.length*.2),Math.ceil(latDiffs.length*.8));
+//									latDiffs = average(latDiffs);
+//									feature.geometry.coordinates[1] = +(feature.geometry.coordinates[1]+latDiffs).toFixed(6);
+//									console.log(i+': ['+lngDiffs+','+latDiffs+'] (average of '+foundCount+' point differences)');
+//								}
+//								else console.log(i+': Only '+foundCount+' reference points found.');
+//								adjustFeature(i+1);
+//							});
+//						}
+//						else adjustFeature(i+1);
+//					}
+//					adjustFeature(0);
+//				}
+//				$( this ).dialog( "close" );
+//			},
 			"Link to Library": function() {
 				var libraryType = $('input[name="datastore"]:checked').val();
 				var libraryLabel = $('input[name="datastore"]:checked').next('label').text();
