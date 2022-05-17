@@ -56,9 +56,13 @@ If you already have a file in Linked Places Format, you can simply upload it and
 6. The orange bin button will delete the current feature: use with caution as this action cannot be undone.
 7. The back-arrow button will revert recent changes made to the current feature; the edit history is lost if you switch to another feature.
 8. The magnifying glass button can be used to search a modern gazetteer (GeoNames) for places *within the current map view*.
-9. The layers button reveals lists of configured APIs and GeoData Library datasets to which you can link the current feature. *Requirements for remote APIs are prone to change, and if the system seems unresponsive you are advised to check your browser's console for Network response data (press [F12]).*
-
-> Documentation yet to be completed.
+9. The layers button reveals lists of configured APIs and GeoData Library datasets to which you can link the current feature: results for checked items are refreshed as you move from one feature to another. *Requirements for remote APIs are prone to change, and if the system seems unresponsive you are advised to check your browser's console for Network response data (press [F12]).*
+10. If you recentre the map you can simply tap on the layers button to refresh API data based on the current map centre point.
+11. Linkable features are indicated by markers on the map:
+    1. Hover over a marker for a preview of the feature.
+    2. Click on a marker for more details of the feature.
+    3. Click `Link Only` to link the feature to your current dataset feature.
+    4. Click on `Link and Move` to additionally move the coordinates of your current dataset feature to those of the linkable feature.
 
 ### Automatically Link Dataset via APIs
 The API buttons are used to programmatically link all dataset features to remote web resources, based on configurable combinations of geographical distance and textual similarity. API calls are throttled to respect providers' usage limits. The preconfigured APIs are:
