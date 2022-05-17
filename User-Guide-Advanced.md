@@ -5,6 +5,8 @@
 # Advanced User Guide
 > This User Guide will take you through the steps required to link features in a location-based dataset to other web-resources, ready for visualisation in *Peripleo*. It assumes that you are already familiar with the processes discussed in the [Basic User Guide](./User-Guide-Basic.md)
 
+> This User Guide is based on the initial configuration set up in the [master repository](https://github.com/docuracy/Locolligo), as outlined [below](./User-Guide-Advanced.md#configuration). If you want to customise the configuration, you will need to 'fork' the repository into your own GitHub account.
+
 ## Load Example Dataset
 1. Point your browser to https://docuracy.github.io/Locolligo/ (*right-click this link to avoid losing your place in this Guide*).
 2. Click on `Choose Input`, then 
