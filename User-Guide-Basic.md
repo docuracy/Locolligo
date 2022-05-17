@@ -20,4 +20,4 @@ There are two options for 'downloading' your dataset to your local filesystem (a
 
 > **CSV download needs to be rewritten to capture entire JSON object structure, together with annotation headings.**
 
-> **Documentation yet to be written.**
+> **Documentation yet to be completed.**
