@@ -18,8 +18,14 @@ There are two options for 'downloading' your dataset to your local filesystem (a
 
 ### Local GeoData Library
 
-### Link & Georeference Dataset
+### Manually Link & Georeference Dataset
 
+### Automatically Link Dataset via APIs
+The API buttons are used to programmatically link dataset features to remote web resources, based on configurable combinations of geographical distance and textual similarity. The preconfigured APIs are:
+- `WD`: [Wikidata](https://www.wikidata.org/wiki/Wikidata:Main_Page) ('a free and open knowledge base that can be read and edited by both humans and machines').
+- `GG`: [Geograph](https://m.geograph.org.uk/) ('geographically representative photographs and information for every square kilometre of Great Britain and Ireland').
+- `WP`: Wikipedia articles linked by [GeoNames](https://www.geonames.org/export/wikipedia-webservice.html).
+- `PAS`: [Portable Antiquities Scheme](https://finds.org.uk/) (archaeological finds in England and Wales).
 
 ### Map Dataset
 Click on the `Map` button for a basic map showing all of the points in the dataset (not recommended for large datasets).
