@@ -4,6 +4,10 @@
 	"name": "***** Name *****",
 	"description": "***** Description (at least 50 characters) *****",
 	"creator": [{
+		"@type": "Organisation",
+		"name": "",
+		"url": ""
+	},{
 		"@type": "Person",
 		"name": "",
 		"url": "https://orcid.org/****-****-****-****"
@@ -13,13 +17,10 @@
 	}],
 	"license": "https://creativecommons.org/licenses/by/4.0/",
 	"identifier": "https://w3id.org/*****",
-	"temporalCoverage": "",
+	"temporalCoverage": "1066/2022",
 	"spatialCoverage": {
-		"@type": "Place",
-		"geoCoveredBy": {
-			"@type": "DefinedRegion",
-			"addressCountry": "GB"
-		}
+		"@type": "GeoShape",
+		"box": "0.580101 0.00149 60.355 9.78667"
 	},
     "significantLink": [
         "https://*****",
