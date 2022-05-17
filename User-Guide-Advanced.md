@@ -72,13 +72,6 @@ The API buttons are used to programmatically link all dataset features to remote
 - `WP`: Wikipedia articles linked by [GeoNames](https://www.geonames.org/export/wikipedia-webservice.html).
 - `PAS`: [Portable Antiquities Scheme](https://finds.org.uk/) (archaeological finds in England and Wales).
 
-## Download Dataset
-There are two options for 'downloading' your dataset to your local filesystem (although in fact it is already held and processed locally in your device's memory):
-1. Click on `Download` to save the file in JSON format.
-2. Click on `CSV` to convert your dataset to CSV format (Comma Separated Values, as used by spreadsheet software).
-
-> **CSV download needs to be rewritten to capture entire JSON object structure, together with annotation headings.**
-
 ## Map Dataset
 Click on the `Map` button for a very basic map showing all of the points in the dataset.
 
