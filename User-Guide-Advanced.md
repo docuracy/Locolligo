@@ -37,7 +37,8 @@ Automatically link all features in the currently-loaded dataset to features in a
 ## Upload Linked Places Format (LPF) file
 If you already have a file in Linked Places Format, you can simply upload it and begin work on it. Click on `Choose Input`, then on `Upload`, and follow the usual steps for locating a file on your device.
 
-## Upload CSV & Convert to Linked Places Format (LPF)
+## Convert CSV to Linked Places Format (LPF)
+> See the [Basic User Guide](./User-Guide-Basic.md) for details of how to upload CSV (tabular data) and open the `Assign CSV Columns` form. This Guide deals with more detailed configuration.
 > **Documentation yet to be written.**
 
 ## Annotate CSV Column Headers and Upload `.lp.csv`
