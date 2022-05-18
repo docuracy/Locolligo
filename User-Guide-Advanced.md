@@ -78,11 +78,6 @@ There are two options for 'downloading' your dataset to your local filesystem (a
 
 > **CSV download needs to be rewritten to capture entire JSON object structure, together with annotation headings.**
 
-## Map Dataset
-Click on the `Map` button for a very basic map showing all of the points in the dataset.
-
-> **This feature to be removed as the same can be achieved (with greater functionality) with `Link\Georeference`.**
-
 ## JSON Editing
 There is basic support for editing the JSON objects displayed in *Locolligo*: hover over a property's name to reveal a clickable bin for its deletion, or over a property's value to reveal a clickable pencil for editing mode. For more complex editing or additions to the object structure, you should download the dataset and use a dedicated JSON editor: try [Notepad++](https://notepad-plus-plus.org/) with its JSON Viewer plugin. After editing, you can simply upload your dataset back into *Locolligo*.
 
