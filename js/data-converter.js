@@ -288,9 +288,9 @@ function assign(){
 	var assignmentOptions = [
 		['(ignore)'],
 		['@id','identifier|uuid|id|@id'],
-		['properties.title','title|name'],
+		['properties.title','title|name|label'],
 		['properties.%%%'],
-		['geometry.coordinates','coords'],
+		['geometry.coordinates','coordinates|coords|OSGB'],
 		['geometry.coordinates[0]','longitude|long|lng|easting|westing|X'],
 		['geometry.coordinates[1]','latitude|lat|northing|southing|Y'],
 		['names[0].toponym','toponym'],
@@ -2714,13 +2714,13 @@ $( document ).ready(function() {
 		$('#choose_input-button').removeClass('throb');
 		$('#inputs').removeClass().addClass($('#choose_input option:selected').val());
 	});
-	$('#conversions').append('<button id="assign" onclick="assign();" title="Assign CSV columns to Linked Places Format properties.">Assign CSV Columns</button>')
+	$('#conversions').append('<button id="assign" onclick="assign();" title="Assign CSV columns to Linked Places Format properties.">Assign CSV Columns</button>');
 // These lines for functionality now deprecated:	
-	$('#expression')
-	.after('<button onclick="convert();" title="Convert uploaded dataset using chosen type">Convert</button>')
-	.after('<button onclick="$(\'#datafields\').text(fields);$(\'#modal\').dialog(\'open\')"  title="Paste new JSONata expression to be used for this conversion type">Edit JSONata</button>')
-	.after('<button onclick="download(mappings,\'mappings.json\');" title="Download all conversion definitions to local filesystem">Download mappings.json</button>')
-	;
+//	$('#expression')
+//	.after('<button onclick="convert();" title="Convert uploaded dataset using chosen type">Convert</button>')
+//	.after('<button onclick="$(\'#datafields\').text(fields);$(\'#modal\').dialog(\'open\')"  title="Paste new JSONata expression to be used for this conversion type">Edit JSONata</button>')
+//	.after('<button onclick="download(mappings,\'mappings.json\');" title="Download all conversion definitions to local filesystem">Download mappings.json</button>')
+//	;
 	$('button,input:file').button();
 	$('#choose_input-button,#assign').addClass('throb');
 	$('#datafile_url').addClass('ui-button ui-corner-all ui-widget datafile_url');
