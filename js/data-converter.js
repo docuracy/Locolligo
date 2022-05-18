@@ -135,20 +135,51 @@ function download(jsonobject,filename=false){
 
 //Download geoJSON converted to CSV
 function downloadCSV(jsonobject,filename=false,geoJSON=true){
-	var dataset = [];
+	var dataset = {'fields':[],'data':[]};
 	if(geoJSON){
-		$.each(jsonobject, function(i,object){
-			dataset.push({'name': object.properties.name, 'latitude': object.geometry.coordinates[1], 'longitude': object.geometry.coordinates[0]});
+		jsonobject.features.forEach(function(object){
+			var newObject = {};
+			var parents=[];
+			function getKeys(subObject,isArray=false){
+				Object.entries(subObject).forEach(function([key,value]){
+					if(isArray) key = '['+key+']';
+					if(Array.isArray(value)){
+						parents.push(key);
+						getKeys(value,true);
+					}
+					else if(typeof value==='object'){
+						parents.push(key);
+						getKeys(value);
+					}
+					else{
+						parents.push(key);
+						parentsString = parents.join('.').replaceAll('.[','[');
+						if(!dataset.fields.includes(parentsString)) dataset.fields.push(parentsString);
+						newObject[parentsString]=value;
+						parents.pop();
+					}
+				});
+				parents.pop();
+			}
+			getKeys(object);
+			dataset.data.push(newObject);
 		});
+		dataset.fields.sort();
+		Object.entries(jsonobject).forEach(function([key,value]){
+			if(key=='features') return;
+			dataset.fields.push('$.'+key+'='+JSON.stringify(value));
+		});
+		dataset.data.unshift( dataset.fields.reduce((a, v) => ({ ...a, [v]: '{'+v+'}'}), {}) ); 
 	}
 	else dataset = jsonobject;
 	$("<a />", {
-		"download": filename ? filename : "geoJSON_Data_"+ Math.floor(Date.now()/1000) +".csv",
+		"download": filename ? filename.split('.')[0]+".lp.csv" : "geoJSON_Data_"+ Math.floor(Date.now()/1000) +".csv",
 		"href" : "data:application/csv;charset=utf-8," + Papa.unparse(dataset,{
 			quotes: true,
 			quoteChar: '"',
+			escapeChar: '"',
 			delimiter: ",",
-			header: true,
+			header: false,
 			newline: "\r\n",
 			skipEmptyLines: true
 		})
@@ -968,7 +999,8 @@ function library(el){
 						var lpMappings = APIJSON.filter(obj => {return obj.type === libraryType})[0].lpMappings;
 					}
 					catch{
-						mappingSet = LibraryMappings.filter(obj => {return obj.name === libraryList[type]})[0];
+						mappingSet = LibraryMappings.filter(obj => {return obj.name === libraryList[libraryType]})[0];
+						if(mappingSet==undefined) mappingSet = defaultMappingSet;
 						var lpMappings = mappingSet.lpMappings;
 					}
 					var radius = (mappingSet!=false && mappingSet.hasOwnProperty('radius')) ? mappingSet.radius : 5;
@@ -1261,9 +1293,9 @@ function library(el){
 }
 
 // Render JSON display
-function renderJSON(target,object,data){
+function renderJSON(target,object,data,filename=false){
 	target
-		.data({'data':data,'formatter':object})
+		.data({'data':data,'formatter':object,'filename':filename})
 		.html(object.render());
 	$('<button class="dataButton clear" title="Clear this dataset">Clear</button>').prependTo(target).button().click(function(){location.reload();});
 	var downloadButton = $('<button class="dataButton" title="Download this dataset to local filesystem">Download</button>').prependTo(target); // Create button for downloading JSON dataset
@@ -1274,9 +1306,10 @@ function renderJSON(target,object,data){
 	}
 	if(data.hasOwnProperty('features')){ // Create button for downloading geoJSON points as csv
 		var csvButton = $('<button class="mapButton" title="Download basic csv">CSV</button>').prependTo(target);
-		csvButton.button().click(function(){downloadCSV($(this).parent('div').data('data').features);});
-		var mapButton = $('<button class="mapButton" title="Visualise dataset on a map">Map</button>').prependTo(target);
-		mapButton.button().click(function(){drawMap($(this));});
+		csvButton.button().click(function(){downloadCSV($(this).parent('div').data('data'),$(this).parent('div').data('filename'));});
+//		mapButton deprecated because visualisation was crude and can be achieved with the Link/Georeference button		
+//		var mapButton = $('<button class="mapButton" title="Visualise dataset on a map">Map</button>').prependTo(target); 
+//		mapButton.button().click(function(){drawMap($(this));});
 		$('<button id="WDLP" class="APIButton" title="Link Wikidata settlements within '+radius+'km, based on best text match (Levenshtein distance algorithm).">WD</button>')
 		.prependTo(target)
 		.button()
@@ -3595,7 +3628,7 @@ $( document ).ready(function() {
     	$('#source_block').appendTo('#darkroom');
     	$('#conversions').insertBefore('.arrow');
     	input_formatter = new JSONFormatter(input_truncated,1,{theme:'dark'});
-		renderJSON($('#source'),input_formatter,input);
+		renderJSON($('#source'),input_formatter,input,filename);
     	identifyType(input);		
 	}
 	
