@@ -24,10 +24,8 @@ Any dataset (once converted to Linked Places Format) can be saved to your browse
 3. Click on `Update Library`.
 ### Link to Library
 Automatically link all features in the currently-loaded dataset to features in a selected GeoData Library dataset, based on configurable combinations of geographical distance and textual similarity.
-
-> **Needs to be fixed following breaking changes.**
  
-> *The default configuration might not suit your dataset: for best results copy the software to your own GitHub repository and edit the configuration files.*
+> *The default configuration might not suit your dataset: for best results copy the software to your own GitHub repository and edit the `/templates/libraryMappings.json` configuration file.*
 
 1. Click on `Library`, then 
 2. Select the radio button next to the name of the dataset to which you wish to create links, and then
@@ -39,7 +37,8 @@ Automatically link all features in the currently-loaded dataset to features in a
 ## Upload Linked Places Format (LPF) file
 If you already have a file in Linked Places Format, you can simply upload it and begin work on it. Click on `Choose Input`, then on `Upload`, and follow the usual steps for locating a file on your device.
 
-## Upload CSV & Convert to Linked Places Format (LPF)
+## Convert CSV to Linked Places Format (LPF)
+> See the [Basic User Guide](./User-Guide-Basic.md) for details of how to upload CSV (tabular data) and open the `Assign CSV Columns` form. This Guide deals with more detailed configuration.
 > **Documentation yet to be written.**
 
 ## Annotate CSV Column Headers and Upload `.lp.csv`
@@ -78,11 +77,6 @@ There are two options for 'downloading' your dataset to your local filesystem (a
 2. Click on `CSV` to convert your dataset to CSV format (Comma Separated Values, as used by spreadsheet software).
 
 > **CSV download needs to be rewritten to capture entire JSON object structure, together with annotation headings.**
-
-## Map Dataset
-Click on the `Map` button for a very basic map showing all of the points in the dataset.
-
-> **This feature to be removed as the same can be achieved (with greater functionality) with `Link\Georeference`.**
 
 ## JSON Editing
 There is basic support for editing the JSON objects displayed in *Locolligo*: hover over a property's name to reveal a clickable bin for its deletion, or over a property's value to reveal a clickable pencil for editing mode. For more complex editing or additions to the object structure, you should download the dataset and use a dedicated JSON editor: try [Notepad++](https://notepad-plus-plus.org/) with its JSON Viewer plugin. After editing, you can simply upload your dataset back into *Locolligo*.
