@@ -25,7 +25,7 @@ Any dataset (once converted to Linked Places Format) can be saved to your browse
 ### Link to Library
 Automatically link all features in the currently-loaded dataset to features in a selected GeoData Library dataset, based on configurable combinations of geographical distance and textual similarity.
  
-> *The default configuration might not suit your dataset: for best results copy the software to your own GitHub repository and edit the configuration files.*
+> *The default configuration might not suit your dataset: for best results copy the software to your own GitHub repository and edit the `/templates/libraryMappings.json` configuration file.*
 
 1. Click on `Library`, then 
 2. Select the radio button next to the name of the dataset to which you wish to create links, and then
