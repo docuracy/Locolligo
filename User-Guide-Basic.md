@@ -19,13 +19,32 @@
 
 4. Click on `Choose Input`, then `Upload`, and follow your device's usual steps for locating and uploading the file you saved in Step 2 above.
 
+5. Click on `Assign CSV Columns`. A form should appear listing the column headers in your original table together with the `properties` to which they will be mapped in the conversion process. Any column header not set in Step 1 above will by default be ignored (but such columns can be configured using *Locolligo*'s advanced features).
 
+6. Check the `Dataset CRS` dropbox toward the bottom of the form: `WGS84` is the most commonly-used global coordinate reference standard (decimal degrees east/west of Greenwich and north/south of the equator).
 
-## Download Dataset
-There are two options for 'downloading' your dataset to your local filesystem (although in fact it is already held and processed locally in your device's memory):
-1. Click on `Download` to save the file in JSON format.
-2. Click on `CSV` to convert your dataset to CSV format (Comma Separated Values, as used by spreadsheet software).
+7. Click on `Convert`.
 
-> **CSV download needs to be rewritten to capture entire JSON object structure, together with annotation headings.**
+8. You will see a Validation Report: you can safely ignore warnings about Feature IDs, Google indexing, and Dataset Creator(s). Click on `Close`.
 
-> **Documentation yet to be completed.**
+9. The converted dataset is shown in the maroon-coloured box at the bottom of the screen. Click on the `Download` button within this box, and save the file.
+
+10. If you want to visualise your file using *Peripleo* in your own GitHub repository, and are following the process outlined [here](https://github.com/britishlibrary/peripleo)), you should now:
+    - Go to the `docs` folder in your repository.
+    - Click on `Add file` and `Upload files`.
+    - Drag or choose the file containing your converted dataset and `Commit changes`.
+    - Edit the `peripleo.config.json` file in your `docs` folder so that the "data" property points to your dataset file. For example:
+
+``` json
+"data": [
+    {
+      "name": "Places Where Stuff Happened",
+      "format": "LINKED_PLACES",
+      "src": "./places-where-stuff-happened.json",
+      "attribution": "Stuff data © Your Mum"
+    }
+]
+```
+---
+# Next Steps
+- Read the [Advanced User Guide](./User-Guide-Advanced.md)
