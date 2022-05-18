@@ -5,7 +5,7 @@
 # Basic User Guide
 > This User Guide will take you through the steps required to generate a location-based dataset that you can see mapped in *Peripleo*. **It assumes that you already have data in tabular format**, perhaps in a Google Sheet or an Excel file. The linking of features to other web-resources is explained in the [Advanced User Guide](./User-Guide-Advanced.md)
 
-1. **Set Table Headers** (*This step is not essential, but it will make things easier later in the process.*)
+1. Set Table Headers (*This step is not essential, but it will make things easier later in the process.*)
     - **Labels**: Each of the records in your table will need to have a label for use in the mapping software: the text in the top row of the column that contains the labels should be `title`, `name`, or `label`.
     - **Location**: Ideally, you should provide the location of each of the records in your table (but don't worry if you don't have this information, as it can be added using *Locolligo*'s advanced features). You can provide the location in one of several ways:
         1. Coordinates in two separate columns (headed `longitude`, `long`, `lng`,`easting`, `westing`, or `X` and `latitude`, `lat`, `northing`, `southing`, or `Y`).
