@@ -35,16 +35,19 @@
     - Drag or choose the file containing your converted dataset and `Commit changes`.
     - Edit the `peripleo.config.json` file in your `docs` folder so that the "data" property points to your dataset file. For example:
 
-``` json
-"data": [
-    {
-      "name": "Places Where Stuff Happened",
-      "format": "LINKED_PLACES",
-      "src": "./places-where-stuff-happened.json",
-      "attribution": "Stuff data © Your Mum"
-    }
-]
-```
+
+
+    ``` json
+    "data": [
+        {
+          "name": "Places Where Stuff Happened",
+          "format": "LINKED_PLACES",
+          "src": "./places-where-stuff-happened.json",
+          "attribution": "Stuff data © Your Mum"
+        }
+    ]
+    ```
 ---
 # Next Steps
-- Read the [Advanced User Guide](./User-Guide-Advanced.md).
+- Read the *Locolligo* [Advanced User Guide](./User-Guide-Advanced.md).
+- Read the *Peripleo* [Configuration Guide](https://github.com/britishlibrary/peripleo-lanc/blob/main/Configuration-Guide.md).
