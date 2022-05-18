@@ -74,9 +74,7 @@ The API buttons are used to programmatically link all dataset features to remote
 ## Download Dataset
 There are two options for 'downloading' your dataset to your local filesystem (although in fact it is already held and processed locally in your device's memory):
 1. Click on `Download` to save the file in JSON format.
-2. Click on `CSV` to convert your dataset to CSV format (Comma Separated Values, as used by spreadsheet software).
-
-> **CSV download needs to be rewritten to capture entire JSON object structure, together with annotation headings.**
+2. Click on `CSV` to convert your dataset to CSV format (Comma Separated Values, as used by spreadsheet software). *Note that every JSON property that has a value will be assigned its own column. The column headers will be formatted in such a way that the file can be converted back to LPF JSON by reimporting it.*
 
 ## JSON Editing
 There is basic support for editing the JSON objects displayed in *Locolligo*: hover over a property's name to reveal a clickable bin for its deletion, or over a property's value to reveal a clickable pencil for editing mode. For more complex editing or additions to the object structure, you should download the dataset and use a dedicated JSON editor: try [Notepad++](https://notepad-plus-plus.org/) with its JSON Viewer plugin. After editing, you can simply upload your dataset back into *Locolligo*.
