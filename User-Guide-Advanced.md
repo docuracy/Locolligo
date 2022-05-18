@@ -24,8 +24,6 @@ Any dataset (once converted to Linked Places Format) can be saved to your browse
 3. Click on `Update Library`.
 ### Link to Library
 Automatically link all features in the currently-loaded dataset to features in a selected GeoData Library dataset, based on configurable combinations of geographical distance and textual similarity.
-
-> **Needs to be fixed following breaking changes.**
  
 > *The default configuration might not suit your dataset: for best results copy the software to your own GitHub repository and edit the configuration files.*
 
