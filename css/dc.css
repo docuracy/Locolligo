@@ -537,3 +537,7 @@ a.popup_link.wikidata{
 #validation li {
 	word-break: break-all;
 }
+.ui-selectmenu-menu {
+	height: 200px;
+    overflow: auto;
+}

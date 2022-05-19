@@ -141,25 +141,31 @@ function downloadCSV(jsonobject,filename=false,geoJSON=true){
 			var newObject = {};
 			var parents=[];
 			function getKeys(subObject,isArray=false){
-				Object.entries(subObject).forEach(function([key,value]){
-					if(isArray) key = '['+key+']';
-					if(Array.isArray(value)){
-						parents.push(key);
-						getKeys(value,true);
-					}
-					else if(typeof value==='object'){
-						parents.push(key);
-						getKeys(value);
-					}
-					else{
-						parents.push(key);
-						parentsString = parents.join('.').replaceAll('.[','[');
-						if(!dataset.fields.includes(parentsString)) dataset.fields.push(parentsString);
-						newObject[parentsString]= value;
-						parents.pop();
-					}
-				});
-				parents.pop();
+				try{
+					Object.entries(subObject).forEach(function([key,value]){
+						if(isArray) key = '['+key+']';
+						if(Array.isArray(value)){
+							parents.push(key);
+							getKeys(value,true);
+						}
+						else if(typeof value==='object'){
+							parents.push(key);
+							getKeys(value);
+						}
+						else{
+							parents.push(key);
+							parentsString = parents.join('.').replaceAll('.[','[');
+							if(!dataset.fields.includes(parentsString)) dataset.fields.push(parentsString);
+							newObject[parentsString]= value;
+							parents.pop();
+						}
+					});
+					parents.pop();
+				}
+				catch(err){
+					console.log('Error getting header keys.',err);
+				}
+				
 			}
 			getKeys(object);
 			dataset.data.push(newObject);
@@ -343,6 +349,27 @@ function assign(){
 	});
 	assignmentSelector = '<select class="featureProperty" name="assignment_###" id="assignment_###">'+assignmentSelector.join('')+'</select>'
 	
+	var geocodeSelector=[];
+	geocodeSelector.push('<option selected value="">No Geocode Field</option>');
+	input.meta.fields.forEach(function(field,i){
+		geocodeSelector.push('<option value="'+field+'">'+field+'</option>');
+	});
+	geocodeSelector = '<select title="If any of your features lack coordinates, select a place-name field." name="geocodeSelector" id="geocodeSelector">'+geocodeSelector.join('')+'</select>'
+	
+	var ccodeSelector=[];
+	ccodeSelector.push('<option value="">No Country Bias</option>');
+	$.ajax({
+		dataType: "json",
+		url: './templates/country-codes.json',
+		async: false, 
+		success: function(ccodes) {
+			ccodes.forEach(function(ccode){
+				ccodeSelector.push('<option'+(ccode.Code=='GB'?' selected':'')+' value="'+ccode.Code+'">'+ccode.Name+'</option>');
+			});
+		}
+	});
+	ccodeSelector = '<select title="Bias results by selected country." name="ccodeSelector" id="ccodeSelector">'+ccodeSelector.join('')+'</select>'
+	
 	var CRSOptions = [
 		['Select'],
 		['WGS84'],
@@ -396,6 +423,7 @@ function assign(){
 	.append($('<tr><td>Dataset base URL:</td><td><input id="_baseURL" placeholder="Optional" title="Delete this value if the dataset is not a web resource." value="https://w3id.org/" /></td></tr>'))
 	.append($('<tr><td>Dataset CRS:</td><td>'+CRSSelector+'</td></tr>'))
 	.append($('<tr><td>Coordinate obfuscation:</td><td><input id="_obfuscation" placeholder="Optional (km)" title="Randomise coordinates +/- the distance entered here. Might be used to conceal exact archaeological findspots." /></td></tr>'))
+    .append($('<tr><td>Geocode Place-name:</td><td>'+geocodeSelector+ccodeSelector+'</td></tr>'))
     .dialog({
     	modal: true,
     	title: 'Assign LPF Feature Properties from CSV Columns',
@@ -552,6 +580,27 @@ function assign(){
 		    				}
 	    				}
 	    				else feature.geometry=null;
+	    				
+	    				if(feature.geometry==null && $('#geocodeSelector').val()!==''){
+	    					$.ajax({
+	    						async: false,
+	    						dataType: 'json',
+	    						url: 'https://secure.geonames.org/searchJSON?name='+item[$('#geocodeSelector').val()]+($('#ccodeSelector').val()==''?'':'&countryBias='+$('#ccodeSelector').val())+'&fuzzy=0.8&username='+geoNamesID+'&maxRows=1',
+	    						success: function(data){
+		    						console.log(data);
+		    						if(data.totalResultsCount==0){
+		    							// TO DO: Find a representative coordinate for country bias if selected
+		    							console.log('No geocoding match found for '+item[$('#geocodeSelector').val()]+'.');
+		    							validation.push('No geocoding match found for '+item[$('#geocodeSelector').val()]+'.');
+		    						}
+		    						else{
+		    							feature.geometry = {'type':'Point','coordinates':[+data.geonames[0].lng,+data.geonames[0].lat]};
+		    							console.log('Matched '+item[$('#geocodeSelector').val()]+' to '+data.geonames[0].toponymName+'.');
+		    							validation.push('Matched '+item[$('#geocodeSelector').val()]+' to '+data.geonames[0].toponymName+'.');
+		    						}
+		    					}
+	    					});
+	    				}
 	    				
 	    				if(feature['@id']=='') feature['@id'] = output['@id']+'/'+item['uuid'];
 	    				
@@ -2950,7 +2999,8 @@ $( document ).ready(function() {
         			dynamicTyping:true,
         			skipEmptyLines:true
         		});
-        		input.meta.fields.forEach(function(field){ // Deal first with root attributes (a root @id may form the base of item @ids)
+				
+				input.meta.fields.forEach(function(field){ // Deal first with root attributes (a root @id may form the base of item @ids)
 					if (field !== null && field.startsWith('$.')){
 						keyValue = field.split(/=(.*)/s);
 						var key = keyValue.shift().split('.').pop();
@@ -3327,6 +3377,12 @@ $( document ).ready(function() {
     		}
     		else{ // Regular delimited text
     			input = Papa.parse(filecontent.replace(/[{}]/g, '_'),{header:true,dynamicTyping:true,skipEmptyLines:true}); // Replace curly braces, which break JSONata when used in column headers
+				
+				var emptyRows=[];
+				input.data.forEach(function(feature,i){if(Object.values(feature).every(x => x === null || x === '')) emptyRows.push(i);});
+				console.log('Deleting empty rows',emptyRows);
+				emptyRows.reverse().forEach(function(i){input.data.splice(i,1);});
+				
     			input['@id'] = 'https://w3id.org/locolligo/'+uuidv4(); // Create PID for dataset
         		input.meta.filename = filename;
     			$.each(input.data, function(key,value){ // Create uuid for each item/Trace
