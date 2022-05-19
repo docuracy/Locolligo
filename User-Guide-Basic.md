@@ -5,7 +5,7 @@
 # Basic User Guide
 > This User Guide will take you through the steps required to generate a location-based dataset that you can see mapped in *Peripleo*. **It assumes that you already have data in tabular format**, perhaps in a Google Sheet or an Excel file. The linking of features to other web-resources is explained in the [Advanced User Guide](./User-Guide-Advanced.md).
 
-> Every column in your table must have a title in the first row, and blank rows are not permitted except at the end.
+> **Every column in your table must have a title in the first row.**
 
 1. Set Table Headers
     - **Labels**: Each of the records in your table will need to have a label for use in the mapping software: the text in the top row of the column that contains the labels should be `title`, `name`, or `label`.
