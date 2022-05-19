@@ -155,7 +155,7 @@ function downloadCSV(jsonobject,filename=false,geoJSON=true){
 						parents.push(key);
 						parentsString = parents.join('.').replaceAll('.[','[');
 						if(!dataset.fields.includes(parentsString)) dataset.fields.push(parentsString);
-						newObject[parentsString]=value;
+						newObject[parentsString]= value;
 						parents.pop();
 					}
 				});
@@ -169,20 +169,21 @@ function downloadCSV(jsonobject,filename=false,geoJSON=true){
 			if(key=='features') return;
 			dataset.fields.push('$.'+key+'='+JSON.stringify(value));
 		});
-		dataset.data.unshift( dataset.fields.reduce((a, v) => ({ ...a, [v]: '{'+v+'}'}), {}) ); 
-	}
-	else dataset = jsonobject;
-	$("<a />", {
-		"download": filename ? filename.split('.')[0]+".lp.csv" : "geoJSON_Data_"+ Math.floor(Date.now()/1000) +".csv",
-		"href" : "data:application/csv;charset=utf-8," + Papa.unparse(dataset,{
+		dataset.data.unshift( dataset.fields.reduce((a, v) => ({ ...a, [v]: '{'+v+'}'}), {}) );
+		var CSVoutput = Papa.unparse(dataset,{
 			quotes: true,
 			quoteChar: '"',
 			escapeChar: '"',
-			delimiter: ",",
 			header: false,
 			newline: "\r\n",
 			skipEmptyLines: true
 		})
+		console.log('CSV generated ('+dataset.fields.length+' columns and '+dataset.data.length+' rows).');
+	}
+	else dataset = jsonobject;
+	$("<a />", {
+		"download": filename ? filename.split('.')[0]+".lp.csv" : "geoJSON_Data_"+ Math.floor(Date.now()/1000) +".csv",
+		"href" : "data:application/csv;charset=utf-8," +encodeURIComponent( CSVoutput )
 	}).appendTo("body")
 	.click(function() {
 		$(this).remove()
@@ -293,7 +294,7 @@ function convert(){
 		output.indexing = indexing;
 		console.log('Assigning default indexing data.');
 	}
-	else if($('#source').data('data').indexing.endsWith('.json')){
+	else if(typeof $('#source').data('data').indexing==='string' && $('#source').data('data').indexing.endsWith('.json')){
 		$.ajaxSetup({async:false});
 		try{
 			$.get('./templates/'+$('#source').data('data').indexing+'?'+Date.now(), function(data) { // Do not use any cached file
@@ -2942,17 +2943,28 @@ $( document ).ready(function() {
         			var newHeader = /\{(.*)/.exec(header);
         			return newHeader===null ? null : newHeader[1].slice(0, -1); // Remove closing }
         		}
-        		input = Papa.parse(filecontent,{header:true,transformHeader:transformHeader,dynamicTyping:true,skipEmptyLines:true});
+        		input = Papa.parse(filecontent,{
+        			delimiter: ",",
+        			header:true,
+        			transformHeader:transformHeader,
+        			dynamicTyping:true,
+        			skipEmptyLines:true
+        		});
         		input.meta.fields.forEach(function(field){ // Deal first with root attributes (a root @id may form the base of item @ids)
 					if (field !== null && field.startsWith('$.')){
-						keyValue = field.split('=');
+						keyValue = field.split(/=(.*)/s);
 						var key = keyValue.shift().split('.').pop();
 						var value = keyValue.shift();
 						if (value.startsWith('"') && value.endsWith('"')){
 							input[key] = value.replace(/["]+/g, '');
 						}
 						else{
-							input[key] = JSON.parse(value);
+							try{
+								input[key] = JSON.parse(value);
+							}
+							catch(err){
+								console.log('JSON header may be malformed.',value,err);
+							}
 						}
 					}
 				});
@@ -3058,14 +3070,13 @@ $( document ).ready(function() {
         			if(firstPoint(feature.geometry)==null) feature.geometry = null; // Required by GeoJSON specification (see https://datatracker.ietf.org/doc/html/rfc7946#section-3.2)
         			
         			Object.keys(feature).forEach(function(property) {
+        				if(property.startsWith('$.')) return;
         				var properties = property.replaceAll('[','.').replaceAll(']','').split('.');
-//        				console.log(properties.join('.'));
         				if(properties.length>1 && properties[0]!==''){
             				var root = feature;
             				properties.forEach(function(property,i){
-            					if(!root.hasOwnProperty(property)){
+            					if(!root.hasOwnProperty(property) || root[property]==null){
             						if(properties.length>i && /(0|[1-9]\d*)/.test(properties[i+1])){ // Array item next
-//                						console.log('Array '+property);
             							root[property] = [];
                 					}
                 					else root[property] = {};
