@@ -41,6 +41,9 @@ If you already have a file in Linked Places Format, you can simply upload it and
 > See the [Basic User Guide](./User-Guide-Basic.md) for details of how to upload CSV (tabular data) and open the `Assign CSV Columns` form. This Guide deals with more detailed configuration.
 > **Documentation yet to be written.**
 
+## Geolocate Place-Names
+> **Documentation yet to be written.**
+> 
 ## Annotate CSV Column Headers and Upload `.lp.csv`
 > **Documentation yet to be written.**
 
