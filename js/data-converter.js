@@ -459,6 +459,7 @@ function assign(){
 	    	{
 	    		text: 'Convert',
 	    		click: function(){
+	    			$('body').loadingModal({text: 'Processing...'});
 
 	    			var validation = [];
 	    			var validationGeo = [];
@@ -521,6 +522,7 @@ function assign(){
 	    			delete output.indexing.significantLink;
 	    			delete output.indexing.relatedLink;
 	    			delete output.indexing.spatialCoverage.geoCoveredBy;
+	    			var geocodingOK = true;
 	    			input.data.forEach(function(item,i){
 	    				var feature = {'@id':'','type':'Feature','properties':{'title':''},'geometry':{'type':'Point'}};
 	    				
@@ -575,31 +577,39 @@ function assign(){
 		    					feature.geometry=null;
 		    					validationGeo.push(i);
 		    				}
-		    				else if(typeof +$('#_obfuscation').val() == 'number') {
+		    				else if(typeof +$('#_obfuscation').val() == 'number' && +$('#_obfuscation').val()>0) {
 		    					feature.geometry.coordinates = scatter(feature.geometry.coordinates,+$('#_obfuscation').val());
 		    					feature.geometry.granularity = {'tolerance':{'value':+$('#_obfuscation').val(),'units':'km'}};
 		    				}
 	    				}
 	    				else feature.geometry=null;
 	    				
-	    				if(feature.geometry==null && $('#geocodeSelector').val()!==''){
+	    				if(geocodingOK && feature.geometry==null && $('#geocodeSelector').val()!==''){
 	    					$.ajax({
 	    						async: false,
 	    						dataType: 'json',
-	    						url: 'https://secure.geonames.org/searchJSON?name='+item[$('#geocodeSelector').val()]+($('#ccodeSelector').val()==''?'':'&countryBias='+$('#ccodeSelector').val())+'&fuzzy=0.8&username='+geoNamesID+'&maxRows=1',
+	    						url: 'https://secure.geonames.org/searchJSON?q='+item[$('#geocodeSelector').val()]+($('#ccodeSelector').val()==''?'':'&countryBias='+$('#ccodeSelector').val())+'&fuzzy=0.3&username='+geoNamesID+'&maxRows=1',
 	    						success: function(data){
 		    						console.log(data);
 		    						if(data.totalResultsCount==0){
 		    							// TO DO: Find a representative coordinate for country bias if selected
-		    							console.log('No geocoding match found for '+item[$('#geocodeSelector').val()]+'.');
-		    							validation.push('No geocoding match found for '+item[$('#geocodeSelector').val()]+'.');
+		    							console.log('No geocoding match found for "'+item[$('#geocodeSelector').val()]+'".');
+		    							validation.push('No geocoding match found for "'+item[$('#geocodeSelector').val()]+'".');
 		    						}
 		    						else{
-		    							feature.geometry = {'type':'Point','coordinates':[+data.geonames[0].lng,+data.geonames[0].lat]};
-		    							console.log('Matched '+item[$('#geocodeSelector').val()]+' to '+data.geonames[0].toponymName+'.');
-		    							validation.push('Matched '+item[$('#geocodeSelector').val()]+' to '+data.geonames[0].toponymName+'.');
+		    							feature.geometry = {'type':'Point','coordinates':[+data.geonames[0].lng,+data.geonames[0].lat],'certainty':'uncertain'};
+		    							console.log('Matched "'+item[$('#geocodeSelector').val()]+'" to "'+data.geonames[0].toponymName+'".');
+		    							validation.push('Matched "'+item[$('#geocodeSelector').val()]+'" to "'+data.geonames[0].toponymName+'".');
 		    						}
-		    					}
+		    					},
+		    					error: function(xmlhttprequest, textstatus, message) {
+		    				        if(textstatus==='timeout') {
+		    				            alert('Geocoding API call timed out: cancelling geocoding.');
+		    				            geocodingOK = false;
+		    				        } else {
+		    				            alert('Geocoding API error: '+message);
+		    				        }
+		    				    }
 	    					});
 	    				}
 	    				
@@ -639,6 +649,7 @@ function assign(){
 	    			
 	    			if(validationGeoConvert.length>0) validation.push('CRS conversion failed for the following items: '+validationGeoConvert.join(',')+'.');
 	    			if(validationGeo.length>0) validation.push('Geometry is invalid for the following items: '+validationGeo.join(',')+'.');
+	    			$('body').loadingModal('destroy');
 	    			$('<div id="validation"><ul><li>'+validation.join('</li><li>')+'</li></ul></div>')
 	    			.appendTo('body')
 	    			.dialog({
