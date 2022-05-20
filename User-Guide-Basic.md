@@ -52,4 +52,4 @@
 # Next Steps
 - Make a Cup of Tea.
 - Read the *Locolligo* [Advanced User Guide](./User-Guide-Advanced.md).
-- Read the *Peripleo* [Configuration Guide](https://github.com/britishlibrary/peripleo-lanc/blob/main/Configuration-Guide.md).
+- Read the *Peripleo* [Configuration Guide](https://github.com/britishlibrary/peripleo/blob/main/Configuration-Guide.md).
