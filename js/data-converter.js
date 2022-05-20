@@ -577,6 +577,7 @@ function assign(){
 		    				}
 		    				else if(typeof +$('#_obfuscation').val() == 'number') {
 		    					feature.geometry.coordinates = scatter(feature.geometry.coordinates,+$('#_obfuscation').val());
+		    					feature.geometry.granularity = {'tolerance':{'value':+$('#_obfuscation').val(),'units':'km'}};
 		    				}
 	    				}
 	    				else feature.geometry=null;
