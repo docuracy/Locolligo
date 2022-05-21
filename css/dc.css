@@ -188,10 +188,11 @@ button.mapboxgl-ctrl-close-map span.mapboxgl-ctrl-icon{
 	width: 100vw;
 }
 .marker {
-	background-color: blue;
+	background-color: #0000ff80;
 	width: 15px;
 	height: 15px;
-	border-radius: 50%;
+	border: 1px yellow solid;
+	border-radius: 25%;
 	cursor: pointer;
     z-index: 2;
 }
@@ -257,6 +258,15 @@ button.mapboxgl-ctrl-close-map span.mapboxgl-ctrl-icon{
     max-height: 50vh;
     overflow-y: scroll;
 }
+
+.expandingButton span.layer{
+    opacity: 0;
+    transition: opacity 0.5s;
+}
+.expandingButton:hover span.layer, .expandingButton.pinned span.layer{
+    opacity: 1;
+}
+
 .fence {
     width: 30px;
     height: 30px;
@@ -265,11 +275,12 @@ button.mapboxgl-ctrl-close-map span.mapboxgl-ctrl-icon{
 #layerSelector {
     background-image: url(./images/layers.svg);
     padding: 2px;
+    overflow: hidden;
 }
 #layerSelector label {
 	vertical-align: 2px;
 }
-.layerGroup:not(:first-of-type):before {
+.layerGroup:not(:first-of-type):before, #layerSelector .layerGroup:first-of-type .layer:first-of-type:after {
     display: inline-block;
     content: "";
     border-top: 2px solid var(--op-color);
@@ -540,4 +551,35 @@ a.popup_link.wikidata{
 .ui-selectmenu-menu {
 	height: 200px;
     overflow: auto;
+}
+#geoCodeDataset {
+	text-align: right;
+	line-height: 35px;
+}
+#geocodeResults {
+	font-size: .8rem;
+	text-align: left;
+    line-height: normal;
+    border: 1px solid #c5c5c5;
+    margin-top: 3px;
+    width: 100%;
+    border-collapse: collapse;
+}
+#geocodeResults tr:nth-child(even) {
+	background: #f6f6f6;
+}
+#geocodeResults td {
+    border: 1px solid #c5c5c5;
+}
+#geocodeResults .ui-button:last-of-type {
+	padding: 0.2em 0.2em;
+    float: right;
+    margin-left: 3px;
+}
+#geocodeResults .ui-selectmenu-button, #layerSelector .ui-selectmenu-button {
+	font-size: inherit!important;
+}
+#layerSelector #geocodeSelector-button {
+	padding: 0 3px;
+    top: -2px;
 }

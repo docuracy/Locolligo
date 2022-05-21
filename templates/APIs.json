@@ -22,10 +22,11 @@
 		] 
 	},
 	{
-		"label": "GeoNames Toponyms",
-		"type": "GT", 
-		"title": "Toponyms from the GeoNames database",
-		"url": "'https://secure.geonames.org/findNearbyJSON?lat='+mapCentre.lat+'&lng='+mapCentre.lng+'&radius='+radius+'&username='+geoNamesID+'&maxRows=50'",
+		"label": "GeoCode (GeoNames)",
+		"type": "G", 
+		"title": "Up to 50 toponyms from the GeoNames database: uses Place-name Filter if selected.",
+		"url_findNearby": "'https://secure.geonames.org/findNearbyJSON?lat='+mapCentre.lat+'&lng='+mapCentre.lng+'&radius='+radius+'&username='+geoNamesID+'&maxRows=50'",
+		"url": "'https://secure.geonames.org/searchJSON?q='+geocodeQ+'&east='+bounds._ne.lng+'&west='+bounds._sw.lng+'&north='+bounds._ne.lat+'&south='+bounds._sw.lat+'&fuzzy=1&username='+geoNamesID+'&maxRows=50'",
 		"headers": {
 			"Accept": "application/json" 
 		},
@@ -77,16 +78,6 @@
 				"depictions": "{\"@id\": newbody.link,\"title\": newbody.title,\"license\": newbody.licence}"
 			}
 		] 
-	},
-	{
-		"label": "*Open Street Map Points of Interest",
-		"type": "OS", 
-		"title": ""
-	},
-	{
-		"label": "*Open Historical Map",
-		"type": "OH", 
-		"title": ""
 	},
 	{
 		"label": "World Historical Gazetteer",
@@ -163,10 +154,5 @@
 				"depictions": "{\"@id\": newbody.properties.thumbnail,\"title\": newbody.properties.description}"
 			}
 		] 
-	},
-	{
-		"label": "*Topographical Dictionary of England, 1848",
-		"type": "TD", 
-		"title": ""
 	}
 ]

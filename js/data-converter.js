@@ -113,7 +113,9 @@ var testmode=false,
 				"links": "{\"type\": \"exactMatch\",\"identifier\": newbody['@id'],\"label\":newbody.properties.title}"
 			}
 		] 
-	}
+	},
+	ccodeSelector = false,
+	geocodeSelector = false;
 
 function levenshtein(r,e){if(r===e)return 0;var t=r.length,o=e.length;if(0===t||0===o)return t+o;var a,h,n,c,f,A,d,C,v=0,i=new Array(t);for(a=0;a<t;)i[a]=++a;for(;v+3<o;v+=4){var u=e.charCodeAt(v),l=e.charCodeAt(v+1),g=e.charCodeAt(v+2),s=e.charCodeAt(v+3);for(c=v,n=v+1,f=v+2,A=v+3,d=v+4,a=0;a<t;a++)C=r.charCodeAt(a),(h=i[a])<c||n<c?c=h>n?n+1:h+1:u!==C&&c++,c<n||f<n?n=c>f?f+1:c+1:l!==C&&n++,n<f||A<f?f=n>A?A+1:n+1:g!==C&&f++,f<A||d<A?A=f>d?d+1:f+1:s!==C&&A++,i[a]=d=A,A=f,f=n,n=c,c=h}for(;v<o;){var w=e.charCodeAt(v);for(c=v,f=++v,a=0;a<t;a++)f=(h=i[a])<c||f<c?h>f?f+1:h+1:w!==r.charCodeAt(a)?c+1:c,i[a]=f,c=h;d=f}return d}
 
@@ -321,6 +323,144 @@ function convert(){
 	renderJSON($('#output'),output_formatter,output);
 }
 
+function getccodeSelector(){
+	selector = [];
+	selector.push('<option value="">No Country Bias</option>');
+	$.ajax({
+		dataType: "json",
+		url: './templates/country-codes.json',
+		async: false, 
+		success: function(ccodes) {
+			ccodes.forEach(function(ccode){
+				selector.push('<option'+(ccode.Code=='GB'?' selected':'')+' value="'+ccode.Code+'">'+ccode.Name+'</option>');
+			});
+		}
+	});
+	return '<select title="Bias results by selected country." name="ccodeSelector" id="ccodeSelector">'+selector.join('')+'</select>';
+}
+
+function getgeocodeSelector(features){
+	var fields = [];
+	features.forEach(function(item){
+		Object.keys(item.properties).forEach(function(property){
+			if(fields.indexOf(property) === -1) fields.push(property);
+		});
+	});
+	fields.sort();
+	var selector=[];
+	fields.forEach(function(field,i){
+		selector.push('<option value="'+field+'"'+(field=='title'?' selected':'')+'>'+field+'</option>');
+	});
+	return '<select title="Select a property that represents place-names." name="geocodeSelector" id="geocodeSelector">'+selector.join('')+'</select>'
+}
+
+function geocodeOSM(q,countryBias,maxRows,fuzzy=0.3){
+	var result = false;
+	$.ajax({
+		async: false,
+		dataType: 'json',
+		url: 'https://secure.geonames.org/searchJSON?q='+q+countryBias+'&fuzzy='+fuzzy+'&username='+geoNamesID+'&maxRows='+maxRows,
+		success: function(data){
+			result = data;
+		},
+		error: function(xmlhttprequest, textstatus, message) {
+	        alert ( textstatus==='timeout' ? 'Geocoding API call timed out: cancelling geocoding.' : 'Geocoding API error: '+message );
+	    }
+	});
+	return result;
+}
+
+function GeoCodeDataset(el){
+	ccodeSelector = ccodeSelector ? ccodeSelector : getccodeSelector();
+	geocodeSelector = geocodeSelector ? geocodeSelector : getgeocodeSelector(el.parent('div').data('data').features);
+	var items = el.parent('div').data('data').features;
+	
+	$('<div id="geoCodeDataset"><label for="geocodeSelector">Place-name Property: </label>'+geocodeSelector+'<br/><label for="ccodeSelector">Country Bias: </label>'+ccodeSelector+'</div>')
+	.appendTo('body')
+	.dialog({
+		modal: true,
+    	title: 'Find missing coordinates',
+	    zIndex: 10000,
+	    autoOpen: true,
+	    width: 'auto',
+	    resizable: true,
+	    buttons: [
+	    	{
+	    		text: 'GeoCode',
+	    		id: 'geoCodeDataset_GeoCode',
+	    		click: function(){
+	    			$('#geoCodeDataset_GeoCode,#geoCodeDataset_Close').button( "option", "disabled", true );
+	    			$('#geoCodeDataset').append('<table id="geocodeResults"><tr><th>#</th><th>Place-name</th><th>Match</th></tr></table>');
+	    			var geocodingOK = true;
+	    			var validation = {'ok':[],'failed':[]};
+	    			items.forEach(function(feature,i){
+	    				if(geocodingOK && !(feature.hasOwnProperty('geometry') && firstPoint(feature.geometry)!==null) && $('#geocodeSelector').val()!==''){
+	    					var data = geocodeOSM(feature.properties[$('#geocodeSelector').val()],($('#ccodeSelector').val()==''?'':'&countryBias='+$('#ccodeSelector').val()),20);
+	    					if(data==false) {
+	    						geocodingOK = false;
+	    					}
+	    					else {
+	    						if(data.totalResultsCount==0){
+	    							// TO DO: Find a representative coordinate for country bias if selected
+	    							validation.failed.push([i,feature.properties[$('#geocodeSelector').val()]]);
+	    							$('#geocodeResults').append('<tr><td>'+i+'</td><td>'+feature.properties[$('#geocodeSelector').val()]+'</td><td>-none-</td></tr>');
+	    						}
+	    						else{
+	    							feature.geometry = {'type':'Point','coordinates':[+data.geonames[0].lng,+data.geonames[0].lat],'certainty':'uncertain'};
+	    							var resultPlaces = [];
+	    							data.geonames.forEach(function(geoname,j){
+	    								resultPlaces.push('<option value="['+geoname.lng+','+geoname.lat+']"'+(j==0?' selected':'')+'>'+[geoname.toponymName,geoname.toponymName,geoname.adminName1,geoname.countryName].join(', ').replaceAll(', , ',', ')+'</option>')
+	    							});
+	    							resultPlaces = '<select title="Pick a result, or delete using the trash-can." name="geonameSelector_'+i+'" id="geonameSelector_'+i+'">'+resultPlaces.join('')+'</select>';
+	    							$('#geocodeResults')
+	    							.append('<tr><td>'+i+'</td><td>'+feature.properties[$('#geocodeSelector').val()]+'</td><td>'+resultPlaces+'<span title="Reject this match."></span></td></tr>')
+	    							.find('select').last().selectmenu({
+	    								width:'auto',
+	    								change: function(event, ui) {
+	    									var index = $(this).parents('tr').find('td').first().html();
+	    								    items[index].geometry.coordinates = JSON.parse(ui.item.value);
+	    								}
+	    							})
+	    							.parents('td').find('span').last().button({icon:'ui-icon-trash'})
+	    							.click(function(){
+	    								var index = $(this).parents('tr').find('td').first().html();
+	    								console.log('Resetting geometry for item #'+index);
+	    								items[index].geometry = null;
+	    								if($('#geocodeResults').find('tr').length==2){
+	    									$('#geoCodeDataset').dialog("close");
+	    								}
+	    								else{
+	    									$(this).parents('tr').remove();
+	    								}
+	    							});
+	    						}
+	    					}
+	    				}
+	    				if($('#geocodeResults').find('tr').length==1){
+	    					$('#geocodeResults').remove();
+	    					alert('No features are lacking valid coordinates.');
+	    					$('#geoCodeDataset').dialog("close");
+	    				}
+	    			});
+	    			console.log(validation);
+	    			$('#geoCodeDataset_Close').button( "option", "disabled", false );
+	    		}
+	    	},
+	    	{
+	    		text: 'Close',
+	    		id: 'geoCodeDataset_Close',
+	    		click: function(){
+	    			$(this).dialog("close");
+	    		}
+	    	}
+	    ],
+	    close: function(event, ui) {
+	        $(this).remove();
+	    }
+	})
+	.find('select').selectmenu().end();
+}
+
 function assign(){
 	$('#assign').removeClass('throb');
 	var assignmentOptions = [
@@ -349,26 +489,14 @@ function assign(){
 	});
 	assignmentSelector = '<select class="featureProperty" name="assignment_###" id="assignment_###">'+assignmentSelector.join('')+'</select>'
 	
-	var geocodeSelector=[];
-	geocodeSelector.push('<option selected value="">No Geocode Field</option>');
+	var geocodeFieldSelector=[];
+	geocodeFieldSelector.push('<option selected value="">No Geocode Field</option>');
 	input.meta.fields.forEach(function(field,i){
-		geocodeSelector.push('<option value="'+field+'">'+field+'</option>');
+		geocodeFieldSelector.push('<option value="'+field+'">'+field+'</option>');
 	});
-	geocodeSelector = '<select title="If any of your features lack coordinates, select a place-name field." name="geocodeSelector" id="geocodeSelector">'+geocodeSelector.join('')+'</select>'
+	geocodeFieldSelector = '<select title="If any of your features lack coordinates, select a place-name field." name="geocodeFieldSelector" id="geocodeFieldSelector">'+geocodeFieldSelector.join('')+'</select>'
 	
-	var ccodeSelector=[];
-	ccodeSelector.push('<option value="">No Country Bias</option>');
-	$.ajax({
-		dataType: "json",
-		url: './templates/country-codes.json',
-		async: false, 
-		success: function(ccodes) {
-			ccodes.forEach(function(ccode){
-				ccodeSelector.push('<option'+(ccode.Code=='GB'?' selected':'')+' value="'+ccode.Code+'">'+ccode.Name+'</option>');
-			});
-		}
-	});
-	ccodeSelector = '<select title="Bias results by selected country." name="ccodeSelector" id="ccodeSelector">'+ccodeSelector.join('')+'</select>'
+	ccodeSelector = ccodeSelector ? ccodeSelector : getccodeSelector();
 	
 	var CRSOptions = [
 		['Select'],
@@ -409,7 +537,7 @@ function assign(){
 		}
 	}
 	
-	$('<table id="assignments"><tr><th>Original Header&nbsp;</th><th>LPF Translation&nbsp;<span class="mini">(Sample)</span></th></td></table>')
+	$('<table id="assignments"><tr><th>Original Header&nbsp;</th><th>LPF Translation&nbsp;<span class="mini">(Sample)</span></th></tr></table>')
 	.appendTo('body');
 	input.meta.fields.forEach(function(field,j){
 		$('<tr class="assignment"><td><label for="assignment_'+j+'">'+field+':</td><td>'+assignmentSelector.replaceAll('%%%',field.toLowerCase().replaceAll(' ','_').replaceAll('\'','')).replaceAll('###',j)+'<span class="mini">('+truncate(input.data[0][field])+')</span></td></tr>')
@@ -423,14 +551,14 @@ function assign(){
 	.append($('<tr><td>Dataset base URL:</td><td><input id="_baseURL" placeholder="Optional" title="Delete this value if the dataset is not a web resource." value="https://w3id.org/" /></td></tr>'))
 	.append($('<tr><td>Dataset CRS:</td><td>'+CRSSelector+'</td></tr>'))
 	.append($('<tr><td>Coordinate obfuscation:</td><td><input id="_obfuscation" placeholder="Optional (km)" title="Randomise coordinates +/- the distance entered here. Might be used to conceal exact archaeological findspots." /></td></tr>'))
-    .append($('<tr><td>Geocode Place-name:</td><td>'+geocodeSelector+ccodeSelector+'</td></tr>'))
+    .append($('<tr><td>Geocode Place-name:</td><td>'+geocodeFieldSelector+ccodeSelector+'</td></tr>'))
     .dialog({
     	modal: true,
     	title: 'Assign LPF Feature Properties from CSV Columns',
 	    zIndex: 10000,
 	    autoOpen: true,
 	    width: 'auto',
-	    resizable: false,
+	    resizable: true,
 	    open: function( event, ui ) {
 	    	async function loadAssignments() { // Load values from IndexedDB storage
 		    	if((await window.indexedDB.databases()).map(db => db.name).includes('_assignments')){
@@ -584,33 +712,21 @@ function assign(){
 	    				}
 	    				else feature.geometry=null;
 	    				
-	    				if(geocodingOK && feature.geometry==null && $('#geocodeSelector').val()!==''){
-	    					$.ajax({
-	    						async: false,
-	    						dataType: 'json',
-	    						url: 'https://secure.geonames.org/searchJSON?q='+item[$('#geocodeSelector').val()]+($('#ccodeSelector').val()==''?'':'&countryBias='+$('#ccodeSelector').val())+'&fuzzy=0.3&username='+geoNamesID+'&maxRows=1',
-	    						success: function(data){
-		    						console.log(data);
-		    						if(data.totalResultsCount==0){
-		    							// TO DO: Find a representative coordinate for country bias if selected
-		    							console.log('No geocoding match found for "'+item[$('#geocodeSelector').val()]+'".');
-		    							validation.push('No geocoding match found for "'+item[$('#geocodeSelector').val()]+'".');
-		    						}
-		    						else{
-		    							feature.geometry = {'type':'Point','coordinates':[+data.geonames[0].lng,+data.geonames[0].lat],'certainty':'uncertain'};
-		    							console.log('Matched "'+item[$('#geocodeSelector').val()]+'" to "'+data.geonames[0].toponymName+'".');
-		    							validation.push('Matched "'+item[$('#geocodeSelector').val()]+'" to "'+data.geonames[0].toponymName+'".');
-		    						}
-		    					},
-		    					error: function(xmlhttprequest, textstatus, message) {
-		    				        if(textstatus==='timeout') {
-		    				            alert('Geocoding API call timed out: cancelling geocoding.');
-		    				            geocodingOK = false;
-		    				        } else {
-		    				            alert('Geocoding API error: '+message);
-		    				        }
-		    				    }
-	    					});
+	    				if(geocodingOK && feature.geometry==null && $('#geocodeFieldSelector').val()!==''){
+	    					var data = geocodeOSM(item[$('#geocodeFieldSelector').val()],($('#ccodeSelector').val()==''?'':'&countryBias='+$('#ccodeSelector').val()),1);
+	    					if(data==false) {
+	    						geocodingOK = false;
+	    					}
+	    					else {
+	    						if(data.totalResultsCount==0){
+	    							// TO DO: Find a representative coordinate for country bias if selected
+	    							validation.push('No geocoding match found for "'+item[$('#geocodeFieldSelector').val()]+'".');
+	    						}
+	    						else{
+	    							feature.geometry = {'type':'Point','coordinates':[+data.geonames[0].lng,+data.geonames[0].lat],'certainty':'uncertain'};
+	    							validation.push('Matched "'+item[$('#geocodeFieldSelector').val()]+'" to "'+data.geonames[0].toponymName+'".');
+	    						}
+	    					}
 	    				}
 	    				
 	    				if(feature['@id']=='') feature['@id'] = output['@id']+'/'+item['uuid'];
@@ -650,6 +766,7 @@ function assign(){
 	    			if(validationGeoConvert.length>0) validation.push('CRS conversion failed for the following items: '+validationGeoConvert.join(',')+'.');
 	    			if(validationGeo.length>0) validation.push('Geometry is invalid for the following items: '+validationGeo.join(',')+'.');
 	    			$('body').loadingModal('destroy');
+	    			console.log('CSV Assignment Validation Report',validation);
 	    			$('<div id="validation"><ul><li>'+validation.join('</li><li>')+'</li></ul></div>')
 	    			.appendTo('body')
 	    			.dialog({
@@ -1392,10 +1509,14 @@ function renderJSON(target,object,data,filename=false){
 	if(data.hasOwnProperty('features') || data.hasOwnProperty('traces')){
 		var indexButton = $('<button class="indexButton" title="Add dataset to local geo-library (for later linking).">Library</button>').prependTo(target);
 		indexButton.button().click(function(){library($(this));}); 
+		$('<button id="GeoCodeButton" title="Find coordinates based on place-names" style="pointer-events: auto;">GeoCode</button>')
+		.prependTo(target)
+		.button()
+		.click(function(){GeoCodeDataset($(this));});
 		$('<button id="LinkButton" title="Link and/or georeference records" style="pointer-events: auto;">Link/Georeference</button>')
-			.prependTo(target)
-			.button()
-			.click(function(){explore($(this));});
+		.prependTo(target)
+		.button()
+		.click(function(){explore($(this));});
 	}
 	if(data.hasOwnProperty('traces')){
 	}
@@ -1562,13 +1683,19 @@ function updateLinkMarkers(root=$('#layerSelector')){ // TO DO: Update each newb
 			.addTo(map);
 		linkMarkers[type].push(marker);		
 	}
-	var input = root.find('input');
+	var input = root.find('input[type="checkbox"]:not([name="geocodeActivator"])');
+	console.log(input);
 	if (input.length == 1 && !input.prop('checked')){ // Remove markers for this layer only
 		$.each(linkMarkers[input.val()],function(i,marker){marker.remove()});
 		root.removeClass('loading');
 	}
 	const mapCentre = map.getCenter();
 	var bounds = map.getBounds();
+	var geocodeQ='';
+	if (traceGeoJSON.properties.hasOwnProperty($("#geocodeSelector option:selected").text())){
+		geocodeQ = ($('input[type="checkbox"][name="geocodeActivator"]')[0].checked?encodeURIComponent(traceGeoJSON.properties[$("#geocodeSelector option:selected").text()]):'');
+	}
+	console.log('geocodeQ',geocodeQ);
 	$.each(input.filter(':checked'),function(i,layer){
 		// Add markers for these layers		
 		var type = $(layer).val();
@@ -1634,7 +1761,7 @@ function updateLinkMarkers(root=$('#layerSelector')){ // TO DO: Update each newb
 				}
 				
 				$.each(eval('data.'+result.datakey), function(i,feature){
-					console.log(i,feature,result.coordinates);
+//					console.log(i,feature,result.coordinates);
 					linkMarker(feature,result.type,colour,eval(result.coordinates),false,eval(result.name));
 				});
 			});
@@ -1650,17 +1777,17 @@ function updateLinkMarkers(root=$('#layerSelector')){ // TO DO: Update each newb
 				var mappingSet = LibraryMappings.filter(obj => {return obj.name === libraryList[type]})[0];
 				if(mappingSet==undefined) mappingSet = defaultMappingSet;
 				
-				console.log(libraryList,type,mappingSet);
+//				console.log(libraryList,type,mappingSet);
 				var popupRule = mappingSet.popup;
 				
 				if(mappingSet.hasOwnProperty('radius')) radius = mappingSet.radius;
-				var fuse = (mappingSet.hasOwnProperty('fuse') && mappingSet.fuse!=false) ? true : false;
+				var fuse = (mappingSet.hasOwnProperty('fuse') && mappingSet.fuse!=false && $('input[type="checkbox"][name="geocodeActivator"]')[0].checked) ? true : false;
 				var range = .01*(radius);
 				var selections = [];
 				select(index, [IDBKeyRange.bound(+(mapCentre.lng-range).toFixed(3), +(mapCentre.lng+range).toFixed(3)),IDBKeyRange.bound(+(mapCentre.lat-range).toFixed(3), +(mapCentre.lat+range).toFixed(3))], function(newbody){
-					eval('selections.push('+(fuse ? 'newbody' : '[newbody,distance([mapCentre.lng,mapCentre.lat],[newbody._longitude,newbody._latitude],6)]')+')');
+					eval('selections.push('+(fuse==true ? 'newbody' : '[newbody,distance([mapCentre.lng,mapCentre.lat],[newbody._longitude,newbody._latitude],6)]')+')');
 				}, function(){
-					if(fuse){
+					if(fuse && geocodeQ!==''){
 						console.log('Starting fuse search',traceGeoJSON.properties.title,selections);
 						const options = {
 							isCaseSensitive: false,
@@ -1681,19 +1808,26 @@ function updateLinkMarkers(root=$('#layerSelector')){ // TO DO: Update each newb
 							]
 						};
 						const fuse = new Fuse(selections, options);
-						const pattern = traceGeoJSON.properties.title;
+						const pattern = decodeURIComponent(geocodeQ);
 						results = fuse.search(pattern);
-						console.log(results);
-						selections = results.map(a => [a.item]).slice(0,10); // Limit to 250 closest results;
+						selections = results.map(a => [a.item][0]).slice(0,20); // Limit to 20 closest matches;
 					}
 					else{
 						selections.sort((a, b) => a[1] - b[1]);
-						selections = selections.slice(0,250); // Limit to 250 closest results
+						selections = selections.slice(0,250);
+						selections = selections.map(a => a[0]);
+						selections = selections.filter(function(a){return a!==undefined});
 					}
+					console.log(selections);
 					selections.forEach(function(selection){
-						var newbody = selection[0];
-						var coordinates = [newbody._longitude,newbody._latitude];
-						linkMarker(newbody,type,colour,coordinates,$(layer).siblings('label').text(),eval(popupRule));
+						try{
+							var newbody = selection;
+							var coordinates = [newbody._longitude,newbody._latitude];
+							linkMarker(newbody,type,colour,coordinates,$(layer).siblings('label').text(),eval(popupRule));
+						}
+						catch(err){
+							console.log('Library failure:',selection,err);
+						}
 					});
 					console.log('Index retrieval complete');
 				});
@@ -1756,7 +1890,12 @@ function updateTrace(dataset=activeDatasetEl.data('data')[activeDataType]){
 		if(traceGeoJSON['@id'] == $(marker.getElement()).data('id')){
 			$(marker.getElement()).addClass('movable').attr('title', 'Drag this marker to a new location');
 		}
-		if(addBounds) bounds.extend(marker.getLngLat());
+		try{
+			if(addBounds) bounds.extend(marker.getLngLat());
+		}
+		catch{
+			// Cannot extend bounds if first feature has invalid or null geometry
+		}
 	});	
 	
 	if($('#typeList').length>0 && dataset[index].hasOwnProperty('properties') && dataset[index].properties.hasOwnProperty('type')){
@@ -1910,7 +2049,20 @@ function explore(el) {
 			}
 		}).end()
 		.slice(-5).insertAfter($('#navigation')).wrapAll('<div id="edit"/>');
-		$('#typeLibrary-button').appendTo($('#edit'));
+	$('#typeLibrary-button').appendTo($('#edit'));
+	
+	if($('#layerSelector #geocodeSelector').length==0){ // Add Place-name Property Selector to layerSelector
+		geocodeSelector = geocodeSelector ? geocodeSelector : getgeocodeSelector(activeDatasetEl.data('data')[activeDataType]);
+		$('#layerSelector .layerGroup').first().prepend('<span class="layer"><input type="checkbox" name="geocodeActivator" value="true"><label for="geocodeActivator">Place-name Filter </label>'+geocodeSelector+"</span>")
+		.find('input[type="checkbox"]').click(function(){$('#layerSelector span.fence').click();}).end()
+		.find('select').selectmenu({
+			width:'auto',
+			open: function( event, ui ) {$('#layerSelector').addClass('pinned');console.log('pinned')},
+			close: function( event, ui ) {$('#layerSelector').removeClass('pinned');console.log('unpinned')},
+			change: function( event, ui ) {if($('input[type="checkbox"][name="geocodeActivator"]')[0].checked) $('#layerSelector span.fence').click();}
+		});
+	}
+	
 	updateFilter();
 	$('#index').change(); // Trigger updateTrace
 }
