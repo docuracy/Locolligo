@@ -12,6 +12,7 @@
 
 ***Locolligo* is a single-page, browser-based javascript application \[*in the early stages of development*\] for the formatting, linking, and geolocation of datasets, with a particular focus on Cultural Heritage.** The greatest barrier to the visualisation, sharing, and linking of datasets that have a locational facet is the variety of ways and formats in which information has been collected, recorded, and stored. *Locolligo* seeks to dissolve that barrier.
 
+[<img src="./images/docuracy-logo.png" height="100" align="left">](https://docuracy.co.uk/)
 [<img src="https://britishlibrary.github.io/locating-a-national-collection/graphics/BL.svg" height="100" align="left">](https://www.bl.uk/)
 [<img src="https://britishlibrary.github.io/locating-a-national-collection/graphics/TaNC-logo.png" height="100" align="left">](https://www.nationalcollection.org.uk/)
 [<img src="https://britishlibrary.github.io/locating-a-national-collection/graphics/UKRI-logo.png" height="100">](https://www.ukri.org/)
