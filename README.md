@@ -19,9 +19,13 @@
 
 This software originated as an output of the AHRC-funded [**Locating a National Collection**](https://www.nationalcollection.org.uk/Foundation-Projects#:~:text=Locating%20a%20National%20Collection) (LaNC) project. Based at the British Library in London, the project was part of the AHRC programme [Towards a National Collection: Opening UK Heritage to the World](https://www.nationalcollection.org.uk/). *Locolligo* addresses the LaNC project's aim of helping cultural heritage organisations to use geospatial data, and together with development of *Peripleo* is a major step in scoping 'technical recommendations for the development of a national discovery system whereby objects about a topic of interest can be readily discovered from a variety of sources, represented in the context of their historic environment, and referenced in time and landscape'. 
 
-[<img title="Pelagios Network" src="./images/pelagios.svg" height="100" align="left">](https://pelagios.org/)
+[<img title="Pelagios Network" src="./images/pelagios.svg" height="100" align="right">](https://pelagios.org/)
 
 *Locolligo* employs standards developed by the [Pelagios Network](https://pelagios.org/), and will (for example) conform datasets for use in the Network's [*Peripleo*](https://github.com/britishlibrary/peripleo) map visualisation and [*Recogito*](https://recogito.pelagios.org/) annotation software, and generate metadata for the submission of datasets to the Network's historical geodata Registry.
+
+
+
+
 
 >It facilitates the linking of related records (*subjects* and *objects*) based on definable criteria (*predicates*):
 >* between datasets, 
