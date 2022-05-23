@@ -62,9 +62,6 @@
 // Offer download of Pelagios Registry description for dataset
 // ===========================================================
 
-// User variables
-var geoNamesID = 'locolligo';
-
 // Custom variables
 var facet = false;
 //var facet = ".relations[1].relationTo";
@@ -1505,6 +1502,10 @@ function renderJSON(target,object,data,filename=false){
 		.prependTo(target)
 		.button()
 		.click(function(){PASLP($(this));});
+		$('<button id="StreetView" class="APIButton" title="Add links to Google StreetView.">StreetView</button>')
+		.prependTo(target)
+		.button()
+		.click(function(){StreetView($(this));});
 	}
 	if(data.hasOwnProperty('features') || data.hasOwnProperty('traces')){
 		var indexButton = $('<button class="indexButton" title="Add dataset to local geo-library (for later linking).">Library</button>').prependTo(target);
@@ -1684,7 +1685,6 @@ function updateLinkMarkers(root=$('#layerSelector')){ // TO DO: Update each newb
 		linkMarkers[type].push(marker);		
 	}
 	var input = root.find('input[type="checkbox"]:not([name="geocodeActivator"])');
-	console.log(input);
 	if (input.length == 1 && !input.prop('checked')){ // Remove markers for this layer only
 		$.each(linkMarkers[input.val()],function(i,marker){marker.remove()});
 		root.removeClass('loading');
@@ -1760,10 +1760,64 @@ function updateLinkMarkers(root=$('#layerSelector')){ // TO DO: Update each newb
 					}
 				}
 				
-				$.each(eval('data.'+result.datakey), function(i,feature){
-//					console.log(i,feature,result.coordinates);
-					linkMarker(feature,result.type,colour,eval(result.coordinates),false,eval(result.name));
-				});
+				if(result.type=='GG'){ // Geograph
+					if(data.items.length==0) {
+						alert('No Geograph images found matching given search criteria.');
+					}
+					else {
+						var images=[];
+						data.items.forEach(function(image){
+							images.push('<img title="'+image.title+' [© '+image.author+']" src="'+image.thumb+'" />');
+						});
+						
+						$('<div id="Geograph">'+images.join('')+'</div>')
+						.appendTo('body')
+						.find('img').click(function(e){$(e.target).toggleClass('selected');}).end()
+						.dialog({
+							modal: true,
+					    	title: 'Select Geograph Images',
+						    zIndex: 10000,
+						    autoOpen: true,
+						    width: window.innerWidth - 20,
+						    height: window.innerHeight - 20,
+						    resizable: false,
+						    buttons: [
+						    	{
+		    			    		text: 'Add Image Links',
+		    			    		click: function(){
+		    			    			$('#Geograph img').each(function(i){
+		    			    				if($(this).hasClass('selected')){
+		    			    					if(!traceGeoJSON.hasOwnProperty('depictions')) traceGeoJSON.depictions = [];
+		    			    					traceGeoJSON.depictions.push({
+		    			    						'@id':data.items[i].thumb.replace('_120x120',''),
+		    			    						'title':data.items[i].title,
+		    			    						'accreditation':'© '+data.items[i].author,
+		    			    						'thumbnail':data.items[i].thumb,
+		    			    						'license':data.items[i].licence
+		    			    					});
+		    			    				}
+		    			    			});
+		    			    			$('#trace').data('formatter',new JSONFormatter(dataset[index],3,{theme:'light'}));
+		    			    			$('#trace').html($('#trace').data('formatter').render()).addClass('json-formatter');
+		    			    			$(this).dialog("close");
+		    			    		}
+		    			    	},
+						    	{
+		    			    		text: 'Cancel',
+		    			    		click: function(){
+		    			    			$(this).dialog("close");
+		    			    		}
+		    			    	}
+						    ]
+						});
+					}
+				}
+				else{
+					$.each(eval('data.'+result.datakey), function(i,feature){
+						linkMarker(feature,result.type,colour,eval(result.coordinates),false,eval(result.name));
+					});
+				}
+				
 			});
 		}
 		catch(err) {// Assume GeoData Library
@@ -1867,6 +1921,24 @@ function updateFacetMarkers(){
 				facetmarkers.push(marker);
 			}
 		});
+	}
+}
+
+function zoomLPF(features=activeDatasetEl.data('data')[activeDataType]){
+	var bounds = false;
+	features.forEach(function(feature){
+		if(firstPoint(feature.geometry)!==null){
+			if(!bounds){ bounds = new maplibregl.LngLatBounds(feature.geometry.coordinates,feature.geometry.coordinates); }
+			else{ bounds.extend(feature.geometry.coordinates); }
+		}
+	});
+	if(bounds){
+		map.fitBounds(bounds, {
+			padding: 20,
+			duration: 0
+		});
+		var zoom = map.getZoom();
+		if (zoom>18) map.setZoom(12);
 	}
 }
 
@@ -2027,7 +2099,8 @@ function explore(el) {
 			.end()
 		.eq(4).button({icon:"ui-icon-arrowreturnthick-1-w",showlabel:false}).prop({'title':'Undo last edit','id':'history'}).click(function(){undoEdit();}).data({'states':[]}).end()
 		.eq(5).button({icon:"ui-icon-pin-s",showlabel:false}).prop('title','Drop pin on map').click(function(){dropPin();}).end()
-		.eq(6).button({icon:"ui-icon-image",showlabel:false}).prop('title','Fetch IIIF image fragments').click(function(){alert('Not yet implemented')}).end()
+//		.eq(6).button({icon:"ui-icon-image",showlabel:false}).prop('title','Fetch IIIF image fragments').click(function(){alert('Not yet implemented')}).end()
+		.eq(6).button({icon:"ui-icon-arrow-4-diag",showlabel:false}).prop('title','Zoom map to dataset extent.').click(function(){zoomLPF();}).end()
 		.eq(7).button({icon:"ui-icon-circle-arrow-s",showlabel:false}).prop('title','Download/Save edited dataset').click(function(){download(activeDatasetEl.data('data'));}).end()
 		.eq(8).button({icon:"ui-icon-trash",showlabel:false}).prop({'title':'Delete this item','id':'delete'}).click(function(){
 			if (confirm('Delete this item?')){
@@ -2054,7 +2127,7 @@ function explore(el) {
 	if($('#layerSelector #geocodeSelector').length==0){ // Add Place-name Property Selector to layerSelector
 		geocodeSelector = geocodeSelector ? geocodeSelector : getgeocodeSelector(activeDatasetEl.data('data')[activeDataType]);
 		$('#layerSelector .layerGroup').first().prepend('<span class="layer"><input type="checkbox" name="geocodeActivator" value="true"><label for="geocodeActivator">Place-name Filter </label>'+geocodeSelector+"</span>")
-		.find('input[type="checkbox"]').click(function(){$('#layerSelector span.fence').click();}).end()
+		.find('input[name="geocodeActivator"],label[for="geocodeActivator"]').click(function(){$('#layerSelector span.fence').click();}).end()
 		.find('select').selectmenu({
 			width:'auto',
 			open: function( event, ui ) {$('#layerSelector').addClass('pinned');console.log('pinned')},
@@ -2072,7 +2145,7 @@ function geocode(){
 	$('#geoResults').html('');
 	if (q.length < 3) return;
 	const bounds = map.getBounds();
-	settings.url = 'https://secure.geonames.org/searchJSON?name='+q+'&east='+bounds._ne.lng+'&west='+bounds._sw.lng+'&north='+bounds._ne.lat+'&south='+bounds._sw.lat+'&username='+geoNamesID+'&maxRows=10';
+	settings.url = 'https://secure.geonames.org/searchJSON?name='+q+'&east='+bounds._ne.lng+'&west='+bounds._sw.lng+'&north='+bounds._ne.lat+'&south='+bounds._sw.lat+'&username='+geoNamesID+'&fuzzy=1&maxRows=10';
 	$.ajax(settings).then(function(data){
 		if(data.totalResultsCount==0){
 			$('#geoResults').html('<span>No results found</span>');
@@ -2189,8 +2262,28 @@ function WDSettlements(el){
 	matchTrace(traceIndex);
 }
 
+function StreetView(el){
+	el.parent('div').data('data').features.forEach(function(feature,i){
+		var thisPoint = firstPoint(feature.geometry);
+		if(thisPoint==null) return;
+		if(!feature.hasOwnProperty('links')) feature.links = [];
+		var found=false;
+		var newLink = {'label':'Google StreetView','type':'seeAlso','identifier':'https://maps.google.com/maps?q=&layer=c&cbll='+thisPoint[1]+','+thisPoint[0]};
+		feature.links.forEach(function(link){
+			if(link.label=='Google StreetView'){
+				link = newLink;
+			}
+		});
+		if(!found) feature.links.push(newLink);
+	});
+	dataset_formatter = new JSONFormatter(el.parent('div').data('data'),1,{theme:'dark'});
+	renderJSON(el.parent('div'),dataset_formatter,el.parent('div').data('data'));
+	alert('Google StreetView links added to all located features.');
+}
+
 //Match Linked Places with Wikidata settlements with text and location
 function WDLP(el){
+	if($('#data-explorer').is(':visible')) return;
 	var items = el.parent('div').data('data').features,
 		sparql = sparql_nearby_settlements,
 		itemIndex = 0,
@@ -2275,6 +2368,7 @@ function WDLP(el){
 
 //Find Geograph images based on text and location
 function GGLP(el){
+	if($('#data-explorer').is(':visible')) return;
 	var items = el.parent('div').data('data').features,
 		itemIndex = 0,
 		retryAfter = 0,
@@ -2305,6 +2399,8 @@ function GGLP(el){
 	    };
 	if(testmode) items = items.slice(testslice.page*testslice.length,(testslice.page+1)*testslice.length);
 
+	console.log('Geograph',items,el);
+	
 //	$.ajaxSetup({'async':'false'});
 //	settings.data = { i: 0 };
 //	items.forEach(function(item,j){
@@ -2319,13 +2415,13 @@ function GGLP(el){
 //			});
 ////			item.depictions.forEach(function(depiction,i){
 ////				if(depiction['@id'].startsWith('https://www.geograph.org.uk/')){
-////					settings.url = 'https://api.geograph.org.uk/api/photo/'+depiction['@id'].split('/').pop()+'/c743e78c04?output=json';
+////					settings.url = 'https://api.geograph.org.uk/api/photo/'+depiction['@id'].split('/').pop()+'/'+geographKey+'?output=json';
 ////					$.ajax(settings)
 ////						.done(function(data){
 ////							depiction['@id'] = data.imgserver+data.image;
 ////							depiction.title = [];
 ////							if(data.hasOwnProperty('comment')) depiction.title.push(data.comment.replace('/r','').replace('/n',' '));
-////							depiction.title.push('[� '+data.realname+']');
+////							depiction.title.push('[© '+data.realname+']');
 ////							depiction.title = depiction.title.join(' ');
 ////							console.log("Done "+j);
 ////						});
@@ -2345,7 +2441,7 @@ function GGLP(el){
 			return;
 		}
 		settings.data = { i: i };
-		settings.url = 'https://api.geograph.org.uk/syndicator.php?key=c743e78c04&format=JSON&location='+items[i].geometry.coordinates[1]+','+items[i].geometry.coordinates[0]+'&distance='+radius+'&perpage=10&text='+encodeURIComponent(items[i].properties.title);
+		settings.url = 'https://api.geograph.org.uk/syndicator.php?key='+geographKey+'&format=JSON&location='+items[i].geometry.coordinates[1]+','+items[i].geometry.coordinates[0]+'&distance='+radius+'&perpage=10&text='+encodeURIComponent(items[i].properties.title);
 		$.ajax(settings)
 			.done(function(data){
 				activeAjaxConnections--;
@@ -2373,6 +2469,7 @@ function GGLP(el){
 
 //Find Wikipedia articles based on text and location
 function WPLP(el){
+	if($('#data-explorer').is(':visible')) return;
 	var items = el.parent('div').data('data').features,
 		itemIndex = 0,
 		retryAfter = 0,
@@ -2448,6 +2545,7 @@ function WPLP(el){
 
 //Find PAS items based on location
 function PASLP(el){
+	if($('#data-explorer').is(':visible')) return;
 	var items = el.parent('div').data('data').features,
 		itemIndex = 0,
 		retryAfter = 0,
@@ -2654,7 +2752,9 @@ $( document ).ready(function() {
 	});	
 	map.on('load', () => {
 		console.log('Map loading...');
-		map.addControl(new maplibregl.NavigationControl())
+		map.dragRotate.disable();
+		map.touchZoomRotate.disableRotation();
+		map.addControl(new maplibregl.NavigationControl({'showCompass':false}))
 		.on('idle',function(){ map.resize(); })
 		.addSource('point', {
 			'type': 'geojson',

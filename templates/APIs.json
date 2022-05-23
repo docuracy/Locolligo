@@ -63,12 +63,12 @@
 		"label": "Geograph",
 		"type": "GG", 
 		"title": "Photographs sourced from Geograph",
-		"url": "'https://api.geograph.org.uk/syndicator.php?format=JSON&q='+mapCentre.lat+','+mapCentre.lng+'&distance='+(radius*5)+'&perpage=100&key=c743e78c04'",
+		"url": "'https://api.geograph.org.uk/syndicator.php?format=JSON&text='+geocodeQ+'&location='+mapCentre.lat+','+mapCentre.lng+'&distance='+(radius*5)+'&perpage=100&key='+geographKey",
 		"headers": {
 			"Accept": "application/json" 
 		},
 		"datakey": "items",
-		"coordinates": "scatter([parseFloat(feature.long),parseFloat(feature.lat)])",
+		"coordinates": "[feature.long,feature.lat]",
 		"name": "'<img class=\"popupimage\" src=\"'+feature.thumb+'\" /><br/>'+feature.title",
 		"lpMappings": [
 			{

@@ -302,6 +302,7 @@ button.mapboxgl-ctrl-close-map span.mapboxgl-ctrl-icon{
 }
 #geocodeWrapper {
     background-image: url(./images/search.svg);
+    overflow: hidden;
 }
 #geocode {
 	font-size: 1.4em!important;
@@ -582,4 +583,18 @@ a.popup_link.wikidata{
 #layerSelector #geocodeSelector-button {
 	padding: 0 3px;
     top: -2px;
+}
+#Geograph img {
+	border: 1px solid #ddd;
+	border-radius: 4px;
+	padding: 5px;
+	cursor: pointer;
+	margin-right: 5px;
+}
+#Geograph img:hover {
+	box-shadow: 0 0 2px 1px rgba(0, 140, 186, 0.5);
+}
+#Geograph img.selected {
+	border: 3px solid red;
+	padding: 3px;
 }
