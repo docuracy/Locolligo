@@ -10,7 +10,7 @@
 
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.6257615.svg)](https://doi.org/10.5281/zenodo.6257615)
 
-***Locolligo* is a single-page, browser-based javascript application \[*in the early stages of development*\] for the formatting, linking, and geolocation of datasets, with a particular focus on Cultural Heritage.** The greatest barrier to the visualisation, sharing, and linking of datasets that have a locational facet is the variety of ways and formats in which information has been collected, recorded, and stored. *Locolligo* seeks to dissolve that barrier.
+***Locolligo* is a single-page, browser-based javascript application \[*in the early stages of development*\] for the formatting, linking, and geolocation of datasets, with a particular focus on Cultural Heritage.** The greatest barrier to the visualisation, sharing, and linking of datasets that have a locational facet is the variety of ways and formats in which information has been collected, recorded, and stored. *Locolligo* seeks to dissolve that barrier. It can be downloaded and run on a standalone PC, tablet, or smartphone, without any dependency on a database or other server infrastructure; basic features will even run without an internet connection.
 
 [<img src="./images/docuracy-logo.png" height="100" align="left">](https://docuracy.co.uk/)
 [<img src="https://britishlibrary.github.io/locating-a-national-collection/graphics/BL.svg" height="100" align="left">](https://www.bl.uk/)
@@ -21,7 +21,7 @@ This software originated as an output of the AHRC-funded [**Locating a National 
 
 [<img title="Pelagios Network" src="./images/pelagios.svg" height="100" align="left">](https://pelagios.org/)
 
-*Locolligo* employs standards developed by the [Pelagios Network](https://pelagios.org/), and will (for example) conform datasets for use in the Network's [*Peripleo*](https://github.com/britishlibrary/peripleo) map visualisation and [*Recogito*](https://recogito.pelagios.org/) annotation software, and generate metadata for the submission of datasets to the Network's historical geodata Registry. It can be downloaded and run on a standalone PC, tablet, or smartphone, without any dependency on a database or other server infrastructure; basic features will even run without an internet connection.
+*Locolligo* employs standards developed by the [Pelagios Network](https://pelagios.org/), and will (for example) conform datasets for use in the Network's [*Peripleo*](https://github.com/britishlibrary/peripleo) map visualisation and [*Recogito*](https://recogito.pelagios.org/) annotation software, and generate metadata for the submission of datasets to the Network's historical geodata Registry.
 
 >It facilitates the linking of related records (*subjects* and *objects*) based on definable criteria (*predicates*):
 >* between datasets, 
