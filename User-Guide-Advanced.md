@@ -43,7 +43,8 @@ If you already have a file in Linked Places Format, you can simply upload it and
 
 ## Geolocate Place-Names
 > **Documentation yet to be written.**
-> 
+> **Need to set API Key**
+
 ## Annotate CSV Column Headers and Upload `.lp.csv`
 > **Documentation yet to be written.**
 
@@ -68,6 +69,7 @@ If you already have a file in Linked Places Format, you can simply upload it and
     4. Click on `Link and Move` to additionally move the coordinates of your current dataset feature to those of the linkable feature.
 
 ## Automatically Link Dataset via APIs
+> **Need to set API Key**
 The API buttons are used to programmatically link all dataset features to remote web resources, based on configurable combinations of geographical distance and textual similarity. API calls are throttled to respect providers' usage limits. The preconfigured APIs are:
 - `WD`: [Wikidata](https://www.wikidata.org/wiki/Wikidata:Main_Page) ('a free and open knowledge base that can be read and edited by both humans and machines').
 - `GG`: [Geograph](https://m.geograph.org.uk/) ('geographically representative photographs and information for every square kilometre of Great Britain and Ireland').
@@ -85,6 +87,7 @@ There is basic support for editing the JSON objects displayed in *Locolligo*: ho
 ## Configuration
 Much of the configuration is determined by the files listed below, which can easily be edited if you have your own copy of the master repository. More complex configuration can be achieved by editing the main JavaScript file ([data-converter.js](./js/data-converter.js)), which includes many now-disabled sections of code used during development that might be customised and re-deployed.
 - [APIs.json](./templates/APIs.json): configuration of external APIs used to gather linked data.
+- [API-keys.js](./API-keys.js): configuration of API keys.
 - [indexing.json](./templates/indexing.json): template for schema.org-compliant description of the dataset.
 - [libraryMappings.json](./templates/libraryMappings.json): configuration of linkage to locally-stored [Geodata Library](./User-Guide.md#local-geodata-library) items.
 - [mappings.json](./templates/mappings.json): used during development to define JSONata transformation expressions, now largely redundant.

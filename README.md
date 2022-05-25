@@ -10,107 +10,78 @@
 
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.6257615.svg)](https://doi.org/10.5281/zenodo.6257615)
 
-***Locolligo* is a single-page, browser-based javascript application \[*in the early stages of development*\] for the formatting, linking, and geolocation of datasets, with a particular focus on Cultural Heritage.** The greatest barrier to the visualisation, sharing, and linking of datasets that have a locational facet is the variety of ways and formats in which information has been collected, recorded, and stored. *Locolligo* seeks to dissolve that barrier.
+***Locolligo* is a single-page, browser-based javascript application \[*in the early stages of development*\] for the formatting, linking, and geolocation of datasets, with a particular focus on Cultural Heritage.** The greatest barrier to the visualisation, sharing, and linking of datasets that have a locational facet is the variety of ways and formats in which information has been collected, recorded, and stored. *Locolligo* seeks to dissolve that barrier. It can be downloaded and run on a standalone PC, tablet, or smartphone, without any dependency on a database or other server infrastructure; basic features will even run without an internet connection.
 
->It will facilitate the linking of related records (*subjects* and *objects*) based on definable criteria (*predicates*):
+[<img src="./images/docuracy-logo.png" height="100" align="left">](https://docuracy.co.uk/)
+[<img src="https://britishlibrary.github.io/locating-a-national-collection/graphics/BL.svg" height="100" align="left">](https://www.bl.uk/)
+[<img src="https://britishlibrary.github.io/locating-a-national-collection/graphics/TaNC-logo.png" height="100" align="left">](https://www.nationalcollection.org.uk/)
+[<img src="https://britishlibrary.github.io/locating-a-national-collection/graphics/UKRI-logo.png" height="100">](https://www.ukri.org/)
+
+This software originated as an output of the AHRC-funded [**Locating a National Collection**](https://www.nationalcollection.org.uk/Foundation-Projects#:~:text=Locating%20a%20National%20Collection) (LaNC) project. Based at the British Library in London, the project was part of the AHRC programme [Towards a National Collection: Opening UK Heritage to the World](https://www.nationalcollection.org.uk/). *Locolligo* addresses the LaNC project's aim of helping cultural heritage organisations to use geospatial data, and together with development of *Peripleo* is a major step in scoping 'technical recommendations for the development of a national discovery system whereby objects about a topic of interest can be readily discovered from a variety of sources, represented in the context of their historic environment, and referenced in time and landscape'. 
+
+[<img title="Pelagios Network" src="./images/pelagios.svg" height="100" align="right">](https://pelagios.org/)
+
+*Locolligo* employs standards developed by the [Pelagios Network](https://pelagios.org/), and will (for example) conform datasets for use in the Network's [*Peripleo*](https://github.com/britishlibrary/peripleo) map visualisation and [*Recogito*](https://recogito.pelagios.org/) annotation software, and generate metadata for the submission of datasets to the Network's historical geodata Registry.
+
+
+
+
+
+>It facilitates the linking of related records (*subjects* and *objects*) based on definable criteria (*predicates*):
 >* between datasets, 
 >* to points within existing gazetteers of places-names, and
 >* to coordinates picked on modern or historical maps.
 >
 >The [knowledge graphs](https://en.wikipedia.org/wiki/Knowledge_graph) (collections of [semantic triples](https://en.wikipedia.org/wiki/Semantic_triple) which are the basis of [RDF](https://en.wikipedia.org/wiki/Resource_Description_Framework)) thereby created will enable the automated discovery (within a [knowledge base](https://en.wikipedia.org/wiki/Knowledge_base)) of further links between data records.
 
-*Locolligo* employs standards developed by the [Pelagios Network](https://pelagios.org/), and will (for example) conform datasets for use in the Network's [*Peripleo*](https://github.com/britishlibrary/peripleo) map visualisation and [*Recogito*](https://recogito.pelagios.org/) annotation software, and generate metadata for the submission of datasets to the Network's historical geodata Registry. It can be downloaded and run on a standalone PC, tablet, or smartphone, without any dependency on a database or other server infrastructure; basic features will even run without an internet connection.
+## What Next?
+Because *Locolligo* runs in the browser, no installation is necessary, but you are encouraged to read the User Guides before heading to https://docuracy.github.io/Locolligo/.
+* [Basic User Guide](./User-Guide-Basic.md)
+* [Advanced User Guide](./User-Guide-Advanced.md)
+* [Use Locolligo](https://docuracy.github.io/Locolligo/)
 
-This software originates as an output of the AHRC-funded [**Locating a National Collection**](https://www.nationalcollection.org.uk/Foundation-Projects#:~:text=Locating%20a%20National%20Collection) (LaNC) project. Based at the British Library in London, the project is part of the AHRC programme [Towards a National Collection: Opening UK Heritage to the World](https://www.nationalcollection.org.uk/). Initial development of *Locolligo* addresses the LaNC project's aim of helping cultural heritage organisations to use geospatial data, and together with development of *Peripleo* is a major step in scoping 'technical recommendations for the development of a national discovery system whereby objects about a topic of interest can be readily discovered from a variety of sources, represented in the context of their historic environment, and referenced in time and landscape'. 
+---
 
-**Please read the User Guides ([Basic](./User-Guide-Basic.md) & [Advanced](./User-Guide-Advanced.md)), and try out the active demonstration of the *Locolligo* prototype at https://docuracy.github.io/Locolligo/**.
-<p align="center" width="100%">
-    <img border="black 1px" src="/images/Locolligo-screenshot.png" />
-</p>
-
-> Please note that after a period of development and experimentation with other formats, *Locolligo* now generates datasets exclusively in the extended Linked Places Format (LPF) detailed [here](https://github.com/docuracy/Locolligo/blob/main/schemas/LP.json). Some of the features listed below were implemented but have now been deprecated.
-
-
-## Feature development:
-- [x] Convert the following dataset types to JSON:
-    - [x] CSV / TSV (from upload or URL)
-    - [x] Google Sheets (from URL)
-    - [x] XML (from upload or URL)
-    - [x] Google Maps KML (from upload or URL; also convert to geoJSON)
-    - [x] Zipped Shapefile (from upload, to geoJSON)
-- [x] Convert the following JSON types to xLP:
-    - [x] Recogito LD
-    - [x] Uploaded datasets (JSONata configuration required, UI not yet built)
-- [x] Convert Peripleo-LD to:
-    - [x] [geoJSON](https://geojson.org/) (with basic mapping; *geoWithin* properties not yet supported)
-    - [ ] [Turtle](https://en.wikipedia.org/wiki/Turtle_(syntax)) RDF
-    - [ ] CSV for batch contribution to Wikidata via [*QuickStatements*](https://quickstatements.toolforge.org/)
+## Key Features:
+- [x] Convert CSV to JSON (extended Linked Places Format)
 - [x] Conform geodata to [WGS84](https://en.wikipedia.org/wiki/World_Geodetic_System) from:
     - [x] [OSGB](https://en.wikipedia.org/wiki/Ordnance_Survey_National_Grid) (Ordnance Survey of Great Britain)
     - [x] [EPSG:29900](https://en.wikipedia.org/wiki/Irish_grid_reference_system) (Irish Grid Eastings & Northings)
-    - [ ] [What3Words](https://what3words.com/about)
-- [x] Standardisation of annotation fragment selectors (see [here](https://github.com/docuracy/LaNC/blob/main/Peripleo_Fragment_Selector_SVG.js)). Useful for display of IIIF fragments (not yet implemented).
-- [x] Implementation of [schema.org](https://schema.org/) vocabulary to facilitate dataset indexing and discovery
-- [x] Location approximation: translation of text values to schema.org *geoRadius* values and *geoWithin* *geoCircle*s
-- [ ] UI for configuration of JSONata transformation of unrecognised data models
-- [x] Fetch CITATION.cff and incorporate in dataset as CSL-JSON
-- [x] Facilitate editing of dataset metadata
-- [x] Add xLP, shapefile, and geoJSON datasets to user's local **GeoData Library** ([indexedDB](https://developer.mozilla.org/en-US/docs/Web/API/IndexedDB_API) store)
-- [x] Find places in map view (using GeoNames API)
-- [ ] Data Linking
-    - [x] Curated interlinking of xLP datasets (using **GeoData Library**)
-    - [x] Programmatic linking of Wikidata settlements (best text match within 15km, using Levenshtein algorithm)
-    - [x] Cultural Heritage sites within radius: [Wikidata](https://www.wikidata.org/)
-    - [x] [GeoNames toponyms](https://www.geonames.org/export/web-services.html#findNearby)
-    - [x] [World Historical Gazetteer](https://whgazetteer.org/usingapi/)
-    - [ ] [Open Street Map Points of Interest](https://wiki.openstreetmap.org/wiki/Points_of_interest)
-    - [ ] [Open Historical Map](https://wiki.openstreetmap.org/wiki/Open_Historical_Map)
-    - [ ] [GB1900](http://www.visionofbritain.org.uk/)
-    - [x] Wikipedia articles: [GeoNames API](https://www.geonames.org/export/wikipedia-webservice.html#findNearbyWikipedia)
-    - [x] Archaeological finds within radius: [PAS](https://finds.org.uk/) API
-    - [x] Historical Plaques: [OpenPlaques.org](https://openplaques.org/) API (or data dump converted to Peripleo-LD)
-    - [x] Geograph photographs: [Geograph Syndicator API](https://www.geograph.org.uk/help/api#rss)
-- [ ] Data Checking
-    - [ ] Sanity checking
-    - [ ] Add confirmation flags for checked data
-- [ ] Geocoding of place-names
-    - [ ] [World Historical Gazetteer](https://whgazetteer.org/)
-    - [ ] Wikidata
-    - [ ] Geonames
-    - [ ] Google
+- [x] Standardisation of annotation fragment selectors (see [here](https://github.com/docuracy/LaNC/blob/main/Peripleo_Fragment_Selector_SVG.js)). Useful for display of IIIF fragments.
+- [x] Implementation of [schema.org](https://schema.org/) vocabulary to facilitate dataset indexing and discovery.
+- [x] Fetch CITATION.cff and incorporate in dataset as CSL-JSON.
+- [x] Facilitate editing of dataset metadata.
+- [x] Add converted datasets to user's local **GeoData Library** ([indexedDB](https://developer.mozilla.org/en-US/docs/Web/API/IndexedDB_API) store).
+- [x] Find places in map view (using GeoNames API).
+- [x] Data Linking
+    - [x] Curated interlinking of datasets (using **GeoData Library**)
+    - [x] Programmatic linking of Wikidata settlements (best text match within 15km, using Levenshtein algorithm).
+    - [x] Cultural Heritage sites within radius: [Wikidata](https://www.wikidata.org/).
+    - [x] [GeoNames toponyms](https://www.geonames.org/export/web-services.html#findNearby).
+    - [x] [World Historical Gazetteer](https://whgazetteer.org/usingapi/).
+    - [x] Wikipedia articles: [GeoNames API](https://www.geonames.org/export/wikipedia-webservice.html#findNearbyWikipedia).
+    - [x] Archaeological finds within radius: [PAS](https://finds.org.uk/) API.
+    - [x] Historical Plaques: [OpenPlaques.org](https://openplaques.org/) API.
+    - [x] Geograph photographs: [Geograph Syndicator API](https://www.geograph.org.uk/help/api#rss)..
+- [x] Geocoding of place-names (Geonames).
 - [x] URLs and Persistent IDs (PIDs)
-    - [x] Generate UUIDs and corresponding PIDs for datasets (and each of their items), when converted from delimited text
-    - [x] Static [gazetteer](https://github.com/docuracy/Locolligo/blob/main/API/index.html)
-    - [x] Example use of PID to reach gazetteer: https://w3id.org/locolligo/CAMPOP-Places/AGY.Holyhead
-- [ ] Geocoding of un-gazetteered places
-    - [x] Create or adjust feature coordinates with reference to basemap
-    - [ ] Use georeferenced historical basemaps as citable references
-    - [ ] Create linked Wikidata item with geo-coordinates, using programmatically-submitted [*QuickStatements* batch jobs](https://quickstatements.toolforge.org/#/user) (default CORS policy prevents direct use of API)
+    - [x] Generate UUIDs and corresponding PIDs for datasets (and each of their items), when converted from delimited text.
+    - [x] Static gazetteer [example](https://docuracy.github.io/Locolligo/datasets/#Hollar-1660/d54e04cd-c73e-4f21-8b71-8d69aaada6fe).
+    - [x] Integration with w3id.org to form PIDs to reach gazetteer: [example](https://w3id.org/locolligo/Hollar-1660/d54e04cd-c73e-4f21-8b71-8d69aaada6fe)
+- [x] Geocoding of un-gazetteered places
+    - [x] Create or adjust feature coordinates with reference to basemap.
+    - [x] Use georeferenced historical basemaps as citable references.
 - [ ] [Pelagios Registry](https://pelagios.org/activities/registry/) metadata generation
 - [ ] Recogito meta-gazetteer generation
 
 ## Limitations
 Dataset size is limited by local device memory, although a PC with 16GB of memory easily copes with 25,000 records in a 12-field csv input file. It may be possible to implement chunking if necessary for larger files. Memory use is mitigated by use of a spatially-indexed IndexedDB store for a local GeoData Library.
 
-## LaNC Project Partners
-Thanks to various project partners and others, who may retain copyright in their respective sample datasets used in this software:
-
-* [English Heritage](https://www.english-heritage.org.uk/)
-* [Historic England](http://www.HistoricEngland.org.uk) - contains Ordnance Survey data © Crown copyright and database right 2020.
-* [Historic Environment Scotland](https://www.historicenvironment.scot/) - Scottish Charity No. SC045925 © Crown copyright and database right 2020.
-* [Historic Royal Palaces](https://www.hrp.org.uk/)
-* [Museum of London Archaeology](https://www.mola.org.uk/)
-* [The National Trust](https://www.nationaltrust.org.uk/) - Registered Charity in England & Wales No. 205846
-* [The Portable Antiquities Scheme](https://finds.org.uk/) - linked images Courtesy of the Portable Antiquities Scheme - © The British Museum.
-* [Viae Regiae](https://viaeregiae.org/) - a volunteer-driven member project of the Pelagios Network
-
-## Other Acknowledgements
+## Acknowledgements
 Much of the functionality of this software is provided through the use of pre-existing JavaScript libraries, notably the following:
 
 * **JQuery** simplifies cross-browser implementation of HTML document traversal and manipulation, event handling, animation, and Ajax: https://jquery.com/
-* **JSONata** is a query and transformation language for [JavaScript Object Notation](https://en.wikipedia.org/wiki/JSON) (JSON) datasets: https://jsonata.org/
 * **Papa Parse** is 'the first (and so far only) multi-threaded CSV parser', for converting between delimited text and JSON: https://www.papaparse.com/
-* **Fast XML Parser** converts XML (and map-specific KML) to JSON: https://github.com/NaturalIntelligence/fast-xml-parser
 * **JSON Formatter** renders JSON objects in HTML with a collapsible navigation: https://azimi.me/json-formatter-js/
 * **UUIDJS** generates RFC-compliant [Universally Unique IDentifiers](https://en.wikipedia.org/wiki/Universally_unique_identifier) (UUIDs) in JavaScript: https://github.com/uuidjs/uuid
 * **Movable Type Scripts** convert between latitude/longitude & OS National Grid References: https://www.movable-type.co.uk/scripts/latlong-os-gridref.html
