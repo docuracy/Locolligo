@@ -187,7 +187,7 @@ function downloadCSV(jsonobject,filename=false,geoJSON=true){
 	}
 	else dataset = jsonobject;
 	$("<a />", {
-		"download": filename ? filename.split('.')[0]+".lp.csv" : "geoJSON_Data_"+ Math.floor(Date.now()/1000) +".csv",
+		"download": filename ? filename.split('.')[0]+".lp.csv" : "geoJSON_Data_"+ Math.floor(Date.now()/1000) +".lp.csv",
 		"href" : "data:application/csv;charset=utf-8," +encodeURIComponent( CSVoutput )
 	}).appendTo("body")
 	.click(function() {
@@ -358,6 +358,18 @@ function geocodeOSM(q,countryBias,maxRows,fuzzy=0.3){
 		dataType: 'json',
 		url: 'https://secure.geonames.org/searchJSON?q='+q+countryBias+'&fuzzy='+fuzzy+'&username='+geoNamesID+'&maxRows='+maxRows,
 		success: function(data){
+			console.log('raw',data);
+			// Sort by soundex & levenshtein
+			var soundexQ = soundex(q);
+			var maxPopulation = Math.max(...data.geonames.map(o => o.population));
+			data.geonames.forEach(function(geoname){
+				geoname.soundex = (soundexQ==soundex(geoname.toponymName) ? .5 : 1);
+				geoname.levenshtein = 1-(1-(Math.min(10,levenshtein(q.toUpperCase(),geoname.toponymName.toUpperCase()))/10))*.3;
+				geoname.populationScore = 1-(geoname.population/maxPopulation)*.3;
+				geoname.score = (q.toUpperCase()==geoname.toponymName.toUpperCase() ? .1 : 1)*geoname.soundex*geoname.populationScore*geoname.levenshtein;
+			});
+			data.geonames = data.geonames.sort((a,b) => a.score - b.score);
+			console.log('processed',data);
 			result = data;
 		},
 		error: function(xmlhttprequest, textstatus, message) {
@@ -368,11 +380,152 @@ function geocodeOSM(q,countryBias,maxRows,fuzzy=0.3){
 }
 
 function GeoCodeDataset(el){
+	
+	function PlaceNER(description){
+		var result = [];
+		$.ajax({
+			type: "POST",
+			url: 'https://language.googleapis.com/v1/documents:analyzeEntities?alt=json&key='+GoogleNER,
+			data: JSON.stringify({'document':{'content':description,'type':'PLAIN_TEXT'}}), 
+			dataType: 'json',
+			contentType: 'application/json',
+			async: false,
+			success: function(data){
+				result = data.entities
+				.filter(entity => entity.type=='LOCATION' && entity.mentions.some(mention => mention.type=='PROPER'))
+				.sort((a,b) => b.salience - a.salience); // Entities of type 'Location' with a proper name, sorted by salience.
+			},
+			error: function(xmlhttprequest, textstatus, message) {
+		        alert ( textstatus==='timeout' ? 'NER API call timed out: cancelling geocoding.' : 'NER API error: '+message );
+		    }
+		});
+		return result;
+	}
+	
+	function doGeoCoding(NER=false){
+		if(NER && GoogleNER==''){
+			alert('To use the Google NER (Natural Language) API you need to '+(location.hostname=='docuracy.github.io'?'run Locolligo from your own GitHub repository, and also ':'')+'get an API key and enter it in your API-keys.js file. Please see Locolligo documentation for details.');
+			NER=true;
+		}
+		
+		function geonameOption(j,geoname){
+			return '<option value=\''+JSON.stringify(geoname)+'\''+(j==0?' selected':'')+'>'+[geoname.toponymName,geoname.adminName1,geoname.countryCode].join(', ').replaceAll(', , ',', ')+'</option>';
+		}
+		function assignOption(el,value){
+			var index = el.parents('tr').find('td').first().html();
+			var geoname = JSON.parse(value);
+		    items[index].geometry = {'type':'Point','coordinates':[+geoname.lng,+geoname.lat]};
+		    var newLink = {'type':'exactMatch','identifier':'http://www.geonames.org/'+geoname.geonameId+'/'};
+		    if(!items[index].hasOwnProperty('links')) {
+		    	items[index].links = [newLink];
+		    }
+		    else if(items[index].links.length==0 || items[index].links[items[index].links.length-1].identifier !== newLink.identifier){
+		    	if(items[index].links.length!==0) items[index].links.pop();
+		    	items[index].links.push(newLink);
+		    }
+		    el.parents('td').find('span.ui-button').last().addClass('reset');
+			console.log('Added GeoName data to feature #'+index);
+		}
+		$('#geoCodeDataset_NER,#geoCodeDataset_GeoCode,#geoCodeDataset_Close').button( "option", "disabled", true );
+		$('#geoCodeDataset').append('<table id="geocodeResults"><tr><th>#</th><th>Place-name</th><th>Match</th></tr></table>');
+		var geocodingOK = true;
+		var validation = {'ok':[],'failed':[]};
+		items.forEach(function(feature,i){
+			if(geocodingOK && !(feature.hasOwnProperty('geometry') && firstPoint(feature.geometry)!==null) && $('#geocodeSelector').val()!==''){
+				var placeField = feature.properties[$('#geocodeSelector').val()];
+				var placename = placeField;
+				if(NER) {
+					var resultsNER = PlaceNER(placeField);
+					if(resultsNER.length>0){
+						placename = resultsNER[0].name;
+						resultsNER.forEach(function(result,j){
+							var regex = eval('/('+result.name+')(?!<\\/span)/gm');
+							placeField = placeField.replaceAll(regex,'<span title="GeoCode this (salience='+(result.salience*100).toFixed(2)+'%)." class="salient'+(j==0?' selected':'')+'">'+result.name+'</span>');
+						});
+					}
+					else placename = '';
+				}
+				var data = geocodeOSM(placename,($('#ccodeSelector').val()==''?'':'&country='+$('#ccodeSelector').val()),20);
+				if(data==false) {
+					geocodingOK = false;
+				}
+				else {
+					if(data.totalResultsCount==0) validation.failed.push([i,feature.properties[$('#geocodeSelector').val()]]);
+					var resultPlaces = [];
+					data.geonames.forEach(function(geoname,j){
+						resultPlaces.push(geonameOption(j,geoname));
+					});
+					if(data.totalResultsCount==0) resultPlaces.push('<option value="none selected">None</option>');
+					resultPlaces = '<select title="Pick a result, or delete using the trash-can." name="geonameSelector_'+i+'" id="geonameSelector_'+i+'">'+resultPlaces.join('')+'</select>';
+					$('#geocodeResults')
+					.append('<tr><td>'+i+'</td><td>'+placeField+'</td><td class="ui-front">'+resultPlaces+'<span title="Reject this match."></span></td></tr>')
+					.find('span.salient').on('click',function(e){
+						if(!$(e.target).hasClass('selected')){
+							$(e.target).parents('td').find('span.selected').removeClass('selected');
+							$(e.target).addClass('selected');
+							var selector = $(e.target).parents('tr').find('select').first();
+							selector.find('option').remove();
+							var newData = geocodeOSM($(e.target).text(),($('#ccodeSelector').val()==''?'':'&country='+$('#ccodeSelector').val()),20);
+							if(newData==false || data.totalResultsCount==0) {
+								selector.append('<option value="none selected">None</option>').selectmenu('disable');
+							}
+							else {
+								newData.geonames.forEach(function(geoname,j){
+									selector.append(geonameOption(j,geoname));
+								});
+								selector.selectmenu('enable');
+								selector.trigger('selectmenuchange');
+							}
+							selector.selectmenu('refresh');
+						}
+					}).end()
+					.find('select').last().selectmenu({
+						disabled: data.totalResultsCount==0,
+						width:'auto',
+						appendTo: '#panel'
+					})
+					.on('selectmenuchange',function(event,ui){
+						assignOption($(this),$('#geonameSelector_'+i+' option:selected').val());
+					})
+					.parents('td').find('span').last().button({icon:'ui-icon-trash'})
+					.click(function(){
+						var index = $(this).parents('tr').find('td').first().html();
+						if($(this).hasClass('reset')){
+							console.log('Resetting geometry for item #'+index);
+							items[index].geometry = null;
+							items[index].links.pop();
+							if(items[index].links.length==0) delete items[index].links;
+						}
+						if($('#geocodeResults').find('tr').length==2){
+							$('#geoCodeDataset').dialog("close");
+						}
+						else{
+							$(this).parents('tr').remove();
+						}
+					});
+					if(data.totalResultsCount>0) $('#geonameSelector_'+i).trigger('selectmenuchange'); // THIS DOESN'T THIS WORK !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+				}
+			}
+			if($('#geocodeResults').find('tr').length==1){
+				$('#geocodeResults').remove();
+				alert('No features are lacking valid coordinates.');
+				$('#geoCodeDataset').dialog("close");
+			}
+		});
+		console.log(validation);
+//		$( "#geoCodeDataset" ).dialog( "option", "width", window.innerWidth - 20 );
+		$( "#geoCodeDataset" )
+		.dialog( "option", "height", window.innerHeight * .9 )
+		.dialog( "option", "width", window.innerWidth * .9 )
+		.dialog( "option", "position", { my: "center", at: "center", of: window } );
+		$('#geoCodeDataset_Close').button( "option", "disabled", false );
+	}
+	
 	ccodeSelector = ccodeSelector ? ccodeSelector : getccodeSelector();
 	geocodeSelector = geocodeSelector ? geocodeSelector : getgeocodeSelector(el.parent('div').data('data').features);
 	var items = el.parent('div').data('data').features;
 	
-	$('<div id="geoCodeDataset"><label for="geocodeSelector">Place-name Property: </label>'+geocodeSelector+'<br/><label for="ccodeSelector">Country Bias: </label>'+ccodeSelector+'</div>')
+	$('<div id="geoCodeDataset"><label for="geocodeSelector">Place-name Property: </label>'+geocodeSelector+'<br/><label for="ccodeSelector">Country: </label>'+ccodeSelector+'</div>')
 	.appendTo('body')
 	.dialog({
 		modal: true,
@@ -383,64 +536,17 @@ function GeoCodeDataset(el){
 	    resizable: true,
 	    buttons: [
 	    	{
+	    		text: 'NER+GeoCode',
+	    		id: 'geoCodeDataset_NER',
+	    		click: function(){
+	    			doGeoCoding(true)
+	    		}
+	    	},
+	    	{
 	    		text: 'GeoCode',
 	    		id: 'geoCodeDataset_GeoCode',
 	    		click: function(){
-	    			$('#geoCodeDataset_GeoCode,#geoCodeDataset_Close').button( "option", "disabled", true );
-	    			$('#geoCodeDataset').append('<table id="geocodeResults"><tr><th>#</th><th>Place-name</th><th>Match</th></tr></table>');
-	    			var geocodingOK = true;
-	    			var validation = {'ok':[],'failed':[]};
-	    			items.forEach(function(feature,i){
-	    				if(geocodingOK && !(feature.hasOwnProperty('geometry') && firstPoint(feature.geometry)!==null) && $('#geocodeSelector').val()!==''){
-	    					var data = geocodeOSM(feature.properties[$('#geocodeSelector').val()],($('#ccodeSelector').val()==''?'':'&countryBias='+$('#ccodeSelector').val()),20);
-	    					if(data==false) {
-	    						geocodingOK = false;
-	    					}
-	    					else {
-	    						if(data.totalResultsCount==0){
-	    							// TO DO: Find a representative coordinate for country bias if selected
-	    							validation.failed.push([i,feature.properties[$('#geocodeSelector').val()]]);
-	    							$('#geocodeResults').append('<tr><td>'+i+'</td><td>'+feature.properties[$('#geocodeSelector').val()]+'</td><td>-none-</td></tr>');
-	    						}
-	    						else{
-	    							feature.geometry = {'type':'Point','coordinates':[+data.geonames[0].lng,+data.geonames[0].lat],'certainty':'uncertain'};
-	    							var resultPlaces = [];
-	    							data.geonames.forEach(function(geoname,j){
-	    								resultPlaces.push('<option value="['+geoname.lng+','+geoname.lat+']"'+(j==0?' selected':'')+'>'+[geoname.toponymName,geoname.toponymName,geoname.adminName1,geoname.countryName].join(', ').replaceAll(', , ',', ')+'</option>')
-	    							});
-	    							resultPlaces = '<select title="Pick a result, or delete using the trash-can." name="geonameSelector_'+i+'" id="geonameSelector_'+i+'">'+resultPlaces.join('')+'</select>';
-	    							$('#geocodeResults')
-	    							.append('<tr><td>'+i+'</td><td>'+feature.properties[$('#geocodeSelector').val()]+'</td><td>'+resultPlaces+'<span title="Reject this match."></span></td></tr>')
-	    							.find('select').last().selectmenu({
-	    								width:'auto',
-	    								change: function(event, ui) {
-	    									var index = $(this).parents('tr').find('td').first().html();
-	    								    items[index].geometry.coordinates = JSON.parse(ui.item.value);
-	    								}
-	    							})
-	    							.parents('td').find('span').last().button({icon:'ui-icon-trash'})
-	    							.click(function(){
-	    								var index = $(this).parents('tr').find('td').first().html();
-	    								console.log('Resetting geometry for item #'+index);
-	    								items[index].geometry = null;
-	    								if($('#geocodeResults').find('tr').length==2){
-	    									$('#geoCodeDataset').dialog("close");
-	    								}
-	    								else{
-	    									$(this).parents('tr').remove();
-	    								}
-	    							});
-	    						}
-	    					}
-	    				}
-	    				if($('#geocodeResults').find('tr').length==1){
-	    					$('#geocodeResults').remove();
-	    					alert('No features are lacking valid coordinates.');
-	    					$('#geoCodeDataset').dialog("close");
-	    				}
-	    			});
-	    			console.log(validation);
-	    			$('#geoCodeDataset_Close').button( "option", "disabled", false );
+	    			doGeoCoding()
 	    		}
 	    	},
 	    	{
@@ -452,7 +558,7 @@ function GeoCodeDataset(el){
 	    	}
 	    ],
 	    close: function(event, ui) {
-	        $(this).remove();
+	        $(this).dialog('destroy').remove();
 	    }
 	})
 	.find('select').selectmenu().end();
@@ -1781,31 +1887,37 @@ function updateLinkMarkers(root=$('#layerSelector')){ // TO DO: Update each newb
 						    width: window.innerWidth - 20,
 						    height: window.innerHeight - 20,
 						    resizable: false,
+						    open: function(event,ui) {
+						    	$('#Geograph').data('items',data.items);
+						    },
 						    buttons: [
 						    	{
 		    			    		text: 'Add Image Links',
 		    			    		click: function(){
 		    			    			$('#Geograph img').each(function(i){
 		    			    				if($(this).hasClass('selected')){
+			    			    				var item = $('#Geograph').data('items')[i];
 		    			    					if(!traceGeoJSON.hasOwnProperty('depictions')) traceGeoJSON.depictions = [];
 		    			    					traceGeoJSON.depictions.push({
-		    			    						'@id':data.items[i].thumb.replace('_120x120',''),
-		    			    						'title':data.items[i].title,
-		    			    						'accreditation':'© '+data.items[i].author,
-		    			    						'thumbnail':data.items[i].thumb,
-		    			    						'license':data.items[i].licence
+		    			    						'@id':item.thumb.replace('_120x120',''),
+		    			    						'title':item.title,
+		    			    						'accreditation':'© '+item.author,
+		    			    						'thumbnail':item.thumb,
+		    			    						'license':item.licence
 		    			    					});
 		    			    				}
 		    			    			});
-		    			    			$('#trace').data('formatter',new JSONFormatter(dataset[index],3,{theme:'light'}));
+		    			    			$('#trace').data('formatter',new JSONFormatter(traceGeoJSON,3,{theme:'light'}));
 		    			    			$('#trace').html($('#trace').data('formatter').render()).addClass('json-formatter');
-		    			    			$(this).dialog("close");
+		    			    			$(this).dialog("close").dialog("destroy");
+		    			    			$('#Geograph').remove();
 		    			    		}
 		    			    	},
 						    	{
 		    			    		text: 'Cancel',
 		    			    		click: function(){
-		    			    			$(this).dialog("close");
+		    			    			$(this).dialog("close").dialog("destroy");
+		    			    			$('#Geograph').remove();
 		    			    		}
 		    			    	}
 						    ]

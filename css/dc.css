@@ -571,6 +571,8 @@ a.popup_link.wikidata{
 }
 #geocodeResults td {
     border: 1px solid #c5c5c5;
+    vertical-align: top;
+    line-height: 1.2rem;
 }
 #geocodeResults .ui-button:last-of-type {
 	padding: 0.2em 0.2em;
@@ -597,4 +599,25 @@ a.popup_link.wikidata{
 #Geograph img.selected {
 	border: 3px solid red;
 	padding: 3px;
+}
+span.salient {
+	border: 1px solid #00000000;
+    border-radius: 2px;
+    background-color: #bfe5bfab;
+    margin: 2px;
+    cursor: pointer;
+}
+span.salient:not(.selected):hover {
+	border-color: red;
+}
+span.salient.selected {
+	background-color: #ed7b7bab;
+}
+#geocodeResults .ui-menu .ui-menu-item {
+	border: 1px solid #c1c1c1!important;
+    border-radius: 3px;
+    background-color: #ddeaf1;
+}
+#geocodeResults .ui-widget.ui-widget-content {
+	border: none!important;
 }
