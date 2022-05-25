@@ -938,12 +938,6 @@ function cleanupDataset(data){
 				delete feature.properties.long;
 				feature.properties.when = {"timespans": [{"start": {"in":feature.properties.Founded},"end": {"in":feature.properties.Dissolved}}],"label":"Period from Foundation to Dissolution"}
 				feature['@id']=data.indexing.identifier+'/'+j;
-//				if(feature.hasOwnProperty('depictions') && feature.depictions[0]['@id'].startsWith('https://maps.google.com/maps?q=&layer=c&cbll=')){
-//					if(!feature.hasOwnProperty('links')) feature.links = [];
-//					feature.links.push({"type":"seeAlso","identifier":feature.depictions[0]['@id'],"label":feature.depictions[0].title});
-//					delete feature.depictions;
-//				}
-//				feature.depictions = [{"@id":"https://maps.google.com/maps?q=&layer=c&cbll="+feature.geometry.coordinates[1]+","+feature.geometry.coordinates[0],"title":"Google Street View"}];
 				delete feature.depictions;
 			}
 		}
@@ -952,9 +946,6 @@ function cleanupDataset(data){
 		delete feature._longitude;
 		delete feature._latitude;
 		
-//		if(feature.hasOwnProperty('descriptions') && !Array.isArray(feature.descriptions)){
-//		feature.descriptions = [feature.descriptions[0]];
-//	}
 		if(feature.hasOwnProperty('properties') && feature.properties.hasOwnProperty('description')){
 			if(!feature.hasOwnProperty('descriptions')) feature.descriptions = [];
 			feature.descriptions.push({'value':feature.properties.description});
@@ -964,7 +955,6 @@ function cleanupDataset(data){
 			feature.depictions.forEach(function(depiction){
 				if(depiction.hasOwnProperty('accreditation')){
 					depiction.accreditation = depiction.accreditation.replaceAll('�','©');
-//					depiction.accreditation = '� '+depiction.accreditation.split(' ').splice(0,1).join(' ');
 					console.log('Fixed accreditation: '+depiction.accreditation);
 				}
 			});
@@ -1420,40 +1410,6 @@ function library(el){
 						})
 					}
 					matchLibrary(0);
-					
-//					items.forEach(function(item,count){
-//						counter.html(count+1);
-//						var coordinates = item.geometry.coordinates;
-//						var range = .01*(radius/2); // Probably need to customise depending on the library in use.
-//						var selections = [];
-//						select(index, [IDBKeyRange.bound(+(coordinates[0]-range).toFixed(3), +(coordinates[0]+range).toFixed(3)),IDBKeyRange.bound(+(coordinates[1]-range).toFixed(3), +(coordinates[1]+range).toFixed(3))], function(newbody){
-//							selections.push([newbody,distance(coordinates,[newbody._longitude,newbody._latitude],6)]);
-//						}, function(){
-//							selections.sort((a, b) => a[1] - b[1]);
-//							selections = selections.slice(0,5); // Limit to 5 closest results
-//							selections.forEach(function(selection){
-//								var newbody = selection[0];
-//								lpMappings.forEach(function(mapping){
-//									for (const mappingType in mapping) {
-//										try{
-//											eval('var clone = '+mapping[mappingType]);
-//											if(!item.hasOwnProperty(mappingType)) item[mappingType] = [];
-//											item[mappingType].push(clone);
-//										}
-//										catch(err){
-//											console.log('Failed to map object.',mapping,err);
-//										}
-//									}
-//								});
-//							});
-//							rendered--; // Cannot simply check count because of asynchronicity.
-//							if(rendered == 0){
-//								dataset_formatter = new JSONFormatter(el.closest('div.json-formatter').data('data'),1,{theme:'dark'});
-//								renderJSON(el.closest('div.json-formatter'),dataset_formatter,el.parent('div').data('data'));
-//								console.log('Library linking complete.');
-//							}
-//						})
-//					});
 				}
 			},
 			"Update Library": function() {
@@ -1508,38 +1464,7 @@ function library(el){
 						});	
 					}
 					else{ // geoJSON (including Linked Places format)
-						$.each(dataset.features,function(i,feature){
-//							function findProperty(options){
-//								var result = '';
-//								$.each(options, function(i,option){
-//									if (feature.hasOwnProperty(option)) {result = feature[option]; return};
-//									if (feature.properties.hasOwnProperty(option)) {result = feature.properties[option]; delete trace.properties[option]; return};
-//									if (option=='toponym' && feature.hasOwnProperty('names')) {result = feature.names[0][option]; return};
-//								});
-//								return result;
-//							}
-//							var trace = {
-//								"_longitude": feature.geometry.coordinates[0],
-//								"_latitude": feature.geometry.coordinates[1],
-//								"newbody": JSON.parse(JSON.stringify(feature)) // Clone
-//							}
-//							trace.target = {
-//								"title": findProperty(['name','title','toponym','LOCATION','Name','NAME']),
-//								"additionalType": "Place",
-//								"type": findProperty(['types','X_TYPE']),
-//								"relation": "linking",
-//								"identifier": findProperty(['url','@id','Hyperlink','HYPERLINK']),
-//								"description": findProperty(['description','descriptions']),
-//								"when": findProperty(['when'])
-//							}
-//							trace.target.geometry = {
-//								"@type": "GeoCoordinates",
-//								"longitude": feature.geometry.coordinates[0],
-//								"latitude": feature.geometry.coordinates[1]
-//							}
-							
-//							if(i>100)return;
-							
+						$.each(dataset.features,function(i,feature){							
 							try{
 								feature._longitude = feature.geometry.coordinates[0];
 								feature._latitude = feature.geometry.coordinates[1];
@@ -1589,9 +1514,6 @@ function renderJSON(target,object,data,filename=false){
 	if(data.hasOwnProperty('features')){ // Create button for downloading geoJSON points as csv
 		var csvButton = $('<button class="mapButton" title="Download basic csv">CSV</button>').prependTo(target);
 		csvButton.button().click(function(){downloadCSV($(this).parent('div').data('data'),$(this).parent('div').data('filename'));});
-//		mapButton deprecated because visualisation was crude and can be achieved with the Link/Georeference button		
-//		var mapButton = $('<button class="mapButton" title="Visualise dataset on a map">Map</button>').prependTo(target); 
-//		mapButton.button().click(function(){drawMap($(this));});
 		$('<button id="WDLP" class="APIButton" title="Link Wikidata settlements within '+radius+'km, based on best text match (Levenshtein distance algorithm).">WD</button>')
 		.prependTo(target)
 		.button()
@@ -1625,8 +1547,6 @@ function renderJSON(target,object,data,filename=false){
 		.button()
 		.click(function(){explore($(this));});
 	}
-	if(data.hasOwnProperty('traces')){
-	}
 	if(Array.isArray(data.errors) && data.errors.length>0){ // Warn of errors found when parsing uploaded file
 		var errors = $('<div class="errors" />').prependTo(target);
 		errors.append('<b>'+data.errors.length+' ignored row'+(data.errors.length==1?'':'s')+' with errors:<b/><br/>');
@@ -1634,23 +1554,6 @@ function renderJSON(target,object,data,filename=false){
 			errors.append('Row '+value.row+': '+value.message+'<br/>');
 		})
 	}
-}
-
-// Try to recognise type of uploaded file; perform conversion if found
-function identifyType(input){
-	if (input.hasOwnProperty('traces')){fields = JSON.stringify(['traces']);}
-	else if (input.hasOwnProperty('type') && input.type=='lp'){fields = JSON.stringify(['lp']);}
-	else if (input.hasOwnProperty('type') && input.type=='rld'){fields = JSON.stringify(['rld']);}
-	else if (input.hasOwnProperty('kml')){fields = JSON.stringify(['kml']);}
-	else if (input.hasOwnProperty('meta')){fields = JSON.stringify(input.meta.fields); console.log(input.meta)} // Converted from delimited text
-	else if (input.constructor === Array && input[0].hasOwnProperty('@context') && input[0]['@context']=='http://www.w3.org/ns/anno.jsonld'){fields = JSON.stringify(['annotations']);}
-	else return;
-	$.each(mappings, function(key,value){
-		if(JSON.stringify(mappings[key].fields) == fields){
-			$('#expression').val(key).selectmenu("refresh");
-			convert();
-		}
-	})
 }
 
 // Copy to clipboard
@@ -1669,6 +1572,7 @@ function clipSample(el) {
 	$temp.val(JSON.stringify(clipdata)).select();
 	document.execCommand("copy");
 	$temp.remove();
+	alert('Sample copied to clipboard.');
 }
 
 function showMap(onOff,bounds=false){
@@ -2511,38 +2415,6 @@ function GGLP(el){
 	    };
 	if(testmode) items = items.slice(testslice.page*testslice.length,(testslice.page+1)*testslice.length);
 
-	console.log('Geograph',items,el);
-	
-//	$.ajaxSetup({'async':'false'});
-//	settings.data = { i: 0 };
-//	items.forEach(function(item,j){
-//		if (item.hasOwnProperty('depictions')){
-//			item.depictions.forEach(function(depiction,i){
-//				if(depiction['@id'].indexOf('geograph.org.uk/geophotos')>0){
-//					var rx = /\[(.*)\]$/g;
-//					var arr = rx.exec(depiction.title);
-//					depiction.accreditation = arr[1];
-//					depiction.title = depiction.title.replace(' ['+arr[1]+']',''); 
-//				}
-//			});
-////			item.depictions.forEach(function(depiction,i){
-////				if(depiction['@id'].startsWith('https://www.geograph.org.uk/')){
-////					settings.url = 'https://api.geograph.org.uk/api/photo/'+depiction['@id'].split('/').pop()+'/'+geographKey+'?output=json';
-////					$.ajax(settings)
-////						.done(function(data){
-////							depiction['@id'] = data.imgserver+data.image;
-////							depiction.title = [];
-////							if(data.hasOwnProperty('comment')) depiction.title.push(data.comment.replace('/r','').replace('/n',' '));
-////							depiction.title.push('[© '+data.realname+']');
-////							depiction.title = depiction.title.join(' ');
-////							console.log("Done "+j);
-////						});
-////				}
-////			});
-//		}
-//	});
-//	$.ajaxSetup({'async':'true'});
-	
 	if(el.find('span.count').length<1) el.append('<span> [Wait: <span class="count">0</span>/'+items.length+']</span>');
 	var counter = el.find('span.count');
 	function matchItem(i){
@@ -2721,141 +2593,6 @@ function PASLP(el){
 	matchItem(itemIndex);
 }
 
-//Query API // DEFUNCT - written for LT, not LPF
-//This function should be genericised using JSONata and an API-configurations file, to allow simple addition of further API endpoints.
-function addAPIdata(el){
-	var dataset = el.parent('div').data('data');
-	dataset.traces = dataset.traces.slice(0,5); // API limits concurrent(?) requests *** TO BE ADDRESSED
-	var count = 0;
-	if(el.find('span.count').length<1) el.append('<span> [Wait: <span class="count">'+count+'</span>/'+dataset.traces.length+']</span>');
-	var counter = el.find('span.count');
-	function checkAjaxConnections(){
-		if (0 == activeAjaxConnections){
-			dataset_formatter = new JSONFormatter(dataset,1,{theme:'dark'});
-			renderJSON(el.parent('div'),dataset_formatter,dataset);
-			console.log('API requests completed.');
-		}
-	}
-	$.each(dataset.traces, function(tracekey,trace){
-		$.each(trace.body, function(bodykey,body){
-		if(body.additionalType=="Place" && body.hasOwnProperty('geometry') && body.geometry.hasOwnProperty('latitude') && body.geometry.hasOwnProperty('longitude') ){
-				var settings = {
-						beforeSend: function(xhr) {
-							activeAjaxConnections++;
-							// TO DO: Wait until less than 5
-						},
-						error: function(xhr) {
-							activeAjaxConnections--;
-							checkAjaxConnections();
-						},
-						headers: { Accept: 'application/sparql-results+json' },
-						statusCode: {
-							429: function() {
-								// TO DO: Cease requests for specified period, and resume with this one. Flag completion of each item? Or implement with a while false loop?
-						    }
-						}
-				    };				
-				switch(el.attr('id')){
-				case "WDButton": // Query Wikidata for Cultural Heritage Sites based on location
-					var sparql = sparql_base;
-					settings.data = { query: sparql.replace('%%%lng%%%',body.geometry.longitude).replace('%%%lat%%%',body.geometry.latitude).replace('%%%radius%%%',radius) }
-					$.ajax('https://query.wikidata.org/sparql',settings).then(function(data){
-						$.each(data.results.bindings, function(i,feature){
-							var newbody = {
-									"additionalType": "LinkRole",
-									"linkRelationship": "Cultural heritage site found nearby",
-									"lpo:type": ['seeAlso',feature.classLabel.value],
-									"identifier": feature.site.value,
-									"name": feature.siteLabel.value,
-									"description": feature.hasOwnProperty('siteDescription') ? feature.siteDescription.value : '',
-									"distance": feature.distance.value 
-							}
-							var coordinates = feature.geo.value.match(/-?\d+\.\d+/g);
-							newbody.geometry = {
-								"@type": "GeoCoordinates",
-								"addressCountry": "GB",
-								"longitude": coordinates[0],
-								"latitude": coordinates[1]
-							}
-							dataset.traces[tracekey].body.push(newbody);
-						});
-						count++;
-						counter.html(count);
-						activeAjaxConnections--;
-						checkAjaxConnections();
-					});
-					break;
-				case "WDSettlements": // Query Wikidata for Settlement names based on location
-					var sparql = sparql_nearby_settlements;
-					settings.data = { query: sparql.replace('%%%lng%%%',body.geometry.longitude).replace('%%%lat%%%',body.geometry.latitude).replace('%%%radius%%%',radius) }
-					var placename = body.title.split('.')[1];
-					// TO DO: Limit to 5 concurrent requests, and wait after a 429 / Retry-After response
-					$.ajax('https://query.wikidata.org/sparql',settings).then(
-						function(data,textStatus,jqXHR){
-							scores=[];
-							$.each(data.results.bindings, function(i,settlement){
-								scores.push(levenshtein(placename,settlement.placeLabel.value));
-							})
-							var indexMin = scores.indexOf(Math.min(...scores));
-							var newbody = {
-								"additionalType": "LinkRole",
-								"linkRelationship": "Corresponding Wikidata Item",
-								"identifier": data.results.bindings[indexMin].place.value,
-								"name": data.results.bindings[indexMin].placeLabel.value 
-							}
-							dataset.traces[tracekey].body.push(newbody);
-							count++;
-							counter.html(count);
-							activeAjaxConnections--;
-							checkAjaxConnections();
-						}
-					);
-					break;
-				case "PASButton": // Query Portable Antiquities Scheme API for linked data based on location
-					// Note that some results lack coordinate data
-					function processPage(page){
-						settings.url = 'https://finds.org.uk/database/search/results/lat/'+body.geometry.latitude+'/lon/'+body.geometry.longitude+'/d/'+radius+'/format/geojson/page/'+page;
-						$.ajax(settings).then(function(data){
-							$.each(data.features, function(i,feature){
-								newbody = {
-										"additionalType": "LinkRole",
-										"linkRelationship": "Artefact found nearby",
-										"lpo:type": ['seeAlso',feature.properties.objecttype],
-										"identifier": feature.properties.url,
-										"image": feature.properties.thumbnail
-								}
-								if(feature.geometry.coordinates[0]!==null){
-									// Note: 'findspot to 1km grid square level and slight obfuscation of findspot by randomised subtraction/addition of 10ths of a degree to the degraded findspot'
-									newbody.distance = distance([body.geometry.longitude,body.geometry.latitude],feature.geometry.coordinates,0); // 0 places = nearest kilometre
-									newbody.geoWithin = OSGB_WGS84(feature.properties.fourFigure)[2].geoWithin;
-//									newbody.geometry = { // The API currently returns precise, unobfuscated coordinates, which in the interest of find-site security must not be publicised
-//										"@type": "GeoCoordinates",
-//										"addressCountry": "GB",
-//										"longitude": feature.geometry.coordinates[0],
-//										"latitude": feature.geometry.coordinates[1]
-//									}
-								}
-								dataset.traces[tracekey].body.push(newbody);
-							});		
-							if(page < Math.min( 1+Math.floor((data.meta.totalResults-1)/data.meta.resultsPerPage), 10 )) { // Limit to maximum of 10 pages of results (=200 items)
-								processPage(page+1);
-							}
-							else{
-								count++;
-								counter.html(count);
-							}
-							activeAjaxConnections--;
-							checkAjaxConnections();
-						});
-					}
-					processPage(1);
-					break;
-				}
-			}
-		})
-	});	
-}
-
 $( document ).ready(function() {
 	
 	map = new maplibregl.Map({
@@ -2944,8 +2681,6 @@ $( document ).ready(function() {
 	});
 	$('#map')
 		.on('mouseenter','.linkmarker',function(e){
-//			var text = $(e.target).data('newbody').hasOwnProperty('title') ? $(e.target).data('newbody').title : $(e.target).data('newbody').name;
-//			linkMarkerPopup.setLngLat($(e.target).data('coordinates')).setHTML(text).addTo(map);
 			linkMarkerPopup.setLngLat($(e.target).data('coordinates')).setHTML($(e.target).data('popup')).addTo(map);
 		})
 		.on('mouseleave','.linkmarker',function(e){
@@ -3173,13 +2908,6 @@ $( document ).ready(function() {
 		$('#choose_input-button').removeClass('throb');
 		$('#inputs').removeClass().addClass($('#choose_input option:selected').val());
 	});
-	$('#conversions').append('<button id="assign" onclick="assign();" title="Assign CSV columns to Linked Places Format properties.">Assign CSV Columns</button>');
-// These lines for functionality now deprecated:	
-//	$('#expression')
-//	.after('<button onclick="convert();" title="Convert uploaded dataset using chosen type">Convert</button>')
-//	.after('<button onclick="$(\'#datafields\').text(fields);$(\'#modal\').dialog(\'open\')"  title="Paste new JSONata expression to be used for this conversion type">Edit JSONata</button>')
-//	.after('<button onclick="download(mappings,\'mappings.json\');" title="Download all conversion definitions to local filesystem">Download mappings.json</button>')
-//	;
 	$('button,input:file').button();
 	$('#choose_input-button,#assign').addClass('throb');
 	$('#datafile_url').addClass('ui-button ui-corner-all ui-widget datafile_url');
@@ -3282,12 +3010,6 @@ $( document ).ready(function() {
 		indexing = data;
 	},'json');
 	
-//	// Fetch NT Collections data
-//	$.get('./vocabularies/NT-Collections.json?'+Date.now(), function(data) { // Do not use any cached file
-//		NTCollections = data.data;
-//		console.log('NTCollections',NTCollections);
-//	},'json');
-	
 	// Populate JSONata expressions drop-down list
 	$.get('./templates/mappings.json?'+Date.now(), function(data) { // Do not use any cached file
 		mappings = data;
@@ -3329,40 +3051,17 @@ $( document ).ready(function() {
 		var fileparts = filename.split(/[#?]/)[0].split('.');
 		console.log(filename,fileparts);
     	const fileExtension = fileparts.pop().trim();
+    	if(fileExtension=='csv'){
+    		$('body').removeClass('noconversion');
+    		$('#conversions').insertBefore('div.arrow');
+    	}
+    	else {
+    		$('body').addClass('noconversion');
+    	}
 		$('#assign').hide();
     	if(delimited.includes(fileExtension)){ // Delimited text input
     		$('#assign').show();
     		if(fileparts.length>1 && ['lp','lt'].includes(fileparts.pop().trim())){ // Convert to Linked Places format (geoJSON-T)
-    			
-    			if(filename=='VCH-Places.lp.csv'){ //  Load Vocabulary
-    				var VCHVocabulary = {'terms':[]};
-    				$.ajaxSetup({async:false});
-    				$.get('./vocabularies/VCH-terms.json?'+Date.now(), function(data) { // Do not use any cached file
-    					data.data.forEach(function(term){
-    						VCHVocabulary.terms[term['VCH-term']] = term;
-    					});
-					},'json');
-    				$.ajaxSetup({async:true});
-    			}
-    			
-    			if(filename=='PAS_Warwickshire_v2.lt.csv'){ //  Load Vocabularies
-    				var PASMoDVocabulary = {'terms':[]};
-    				$.ajaxSetup({async:false});
-    				$.get('./vocabularies/PAS-MoDs.json?'+Date.now(), function(data) { // Do not use any cached file
-    					data.forEach(function(term){
-    						PASMoDVocabulary.terms[term.itemLabel] = term.item;
-    					});
-					},'json');
-    				$.ajaxSetup({async:true});
-    				var PASObjVocabulary = {'terms':[]};
-    				$.ajaxSetup({async:false});
-    				$.get('./vocabularies/PAS-objects.json?'+Date.now(), function(data) { // Do not use any cached file
-    					data.forEach(function(term){
-    						PASObjVocabulary.terms[term.value] = term;
-    					});
-					},'json');
-    				$.ajaxSetup({async:true});
-    			}
     			
     			function transformHeader(header,i){
         			var newHeader = /\{(.*)/.exec(header);
@@ -3394,6 +3093,7 @@ $( document ).ready(function() {
 						}
 					}
 				});
+				
 				if(input.hasOwnProperty('citation') && typeof input.citation === 'string'){
 	    			const {Cite} = require('citation-js');
 	    			const citation = new Cite(input.citation);
@@ -3514,205 +3214,6 @@ $( document ).ready(function() {
         				}   				
         			});
         			
-        			if(filename=='IV_tps.lp.csv'){
-        				try {
-        					delete feature.geometry.certainty;
-        				}
-        				catch(err) {console.log(err,feature)};
-        				feature.properties.ccodes = ['GB'];
-        				feature.when = {'label':'Listed in 1680','timespans':[{'start':{'latest':'1680'}},{'end':{'earliest':'1680'}}]};
-        				feature.names = [{'toponym':feature.properties.title,'when':feature.when}];
-        				feature.relations = [
-        					{'relationType':'gvp:broaderPartitive','relationTo':'https://w3id.org/locolligo/historic-counties/'+encodeURIComponent(feature.properties.historic_county),'label':'part of '+feature.properties.historic_county+' (UK)','when':{'timespans':[{'end':{'earliest':'1974'}}]}},
-        					{'relationType':'gvp:broaderPartitive','relationTo':'https://w3id.org/locolligo/historic-hundreds/'+encodeURIComponent(feature.properties.hundred),'label':'part of '+feature.properties.hundred+' (UK county subdivision)','when':{'timespans':[{'end':{'earliest':'1974'}}]}}
-        				];
-        				delete feature.properties.historic_county;
-        				delete feature.properties.hundred;
-        				if(!feature.hasOwnProperty('types')) feature.types = [];
-        				if(feature.properties.hasOwnProperty('glyphs') && feature.properties.glyphs!==''){
-	        				var glyphs = feature.properties.glyphs.split('|');
-	        				glyphs.forEach(function(glyph){
-	        					if(glyph.startsWith('settlement')){
-	        						feature.types.push({'label':'human settlement','identifier':'wd:Q486972','sourceLabels':[{'label':glyph}]});
-	        					}
-	        					else if(glyph.startsWith('seat')){
-	        						feature.types.push({'label':'family seat','identifier':'wd:Q168719','sourceLabels':[{'label':glyph}]});
-	        					}
-	        					else if(glyph.startsWith('market')){
-	        						feature.types.push({'label':'market town','identifier':'wd:Q18511725','sourceLabels':[{'label':glyph}]});
-	        					}
-	        					else if(glyph.startsWith('parish')){
-	        						feature.types.push({'label':'parish','identifier':'wd:Q102496','sourceLabels':[{'label':glyph}]});
-	        					}
-	        					else if(glyph.startsWith('parliament')){
-	        						feature.types.push({'label':'electoral district','identifier':'wd:Q192611','sourceLabels':[{'label':glyph}]});
-	        					}
-	        					else if(glyph.startsWith('society')){
-	        						feature.types.push({'label':'college','identifier':'wd:Q189004','sourceLabels':[{'label':glyph}]});
-	        					}
-	        					else if(glyph.startsWith('seaport')){
-	        						feature.types.push({'label':'seaport','identifier':'wd:Q15310171','sourceLabels':[{'label':glyph}]});
-	        					}
-	        				});
-        				}
-        				else feature.types.push({'label':'place','identifier':'wd:Q98929991'});
-        			}
-        			
-        			if(filename=='VCH-Places.lp.csv'){
-        				
-        				if(feature.hasOwnProperty('VCH-Links') && feature['VCH-Links']!==''){
-	        				if(!feature.hasOwnProperty('links')) feature.links = [];
-	        				var vchlinks = feature['VCH-Links'].split(',');
-	        				vchlinks.forEach(function(vchlink){
-	        					feature.links.push({'type':'seeAlso','identifier':'http://www.british-history.ac.uk/report.aspx?compid='+vchlink.split(' - ')[1]});
-	        				});
-        				}
-	    				delete feature['VCH-Links'];
-	    				
-        				if(!feature.hasOwnProperty('names')) feature.names = [];
-	    				if(feature.properties.hasOwnProperty('KainOliverName') && feature.properties.KainOliverName !== '') feature.names.push({
-	    					'toponym':feature.properties.KainOliverName,
-	    					'citations':[{
-//	    						'label':'Kain, R.J.P., Oliver, R.R. (2001). Historic Parishes of England and Wales : an Electronic Map of Boundaries before 1850 with a Gazetteer and Metadata. [data collection]. UK Data Service.',
-	    						// Label omitted because duplication bloats the dataset. The DOI is sufficient to identify the source.
-	    						'@id':'DOI:10.5255/UKDA-SN-4348-1'
-	    					}]
-	    				});
-	    				delete feature.properties.KainOliverName;
-	    				feature.names.push({'toponym':feature.properties.title});
-	    				if(feature.properties.hasOwnProperty('extranames') && feature.properties.extranames!==''){
-	    					var extranames = feature.properties.extranames.split(',');
-	        				extranames.forEach(function(extraname){
-	        					if(extraname!=='') feature.names.push({'toponym':extraname});
-	        				});
-		    				delete feature.properties.extranames;
-	    				}
-	    				
-        				if(!feature.hasOwnProperty('types')) feature.types = [];
-        				feature.types.push({
-        					"identifier":"wd:Q7884789",
-        					"label":"toponym",
-        					"when":{"timespans":[{"start":{"latest":"1848"}}]}
-        				});
-        				
-        				// do categories permit additional types? Yes, but better to re-extract for multiple types.        		
-        				if (typeof VCHtypes == "undefined") {
-        					VCHtypes = [];
-//        					qualifiers = 'ancient|celebrated|civil|considerable|consolidated|district|ecclesiastical|exclusive|extra-parochial|fashionable|formerly a|formerly an|head of a|head of the|incorporated|independent|inland|manufacturing|metropolitan|newly-enfranchised|newly-erected|parochial|representative|rising|separate|small|suburban|unincorporated';
-//        					terms = 'bathing-place|borough|capital of the county|chapelry|chapelry district|church district|cinque-port|city|city and county|consolidated parishes|county of itself|district|district parish|division or township|extra-parochial|hamlet|hundred|isle|jurisdiction|liberty|market-town|naval arsenal|parish|place|port|post-town|precinct|sea-port|suburb|town|township|two ecclesiastical districts|tything|union|union of itself|united parishes|village|ward|watering-place';
-        				}
-        				
-        				if(feature.descriptions[0].hasOwnProperty('value')){
-        					var parts = feature.descriptions[0].value.split(/,\s(in |chiefly in|comprising|in the|locally in|partly in|partly within|situated|\d+\smile)/i);
-	        				if (parts.length>1 && parts[0].length<1000){
-	        					let result;
-	        					let VCHtext = parts[0];
-	        					let VCHregex = /(?<temporal>(?:(?:ancient|anciently a|formerly a|formerly an|new|newly-enfranchised|newly-erected)\s*)*)(?<qualifiers>(?:(?:celebrated|civil|considerable|consolidated|constituting the|distinct|district|ecclesiastical|exclusive|extra-episcopal|extra-parochial|fashionable|forming a|forming one|forming the|head of a|head of the|incorporated|independent|inland|manufacturing|member of the|metropolitan|municipal|parochial|portion of the|representative|rising|separate|small|suburban|two|unincorporated|which form|which has|within the)\s*)*)(?<term>bathing-place|borough|capital of the county|chapelry|chapelry district|church district|cinque-port|city|city and county|consolidated parishes|county of itself|district|district parish|division|division or township|extra-parochial|hamlet|hundred|hundred of itself|isle|jurisdiction|liberty|liberties|manor|market-town|naval arsenal|parish|place|port|post-town|posting-place|precinct|sea-port|seat of a diocese|suburb|town|township|two ecclesiastical districts|tything|union|union of itself|united parishes|village|ward|watering-place)/gi;
-	        					while ((result = VCHregex.exec(VCHtext)) !== null) {
-	        						var key = (result.groups.qualifiers.toLowerCase().trim()+' '+result.groups.term.toLowerCase().trim()).trim();
-	        						if(!(key in VCHVocabulary.terms)) {
-	        							key = result.groups.term.toLowerCase().trim();
-//	        							console.log('Switched key');
-	        						}
-	        						if(key in VCHVocabulary.terms){
-		        						const temporalRegex = /formerly|anciently a/;
-		        						var past = result.groups.temporal.toLowerCase().match(temporalRegex);
-		        						if(past) {
-		        							when = {"timespans":[{"start":{"latest":"1840"},"end":{"latest":"1847"}}]};
-//		        							console.log(i+' past');
-		        						}
-		        						else when = {"timespans":[{"start":{"latest":"1848"}}]};
-	        							feature.types.push({
-	        	        					"identifier":VCHVocabulary.terms[key]['WD-url'],
-	        	        					"label":VCHVocabulary.terms[key]['WD-label'],
-	        	        					"sourceLabels":[{"label":VCHVocabulary.terms[key]['VCH-term']}],
-	        	        					"when":when
-	        	        				});
-	        						}
-	        						else{
-//	        							VCHtypes.push(key);
-	        							console.log(i,result.groups);
-	        						}
-		        				}
-	        					
-	        					VCHregex = /(?<test>([^\s]*\s(?:railway)[\s,][^\s]*))/gi;
-	        					while ((result = VCHregex.exec(feature.descriptions[0].value)) !== null) {
-	        						var key = result.groups.test.toLowerCase().trim();
-//	        						VCHtypes.push(key);
-//	        						console.log(key);
-	        						feature.types.push({
-        	        					"identifier":"wd:Q109258987",
-        	        					"label":"railway node",
-        	        					"sourceLabels":[{"label":"railway"}],
-        	        					"when":{"timespans":[{"start":{"latest":"1848"}}]}
-        	        				});
-		        				}
-	        					
-	        					VCHregex = /(?<string>population\sof\s(?:about\s)*(?<number>[,\d]*)\s(?:people|persons))/gi;
-	        					while ((result = VCHregex.exec(feature.descriptions[0].value)) !== null) {
-	        						var population = parseInt(result.groups.number.replace(',',''),10);
-//	        						console.log('Population',result.groups.number,population);
-	        						feature.properties.population = population;
-		        				}
-	        					VCHregex = /(?<string>\s(?:about\s)*(?<number>[,\d]*)\s(?:inhabitants))/gi;
-	        					while ((result = VCHregex.exec(feature.descriptions[0].value)) !== null) {
-	        						var population = parseInt(result.groups.number.replace(',',''),10);
-//	        						console.log('Inhabitants',result.groups.number,population);
-	        						feature.properties.population = population;
-		        				}
-	        					
-
-	        					VCHtypes = [];
-	        					VCHregex = /(?<test>[\s>](?<types>(?<type>agricultural|agricultural and garden|blue|blue-cap|blue-coat|bluecoat|boys'|british|catholic|central|charity|charter-house|church|church of england|classical|colleges|collegiate|commercial|dame's|daughters'|day|diocesan|dissenting|endowed|endowment|english|evening|first|foreign|free|free grammar|friends'|girls'|government|grammar|green|green-coat|hospital|infant|infants'|kirk-leatham|lancasterian|latin|lower|marine|mathematical|mechanical|merchant-tailors'|middle|mixed|national|naval|parochial|parochial\)|preparatory|private|proprietary|public|reading|red-boys'|red-sleeve|second|secondary|shire-green|singing|song|spinning|sunday|tailors'|upper|vicar's|weaver-trust|writing)*(?:<\/emph>")?|(?<untyped>[^\s,>]*))[,]*(?:\sschool)[s]*[,.\s])/gi;
-	        					while ((result = VCHregex.exec(feature.descriptions[0].value)) !== null) {
-//	        						console.log(result);
-	        						if('type' in result.groups && result.groups.type!==undefined){
-		        						var type = result.groups.type.toLowerCase().trim();
-		        						VCHtypes.push(type);
-//		        						console.log(type);
-	        						}
-	        						if('untyped' in result.groups && result.groups.untyped!==undefined){
-		        						var untyped = result.groups.untyped.toLowerCase().trim();
-		        						if(untyped!=='flemish') VCHtypes.push('unspecified');
-//		        						console.log(type);
-	        						}
-		        				}
-	        					VCHtypes = VCHtypes.filter(arrayUnique).sort();
-	        					if(VCHtypes.length>0) feature.properties.schools = VCHtypes;
-	        					
-	        				}
-	        				else{
-	        					console.log(i,parts.length, parts[0].length);
-	        				}
-//	        				if(feature.descriptions[0].value.length>900) {
-////	        					console.log (i+': reduced from '+feature.descriptions[0].value.length);
-//	        					feature.descriptions[0].value = feature.descriptions[0].value.substring(0,895)+'...';
-//	        				}
-        				}
-        				else{
-        					console.log("Deleted",i,feature.descriptions[0]);
-        					delete feature.descriptions[0];
-        				}
-        				
-        			}
-        			
-        			if(filename=='PAS_Warwickshire_v2.lt.csv'){
-        				if(feature.relations[1].hasOwnProperty('label')){
-        					if(feature.relations[1].label.toLowerCase() in PASMoDVocabulary.terms){
-        						feature.relations[1].relationTo = PASMoDVocabulary.terms[feature.relations[1].label.toLowerCase()];
-            				}
-        					else console.log('PAS MoD not found: '+feature.relations[1].label);
-        				}
-        				try{
-        					var PAS_type = PASObjVocabulary.terms[feature.properties.type.replace(' ','+')];
-            				feature.types = [{'label':PAS_type.itemLabel,'identifier':PAS_type.item,'sourceLabels':[{'label':feature.properties.type,'lang':'en'}]}];
-            				delete feature.properties.type;
-        				}
-        				catch{
-            				feature.types = [{'label':'Not linked to vocabulary','identifier':'wd:Q83564242','sourceLabels':[{'label':feature.properties.type,'lang':'en'}]}];
-        				}
-        			}
-        			
         			// TO DO: add .relations.broaderPartitive items based on feature.geometry.accuracy, using GeoNames API to identify settlements, counties, or countries based on Point location.
         			// - also allow for numeric accuracy values, adding a geoWithin GeoCircle with geoRadius
         			// - also allow for grid values, adding a geoWithin bounding box
@@ -3801,132 +3302,8 @@ $( document ).ready(function() {
 			input_truncated = input; // TO DO: Find generic method for truncation, to avoid browser overload on expansion of large arrays; could easily be fixed for geoJSON.
     	}
     	else{ // Assume generic JSON input
-    		input = JSON.parse(filecontent);
-    		if(filename.startsWith('MonasteryQuest')){
-    			input.features.forEach(function(feature,i){
-    				
-    				feature.properties.when.timespans[0].start.in = feature.properties.Founded;
-    				
-    				if(feature.hasOwnProperty('types')){
-        				var deletions=[];
-        				feature.types.forEach(function(type,i){
-        					if(type.hasOwnProperty('identifier') && ['aat:300008375','wd:Q486972'].includes(type.identifier)) deletions.push(i);
-        				});
-        				deletions.reverse().forEach(function(i){
-        					feature.types.splice(i,1);
-        				});
-        			}
-    				else feature.types = [];
-    				
-    				var founded = String(feature.properties.Founded).replaceAll('~','').replaceAll(',','').split('.')[0].split('-')[0].split('/')[0];
-    				if(founded>=1500){
-    					feature.types.push({'identifier':'wd:Q7017','label':'16th-century'});
-    				}
-    				else if(founded>=1400){
-    					feature.types.push({'identifier':'wd:Q7018','label':'15th-century'});
-    				}
-    				else if(founded>=1300){
-    					feature.types.push({'identifier':'wd:Q7034','label':'14th-century'});
-    				}
-    				else if(founded>=1200){
-    					feature.types.push({'identifier':'wd:Q7049','label':'13th-century'});
-    				}
-    				else if(founded>=1100 || feature.properties.Founded.includes('Temp Henry')){
-    					feature.types.push({'identifier':'wd:Q7061','label':'12th-century'});
-    				}
-    				else if(founded>=1000){
-    					feature.types.push({'identifier':'wd:Q7063','label':'11th-century'});
-    				}
-    				else if(founded>=900){
-    					feature.types.push({'identifier':'wd:Q8052','label':'10th-century'});
-    				}
-    				else if(founded>=800){
-    					feature.types.push({'identifier':'wd:Q8083','label':'9th-century'});
-    				}
-    				else if(founded>=700){
-    					feature.types.push({'identifier':'wd:Q8086','label':'8th-century'});
-    				}
-    				else if(founded>=600){
-    					feature.types.push({'identifier':'wd:Q8089','label':'7th-century'});
-    				}
-    				else if(founded>=500){
-    					feature.types.push({'identifier':'wd:Q8090','label':'6th-century'});
-    				}
-    				else {
-    					feature.types.push({'identifier':'wd:Q12069528','label':'Foundation undated'});
-    					console.log('Foundation not categorised: '+feature.properties.title+' (#'+i+') '+feature.properties.Founded);
-    				}
-
-    				if(feature.properties.Type.includes('Cathedral')){
-    					feature.types.push({'identifier':'wd:Q2977','label':'Cathedral'});
-    				}
-    				if(feature.properties.Type.includes('Priory')){
-    					feature.types.push({'identifier':'wd:Q2750108','label':'Priory'});
-    				}
-    				else if(feature.properties.Type.includes('Abbey')){
-    					feature.types.push({'identifier':'wd:Q160742','label':'Abbey'});
-    				}
-
-//    				if(feature.properties.Order.includes('Double House')){
-//    					feature.types.push({'identifier':'wd:Q6021560','label':'nunnery'});
-//    					feature.types.push({'identifier':'wd:Q44613','label':'monastery'});
-//    				}
-//    				else if(feature.properties.Order.includes('(Women)')){
-//    					feature.types.push({'identifier':'wd:Q6021560','label':'nunnery'});
-//    				}
-//    				else feature.types.push({'identifier':'wd:Q44613','label':'monastery'});
-//
-//    				if(feature.properties.Order.includes('Augustinian')){
-//    					feature.types.push({'identifier':'wd:Q214528','label':'Augustinian'});
-//    				}
-//    				else if(feature.properties.Order.includes('Benedictine')){
-//    					feature.types.push({'identifier':'wd:Q131132','label':'Benedictine'});
-//    				}
-//    				else if(feature.properties.Order.includes('Cistercian')){
-//    					feature.types.push({'identifier':'wd:Q166861','label':'Cistercian'});
-//    				}
-//    				else if(feature.properties.Order.includes('Premonstratensian')){
-//    					feature.types.push({'identifier':'wd:Q339332','label':'Premonstratensian'});
-//    				}
-//    				else if(feature.properties.Order.includes('Cluniac')){
-//    					feature.types.push({'identifier':'wd:Q1529391','label':'Cluniac'});
-//    				}
-//    				else if(feature.properties.Order.includes('Knights Hospitaller')){
-//    					feature.types.push({'identifier':'wd:Q187549','label':'Knights Hospitaller'});
-//    				}
-//    				else if(feature.properties.Order=='Carthusian'){
-//    					feature.types.push({'identifier':'wd:Q220979','label':'Carthusian'});
-//    				}
-//    				else if(feature.properties.Order.includes('Gilbertine')){
-//    					feature.types.push({'identifier':'wd:Q770486','label':'Gilbertine'});
-//    				}
-//    				else if(feature.properties.Order=='Knights Hospitaller (Formerly Templar)'){
-//    					feature.types.push({'identifier':'wd:Q41300','label':'Templar'});
-//    				}
-//    				else if(feature.properties.Order=='Trinitarian'){
-//    					feature.types.push({'identifier':'wd:Q917518','label':'Trinitarian'});
-//    				}
-//    				else if(feature.properties.Order=='Tironensian'){
-//    					feature.types.push({'identifier':'wd:Q33645010','label':'Tironensian'});
-//    				}
-//    				else if(feature.properties.Order=='Bonhommes'){
-//    					feature.types.push({'identifier':'wd:Q4975709','label':'Bonhommes'});
-//    				}
-//    				else if(feature.properties.Order=='Bethlemite'){
-//    					feature.types.push({'identifier':'wd:Q2588888','label':'Bethlemite'});
-//    				}
-//    				else if(feature.properties.Order=='Bridgettine Double House'){
-//    					feature.types.push({'identifier':'wd:Q952578','label':'Bridgettine'});
-//    				}
-//    				else console.log('Not categorised: '+feature.properties.Order);
-//    				delete feature.properties.Order;
-    				
-    			});
-    		}
-    		
+    		input = JSON.parse(filecontent);    		
     		cleanupDataset(input);
-//    		indexingLinks(input);
-    		
     		input_truncated = input; // TO DO: Find generic method for truncation, to avoid browser overload on expansion of large arrays; could easily be fixed for geoJSON.
     	}
     	
@@ -3946,122 +3323,7 @@ $( document ).ready(function() {
     			}
     		});
     		console.log(certainty);
-    	}    
-		
-		if(filename.startsWith("ArtUK")){
-			function getArtUK(i){
-//				if(i==3) return;
-				if(i==input.features.length) return;
-				var feature = input.features[i];
-				if(feature.properties.hasOwnProperty('title')){
-					getArtUK(i+1);
-					return;
-				}
-				try {
-					$.ajax({
-						  url: 'https://descartes.emew.io/LaNC/artuk.php?url=https://artuk.org/visit/venues/'+feature.uuid,
-						  dataType: 'json',
-						  type: 'POST',
-						  async:false,
-						  success: function (data) {
-				                console.log(i+'/'+input.features.length,data);
-								feature.properties.title = data.title;
-		    					feature.descriptions = [{'value':data.description}];
-		    					feature.links = [{'type':'subjectOf','identifier':data.url}];
-		    					feature.depictions = [{'@id':data.img}];
-				            },
-				            error: function (xhr, status, error) {
-				                console.log(xhr);
-				                console.log(status);
-				                console.log(error);
-				            },
-				            complete: function(jqXHR, textStatus) {
-				            	
-				            }
-					}).done(function(){getArtUK(i+1);});
-				}
-				catch {
-					getArtUK(i+1);
-				}
-			}
-			getArtUK(0);
-		}	
-		
-//		if(filename.startsWith("VisitPlus")){
-//	//		NTCollections
-//			input.features.forEach(function(feature){
-//				if(feature.relations[0].relationTo=='www.nationaltrust.org.uk'){
-//					var collection = NTCollections.filter(obj => {return obj['Website'] === feature.properties.url})[0];
-//					console.log(collection);
-//					if(collection!==undefined){
-//						var url = collection['Collections Trust Place Page '] || collection['Collection Search Page'] || false;
-//						if (url!==false){
-//							if(!feature.hasOwnProperty('links')) feature.links = [];
-//							feature.links.push({'type':'seeAlso','identifier':url,'label':'National Trust Collection: '+collection.NT_Name});
-//							console.log(url);
-//						}
-//					}
-//				}
-//			});
-//		}	
-		
-		if(filename.startsWith("Mapping-Museums")){
-			function moveDescription(i){
-//				if(i==3) return;
-				if(i==input.features.length) return;
-				var feature = input.features[i];
-				
-				if(!feature.hasOwnProperty('descriptions')){
-					feature.descriptions = [{'value':feature.properties.description}];
-					delete feature.properties.description;
-				}
-				moveDescription(i+1);
-			}
-			moveDescription(0);
-		}	
-    	
-    	// DELETE AFTER SINGLE USE - Populate Hollar types
-//    	input.features.forEach(function(feature){
-//    		feature.types = [{
-//    			"identifier":"wd:Q486972",
-//    			"label":"human settlement",
-//    			"when":{"timespans":[{"start":{"latest":"1660"},"end":{"earliest":"2021"}}]}
-//    		}];
-//    		if(feature.name.toLowerCase().indexOf('church')>-1){
-//    			feature.types[0].identifier = 'wd:Q16970';
-//    			feature.types[0].label = 'church building';
-//    		}
-//    		else if(feature.name.toLowerCase().indexOf('bridge')>-1 && !feature.name.toLowerCase().indexOf('uxbridge')>-1){
-//    			feature.types[0].identifier = 'wd:Q12280';
-//    			feature.types[0].label = 'bridge';
-//    		}
-//    		else if(feature.name.toLowerCase().indexOf('castle')>-1){
-//    			feature.types[0].identifier = 'wd:Q23413';
-//    			feature.types[0].label = 'castle';
-//    		}
-//    		else if(feature.name.toLowerCase().indexOf('colliery')>-1){
-//    			feature.types[0].identifier = 'wd:Q959309';
-//    			feature.types[0].label = 'coal mine';
-//    		}
-//    		else if(feature.name.toLowerCase().indexOf('hall')>-1 || feature.name.toLowerCase().indexOf('woodstock')>-1 || feature.name.toLowerCase().indexOf('lodge')>-1 || feature.name.toLowerCase().indexOf('theobalds')>-1 || feature.name.toLowerCase().indexOf('hampton court')>-1){
-//    			feature.types[0].identifier = 'wd:Q4919932';
-//    			feature.types[0].label = 'stately home';
-//    		}
-//    		else if(feature.name.toLowerCase().indexOf('arrows')>-1 || feature.name.toLowerCase().indexOf('newgate')>-1 || feature.name.toLowerCase().indexOf('gravestones')>-1 || feature.name.toLowerCase().indexOf('high cross')>-1){
-//    			feature.types[0].identifier = 'wd:Q4989906';
-//    			feature.types[0].label = 'monument';
-//    		}
-//    		else if(feature.name.toLowerCase().indexOf('spa')>-1){
-//    			feature.types[0].identifier = 'wd:Q1341387';
-//    			feature.types[0].label = 'spa';
-//    		}
-//    		else if(feature.name.toLowerCase().indexOf('st. robert')>-1){
-//    			feature.types[0].identifier = 'wd:Q513550';
-//    			feature.types[0].label = 'hermitage';
-//    		}
-//    		feature.properties.title = feature.name;
-//    		delete feature.name;
-//		});
+    	}   
     	
     	if (typeof VCHtypes != "undefined") {
     		VCHtypes = VCHtypes.filter(arrayUnique).sort();
@@ -4069,10 +3331,8 @@ $( document ).ready(function() {
     	}
     	
     	$('#source_block').appendTo('#darkroom');
-    	$('#conversions').insertBefore('.arrow');
     	input_formatter = new JSONFormatter(input_truncated,1,{theme:'dark'});
 		renderJSON($('#source'),input_formatter,input,filename);
-    	identifyType(input);		
 	}
 	
 	// Process uploaded file

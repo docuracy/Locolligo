@@ -66,18 +66,18 @@ For details see https://github.com/docuracy/Locolligo/blob/main/LICENSE.md
 					</td>
 				</tr>
 			</table>
-			<span class="bg-text">tsv kml json xml csv</span>
+			<span class="bg-text">xLPF LPF TSV GeoJSON JSON XML CSV</span>
 		</span>
 	</div>
 	<div class="arrow"><div class="arrow__body"></div></div>
-	<div id="output" class="json-formatter"><span class="initial" title="After choosing an input dataset, you may adjust the conversion type. Conversions are not yet configurable.">{output}</span><span class="bg-text">csv geoJSON-T JSON-LD ttl</span></div>
+	<div id="output" class="json-formatter"><span class="initial" title="After choosing an input dataset, you may adjust the conversion type. Conversions are not yet configurable.">{output}</span><span class="bg-text">Extended Linked Places Format (xLPF)</span></div>
 	<div id="footer">Copyright &copy; 2021 Stephen Gadd - All Rights Reserved<br/>Released under <a href="https://github.com/docuracy/Locolligo/blob/main/LICENSE.md">CC-BY 4.0 International Licence</a></div>
 	<div id="modal" title="JSONata Expression"><p>Paste unescaped JSONata expression here: converted code will be copied to the clipboard and temporarily assigned to the selected conversion type.</p><p>Afterwards, download and replace your mappings.json file to make the assigment permanent.</p><textarea id="JSONata_area" rows="5" cols="67"></textarea><div id="datafields"></div></div>
 	<div id="map"></div>
 	<div id="darkroom">
 		<div id="conversions">
-			<label for="expression">Conversion type:</label><select name="expression" id="expression"></select>
-		</div>
+			<button id="assign" onclick="assign();" title="Assign CSV columns to Linked Places Format properties.">Assign CSV Columns</button>
+		</div> 
 		<div id="layerSelector" class="expandingButton">
 			<span class="fence"></span>
 			<div class="layerGroup"></div>

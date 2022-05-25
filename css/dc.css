@@ -25,6 +25,9 @@ body {
     background-repeat: no-repeat;
     background-size: 1887px;
 }
+body.noconversion div.arrow, body.noconversion div#output{
+	display: none;
+}
 .noscroll {
 	overflow: hidden;
 }
