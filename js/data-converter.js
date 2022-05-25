@@ -405,7 +405,7 @@ function GeoCodeDataset(el){
 	function doGeoCoding(NER=false){
 		if(NER && GoogleNER==''){
 			alert('To use the Google NER (Natural Language) API you need to '+(location.hostname=='docuracy.github.io'?'run Locolligo from your own GitHub repository, and also ':'')+'get an API key and enter it in your API-keys.js file. Please see Locolligo documentation for details.');
-			NER=true;
+			NER=false;
 		}
 		
 		function geonameOption(j,geoname){
