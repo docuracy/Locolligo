@@ -37,18 +37,23 @@ Automatically link all features in the currently-loaded dataset to features in a
 ## Upload Linked Places Format (LPF) file
 If you already have a file in Linked Places Format, you can simply upload it and begin work on it. Click on `Choose Input`, then on `Upload`, and follow the usual steps for locating a file on your device.
 
-## Convert CSV to Linked Places Format (LPF)
-> See the [Basic User Guide](./User-Guide-Basic.md) for details of how to upload CSV (tabular data) and open the `Assign CSV Columns` form. This Guide deals with more detailed configuration.
-> 
-> **Documentation yet to be written.**
+## Advanced Conversion of CSV to Linked Places Format (LPF)
+The process of assigning CSV columns outlined in the [Basic User Guide](./User-Guide-Basic.md) can be bypassed through the use of a special notation in your spreadsheet column headings. For example:
+- If you have a column headed `Place-names` containing values that are to form the `properties.title` values in your LPF file, change the heading to `Place-names {properties.title}'. You can omit the original heading if you prefer, changing it simply to `{properties.title}'.
+- If you want to insert a particular value into every record in your LPF file, you can assign it in a heading using the format `{properties.dummy="Dummy Value"}`.
+- You can add entire object structures in this way, for example:
+    - ```{links[0]={type:"primaryTopicOf",identifier:"https://en.wikipedia.org/wiki/Stephen_Gadd"}}```
+    - ```{links=[{type:"primaryTopicOf",identifier:"https://en.wikipedia.org/wiki/Stephen_Gadd"},{type:"seeAlso",identifier:"https://en.wikipedia.org/wiki/Steve_Gadd"}]}```
+- To insert a value (or object) into the root of a dataset rather than into all of its features, precede the value (or object) with `$.`. For example, ```{$.@id="https://w3id.org/locolligo/Your-Dataset_ID"}``` could be used to assign the PID of your dataset.
+
+Once you have finished editing the column headings, save or export your data as CSV, but be sure to include `.lp` before `.csv` in the filename. To achieve this, you may have to rename the file after saving it. You can then upload your `example.lp.csv` to *Locolligo* and it will be automatically converted straight to LPF.
+
+> To see a more complex example, load one of the `Try Example` files in *Locolligo*, and then click on the `CSV` button.
 
 ## Geolocate Place-Names
 > **Documentation yet to be written.**
 > 
-> **API Key needs to be set for [Named Entity Recognition (NER)](https://en.wikipedia.org/wiki/Named-entity_recognition) of place-names in text blocks using the [Google Natural Language API](https://cloud.google.com/natural-language/docs/reference/rest/v1/documents/analyzeEntities)**.
-
-## Annotate CSV Column Headers and Upload `.lp.csv`
-> **Documentation yet to be written.**
+> **An API Key needs to be set for [Named Entity Recognition (NER)](https://en.wikipedia.org/wiki/Named-entity_recognition) of place-names in text blocks using the [Google Natural Language API](https://cloud.google.com/natural-language/docs/reference/rest/v1/documents/analyzeEntities)**. This (currently) needs to be added to the other API keys in `API-keys.js`, so you will need to be using a copy of *Locolligo* in your own GitHub repository.
 
 ## Manually Link & Georeference Dataset
 1. Click on `Link/Georeference`.
@@ -71,8 +76,10 @@ If you already have a file in Linked Places Format, you can simply upload it and
     4. Click on `Link and Move` to additionally move the coordinates of your current dataset feature to those of the linkable feature.
 
 ## Automatically Link Dataset via APIs
-> **Need to set API Key**
-The API buttons are used to programmatically link all dataset features to remote web resources, based on configurable combinations of geographical distance and textual similarity. API calls are throttled to respect providers' usage limits. The preconfigured APIs are:
+The API buttons are used to programmatically link all dataset features to remote web resources, based on configurable combinations of geographical distance and textual similarity. 
+> API calls are in some cases ([GeoNames](http://www.geonames.org/login) and [Geograph](https://www.geograph.org.uk/register.php)) throttled to respect providers' usage limits, and if you are using a copy of *Locolligo* in your own GitHub repository you should acquire your own API keys and insert them in the `API-keys.js` file.
+> 
+The preconfigured APIs are:
 - `WD`: [Wikidata](https://www.wikidata.org/wiki/Wikidata:Main_Page) ('a free and open knowledge base that can be read and edited by both humans and machines').
 - `GG`: [Geograph](https://m.geograph.org.uk/) ('geographically representative photographs and information for every square kilometre of Great Britain and Ireland').
 - `WP`: Wikipedia articles linked by [GeoNames](https://www.geonames.org/export/wikipedia-webservice.html).
