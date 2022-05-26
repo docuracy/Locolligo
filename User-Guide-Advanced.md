@@ -109,3 +109,8 @@ Much of the configuration is determined by the files listed below, which can eas
 - [indexing.json](./templates/indexing.json): template for schema.org-compliant description of the dataset.
 - [libraryMappings.json](./templates/libraryMappings.json): configuration of linkage to locally-stored [Geodata Library](./User-Guide.md#local-geodata-library) items.
 - [mappings.json](./templates/mappings.json): used during development to define JSONata transformation expressions, now largely redundant.
+
+----
+
+## Suggestions / Contact
+Please tag [@docuracy](https://twitter.com/docuracy) on Twitter using the hashtag [**#Locolligo**](https://twitter.com/search?q=%23Locolligo&src=typed_query&f=live), or use other contact details given [here](https://www.linkedin.com/in/stephengadd/overlay/contact-info/).
