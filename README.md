@@ -79,6 +79,7 @@ Because *Locolligo* runs in the browser, no installation is necessary, but you a
 - [ ] Improved JSON editing, perhaps using [JSONedtr](https://github.com/LorincJuraj/JSONedtr).
 - [ ] Support for multi-location records and for line and polygon geometries.
 - [ ] Capture historical basemap citations when georeferencing.
+- [ ] Improve place-name spotting in textual data by training [Google Vertex AI](https://cloud.google.com/vertex-ai/docs/start/introduction-unified-platform) on archival descriptions.
 
 ## Limitations
 Dataset size is limited by local device memory, although a PC with 16GB of memory easily copes with 25,000 records in a 12-field csv input file. It may be possible to implement chunking if necessary for larger files. Memory use is mitigated by use of a spatially-indexed IndexedDB store for a local GeoData Library.
