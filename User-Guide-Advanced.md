@@ -39,11 +39,13 @@ If you already have a file in Linked Places Format, you can simply upload it and
 
 ## Convert CSV to Linked Places Format (LPF)
 > See the [Basic User Guide](./User-Guide-Basic.md) for details of how to upload CSV (tabular data) and open the `Assign CSV Columns` form. This Guide deals with more detailed configuration.
+> 
 > **Documentation yet to be written.**
 
 ## Geolocate Place-Names
 > **Documentation yet to be written.**
-> **Need to set API Key**
+> 
+> **API Key needs to be set for [Named Entity Recognition (NER)](https://en.wikipedia.org/wiki/Named-entity_recognition) of place-names in text blocks using the [Google Natural Language API](https://cloud.google.com/natural-language/docs/reference/rest/v1/documents/analyzeEntities)**.
 
 ## Annotate CSV Column Headers and Upload `.lp.csv`
 > **Documentation yet to be written.**
@@ -75,6 +77,15 @@ The API buttons are used to programmatically link all dataset features to remote
 - `GG`: [Geograph](https://m.geograph.org.uk/) ('geographically representative photographs and information for every square kilometre of Great Britain and Ireland').
 - `WP`: Wikipedia articles linked by [GeoNames](https://www.geonames.org/export/wikipedia-webservice.html).
 - `PAS`: [Portable Antiquities Scheme](https://finds.org.uk/) (archaeological finds in England and Wales).
+
+## Link to Vocabularies
+<img title="Example of a Type Library in use." src="./images/Screenshot-Type-Library.png" align="right" />
+
+You can link records to one or more definitions in external vocabularies, such as Wikidata, [Getty](http://vocab.getty.edu/), or [PeriodO](https://perio.do/). Look at the `VisitPlus.csv` example in the `types` folder, which is available in the *Locolligo* feature editor as illustrated here.
+
+To add your own vocabularies simply upload `.csv` files to the `types` folder. The name of the file is used in the drop-down list. Your file should have the words `label,identifer` on the first line, followed by comma-separated pairs of labels and identifiers such as `windmill,wd:Q38720`, `specialty software,http://vocab.getty.edu/aat/300433489`.
+
+Any labels selected in the Type Library will be added to the current feature in its list of `types`. These `types` are used by computers for establishing links between data records, and serve as filters in the *Peripleo* mapping software.
 
 ## Download Dataset
 There are two options for 'downloading' your dataset to your local filesystem (although in fact it is already held and processed locally in your device's memory):
