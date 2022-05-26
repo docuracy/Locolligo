@@ -10,7 +10,7 @@
 
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.6257615.svg)](https://doi.org/10.5281/zenodo.6257615)
 
-***Locolligo* is a single-page, browser-based javascript application \[*in the early stages of development*\] for the formatting, linking, and geolocation of datasets, with a particular focus on Cultural Heritage.** The greatest barrier to the visualisation, sharing, and linking of datasets that have a locational facet is the variety of ways and formats in which information has been collected, recorded, and stored. *Locolligo* seeks to dissolve that barrier. It can be downloaded and run on a standalone PC, tablet, or smartphone, without any dependency on a database or other server infrastructure; basic features will even run without an internet connection.
+***Locolligo* is a single-page, browser-based javascript application or the formatting, linking, and geolocation of datasets, with a particular focus on Cultural Heritage.** The greatest barrier to the visualisation, sharing, and linking of datasets that have a locational facet is the variety of ways and formats in which information has been collected, recorded, and stored. *Locolligo* seeks to dissolve that barrier. It can be used on a standalone PC, tablet, or smartphone, without any dependency on a database or other server infrastructure; basic features will even work without an internet connection.
 
 [<img src="./images/docuracy-logo.png" height="100" align="left">](https://docuracy.co.uk/)
 [<img src="https://britishlibrary.github.io/locating-a-national-collection/graphics/BL.svg" height="100" align="left">](https://www.bl.uk/)
@@ -22,10 +22,6 @@ This software originated as an output of the AHRC-funded [**Locating a National 
 [<img title="Pelagios Network" src="./images/pelagios.svg" height="100" align="right">](https://pelagios.org/)
 
 *Locolligo* employs standards developed by the [Pelagios Network](https://pelagios.org/), and will (for example) conform datasets for use in the Network's [*Peripleo*](https://github.com/britishlibrary/peripleo) map visualisation and [*Recogito*](https://recogito.pelagios.org/) annotation software, and generate metadata for the submission of datasets to the Network's historical geodata Registry.
-
-
-
-
 
 >It facilitates the linking of related records (*subjects* and *objects*) based on definable criteria (*predicates*):
 >* between datasets, 
@@ -70,9 +66,19 @@ Because *Locolligo* runs in the browser, no installation is necessary, but you a
     - [x] Integration with w3id.org to form PIDs to reach gazetteer: [example](https://w3id.org/locolligo/Hollar-1660/d54e04cd-c73e-4f21-8b71-8d69aaada6fe)
 - [x] Geocoding of un-gazetteered places
     - [x] Create or adjust feature coordinates with reference to basemap.
-    - [x] Use georeferenced historical basemaps as citable references.
-- [ ] [Pelagios Registry](https://pelagios.org/activities/registry/) metadata generation
-- [ ] Recogito meta-gazetteer generation
+    - [x] Use georeferenced historical basemaps.
+
+## Development Roadmap
+> Further development is as-yet unfunded, but continues on an *ad hoc* basis. If you have any particular requirements or requests, please tag [@docuracy](https://twitter.com/docuracy) on Twitter using the hashtag [#Locolligo](https://twitter.com/search?q=%23Locolligo&src=typed_query&f=live), or use other contact details given [here](https://www.linkedin.com/in/stephengadd/overlay/contact-info/). The following are ideas currently under consideration:
+- [ ] [Pelagios Registry](https://pelagios.org/activities/registry/) metadata generation.
+- [ ] Recogito meta-gazetteer generation.
+- [ ] Map preview of Geocoding suggestions.
+- [ ] Local (private) storage of API keys.
+- [ ] Use of IndexedDB for persistent storage of currently- and recently-edited datasets.
+- [ ] Export of datasets in [Turtle (TTL)](https://en.wikipedia.org/wiki/Turtle_(syntax)) or other [RDF](https://en.wikipedia.org/wiki/Resource_Description_Framework) formats.
+- [ ] Improved JSON editing, perhaps using [JSONedtr](https://github.com/LorincJuraj/JSONedtr).
+- [ ] Support for multi-location records and for line and polygon geometries.
+- [ ] Capture historical basemap citations when georeferencing.
 
 ## Limitations
 Dataset size is limited by local device memory, although a PC with 16GB of memory easily copes with 25,000 records in a 12-field csv input file. It may be possible to implement chunking if necessary for larger files. Memory use is mitigated by use of a spatially-indexed IndexedDB store for a local GeoData Library.
@@ -93,4 +99,4 @@ Much of the functionality of this software is provided through the use of pre-ex
 All original work within this software is offered under the terms of the **CC-BY 4.0 International** licence detailed [here](./LICENSE.md).
 
 ## Suggestions / Contact
-Please tag [@docuracy](https://twitter.com/docuracy) on Twitter, using the hashtags **#BL_LaNC** and **#Locolligo**
+Please tag [@docuracy](https://twitter.com/docuracy) on Twitter using the hashtag [**#Locolligo**](https://twitter.com/search?q=%23Locolligo&src=typed_query&f=live), or use other contact details given [here](https://www.linkedin.com/in/stephengadd/overlay/contact-info/).
