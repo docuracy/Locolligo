@@ -14,18 +14,13 @@ identifiers:
 url: 'https://w3id.org/locolligo'
 abstract: >-
   Locolligo is a single-page, browser-based
-  javascript application [in the early stages of
-  development] for the formatting, linking, and
-  geolocation of datasets, with a particular focus on
-  Cultural Heritage. The greatest barrier to the
-  visualisation, sharing, and linking of datasets
-  that have a locational facet is the variety of ways
-  and formats in which information has been
-  collected, recorded, and stored. Locolligo seeks to
-  dissolve that barrier.
+  javascript application for the formatting, linking, and
+  geolocation of datasets. With a particular focus on
+  Cultural Heritage, it can form a bridge between archival
+  records and maps.
 keywords:
   - >-
-    historical, geodata, location, places, linked
-    open data, linked data, place-names, cultural
-    heritage, GeoJSON, Peripleo
+    historical, geodata, linked places format, LPF, location, places,
+    linked open data, linked data, place-names, cultural heritage, 
+    GeoJSON, Peripleo
 license: CC-BY-4.0
