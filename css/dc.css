@@ -71,6 +71,7 @@ span.initial{
 .logo span{
 	color: var(--op-color);
 }
+/* This adds a yellow label to the logo text
 .logo span::after {
 	content: 'Prototype';
 	position: absolute;
@@ -83,6 +84,7 @@ span.initial{
 	-moz-transform: rotate(-15deg);    
 	transform:rotate(-15deg);
 }
+*/
 .mapboxgl-ctrl-top-right .logo span::after {
 	padding: 0em 0.2em;
     top: -1.2em;
