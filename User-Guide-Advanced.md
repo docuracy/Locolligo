@@ -3,7 +3,7 @@
 </p>
 
 # Advanced User Guide
-> This User Guide will take you through the steps required to link features in a location-based dataset to other web-resources, ready for visualisation in *Peripleo*,  and it assumes that you are already familiar with the processes discussed in the [Basic User Guide](./User-Guide-Basic.md). It is based on the initial configuration set up in the [master repository](https://github.com/docuracy/Locolligo), as outlined [below](./User-Guide-Advanced.md#configuration). If you want to customise the configuration, you will need to either 'fork' the repository into your own GitHub account or host the software elsewhere.
+> This User Guide will take you through the steps required to link features in a location-based dataset to other web-resources, ready perhaps for visualisation in *Peripleo*,  and it assumes that you are already familiar with the processes discussed in the [Basic User Guide](./User-Guide-Basic.md). It is based on the initial configuration set up in the [master repository](https://github.com/docuracy/Locolligo), as outlined [below](./User-Guide-Advanced.md#configuration). If you want to customise the configuration, you will need to either 'fork' the repository into your own GitHub account or host the software elsewhere.
 
 ## Load Example Dataset
 1. Point your browser to https://docuracy.github.io/Locolligo/ (*right-click this link to avoid losing your place in this Guide*).
@@ -51,9 +51,9 @@ Once you have finished editing the column headings, save or export your data as 
 > To see a more complex example, load one of the `Try Example` files in *Locolligo*, and then click on the `CSV` button.
 
 ## Geolocate Place-Names
-> **Documentation yet to be written.**
-> 
-> **An API Key needs to be set for [Named Entity Recognition (NER)](https://en.wikipedia.org/wiki/Named-entity_recognition) of place-names in text blocks using the [Google Natural Language API](https://cloud.google.com/natural-language/docs/reference/rest/v1/documents/analyzeEntities)**. This (currently) needs to be added to the other API keys in `API-keys.js`, so you will need to be using a copy of *Locolligo* in your own GitHub repository.
+Although *Locolligo* can detect place-names in blocks of text (using the [Google Natural Language API](https://cloud.google.com/natural-language/docs/reference/rest/v1/documents/analyzeEntities)), reliable automatic geolocation of place-names using the Geonames API is dependent on having simple, clear place-names in your dataset. Street addresses are not covered in the standard configuration of *Locolligo*, but it would be possible to reconfigure the API requests (in `/templates/APIs.json`) to use the Geonames postcode search API.
+
+> **An API Key needs to be set for [Named Entity Recognition (NER)](https://en.wikipedia.org/wiki/Named-entity_recognition) of place-names in text blocks using the [Google Natural Language API](https://cloud.google.com/natural-language/docs/reference/rest/v1/documents/analyzeEntities)**. This (currently) has to be added to the other API keys in `API-keys.js`, so you will need to be using a copy of *Locolligo* in your own GitHub repository.
 
 ## Manually Link & Georeference Dataset
 1. Click on `Link/Georeference`.
