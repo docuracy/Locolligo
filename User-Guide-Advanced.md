@@ -39,8 +39,8 @@ If you already have a file in Linked Places Format, you can simply upload it and
 
 ## Advanced Conversion of CSV to Linked Places Format (LPF)
 The process of assigning CSV columns outlined in the [Basic User Guide](./User-Guide-Basic.md) can be bypassed through the use of a special notation in your spreadsheet column headings. For example:
-- If you have a column headed `Place-names` containing values that are to form the `properties.title` values in your LPF file, change the heading to `Place-names {properties.title}'. You can omit the original heading if you prefer, changing it simply to `{properties.title}'.
-- If you want to insert a particular value into every record in your LPF file, you can assign it in a heading using the format `{properties.dummy="Dummy Value"}`.
+- If you have a column headed `Place-names` containing values that are to form the `properties.title` values in your LPF file, change the heading to ```Place-names {properties.title}```. You can omit the original heading if you prefer, changing it simply to ```{properties.title}```.
+- If you want to insert a particular value into every record in your LPF file, you can assign it in a heading using the format ```{properties.dummy="Dummy Value"}```.
 - You can add entire object structures in this way, for example:
     - ```{links[0]={type:"primaryTopicOf",identifier:"https://en.wikipedia.org/wiki/Stephen_Gadd"}}```
     - ```{links=[{type:"primaryTopicOf",identifier:"https://en.wikipedia.org/wiki/Stephen_Gadd"},{type:"seeAlso",identifier:"https://en.wikipedia.org/wiki/Steve_Gadd"}]}```
