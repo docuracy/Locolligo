@@ -557,6 +557,20 @@ function GeoCodeDataset(el){
 	    		}
 	    	}
 	    ],
+	    open: function() {
+	    	$(this).parent().promise().done(function () {
+	    		if(GoogleNER==''){
+	    			$(":button:contains('NER+GeoCode')")
+		    		.prop("disabled",GoogleNER=='')
+		    		.toggleClass("ui-state-disabled",GoogleNER=='');
+	    			$(":button:contains('GeoCode')")
+	    			.prop("title","Plain Geocoding only. See documentation for enabling of Named Entity Recognition (NER) of place-names.");
+	    		}
+	    		else{
+	    			$(":button:contains('NER+GeoCode')").prop("title","Named Entity Recognition (NER) of place-names in text blocks using the Google Natural Language API.");
+	    		}
+		    });
+	    },
 	    close: function(event, ui) {
 	        $(this).dialog('destroy').remove();
 	    }
