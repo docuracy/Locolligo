@@ -11,6 +11,7 @@
         1. Coordinates in two separate columns (headed `longitude`, `long`, `lng`,`easting`, `westing`, or `X` and `latitude`, `lat`, `northing`, `southing`, or `Y`).
         2. Coordinates in a single column headed `coordinates` or `coords`. In this case, the coordinates must be ordered as **longitude then latitude** (*not vice-versa*), separated by a comma and enclosed in square brackets (for example `[-96.840728,32.776078]`).
         3. If your location information is in one of the GB Ordnance Survey formats, in a column headed `OSGB`.
+    - **URL** Each record in your table should have a URL. Add this in a column headed `url` or `identifier` if you would like the URL to appear in the Peripleo popup.
     - **ID**: *If* each of your records has unique identifier, give their column the heading `uuid`, `id`, or `@id`.
     - **Other Columns**: Every column in your table *must* have a distinguishing heading, even if you do not intend to use its data in the mapping software.
 
