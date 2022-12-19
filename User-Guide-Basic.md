@@ -31,7 +31,7 @@
 
 9. The converted dataset is shown in the maroon-coloured box at the bottom of the screen. Click on the `Download` button within this box, and save the file.
 
-10. If you want to visualise your file using *Peripleo* in your own GitHub repository, and are following the process outlined [here](https://github.com/britishlibrary/peripleo)), you should now:
+10. If you want to visualise your file using *Peripleo* in your own GitHub repository, and are following the process outlined [here](https://github.com/britishlibrary/peripleo), you should now:
     - Go to the `docs` folder in your repository.
     - Click on `Add file` and `Upload files`.
     - Drag or choose the file containing your converted dataset and `Commit changes`.
