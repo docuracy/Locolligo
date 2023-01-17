@@ -63,7 +63,7 @@ Although *Locolligo* can detect place-names in blocks of text (using the [Google
     1. Use the left/right arrow buttons in the Feature Explorer, or
     2. Type some text into the `Filter by Title` box, or
     3. Drag and zoom the map and click on a feature of interest.
-5. A download button is provided (a down arrow) which replicated the functionality described [below](./User-Guide.md#download-dataset).
+5. A download button is provided (a down arrow) which replicates the functionality described [below](./User-Guide.md#download-dataset).
 6. The orange bin button will delete the current feature: use with caution as this action cannot be undone.
 7. The back-arrow button will revert recent changes made to the current feature; the edit history is lost if you switch to another feature.
 8. The magnifying glass button can be used to search a modern gazetteer (GeoNames) for places *within the current map view*.
