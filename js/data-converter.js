@@ -2981,6 +2981,7 @@ $( document ).ready(function() {
 				    		if(parse){
 				    			typeTest = type.label.split(' ').shift();
 				    			activeDatasetEl.data('data')[activeDataType].forEach(function(feature,j){
+								if(!feature.hasOwnProperty('types')) feature.types = [];
 				    				if((feature.types.length<=1 || feature.hasOwnProperty('_parse')) && (feature.properties.title+feature.properties.url).toUpperCase().includes(typeTest.toUpperCase())){
 				    					feature._parse = true;
 				    					feature.types.push({'identifier':type.identifier,'label':type.label});
