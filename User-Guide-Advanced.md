@@ -50,9 +50,6 @@ Once you have finished editing the column headings, save or export your data as 
 
 > To see a more complex example, load one of the `Try Example` files in *Locolligo*, and then click on the `CSV` button.
 
-## Change Basemap
-By default, *Locolligo* uses a basemap provided by [OpenStreetMap](https://www.openstreetmap.org/). When trying to geolocate historical sites (for example), you may find it convenient to use a different basemap, such as one offered by [Maptiler Cloud](https://cloud.maptiler.com/tiles/). If using a copy of *Locolligo* in your own GitHub repository, such maps can be configured following the pattern shown in the file named `js/maplibre-config.json`. You should create your own free Maptiler Cloud account and generate your own tileset URL (which includes your own unique key) for the basemap of your choice, and overwrite the default URL given in `js/maplibre-config.json`. You then need to adjust the `minzoom` and `maxzoom` values (for example 14 and 17) to define the zoom levels at which the basemap should be visible.
-
 ## Geolocate Place-Names
 Although *Locolligo* can detect place-names in blocks of text (using the [Google Natural Language API](https://cloud.google.com/natural-language/docs/reference/rest/v1/documents/analyzeEntities)), reliable automatic geolocation of place-names using the Geonames API is dependent on having simple, clear place-names in your dataset. Street addresses are not covered in the standard configuration of *Locolligo*, but it would be possible to reconfigure the API requests (in `/templates/APIs.json`) to use the Geonames postcode search API.
 
@@ -88,10 +85,17 @@ The preconfigured APIs are:
 - `WP`: Wikipedia articles linked by [GeoNames](https://www.geonames.org/export/wikipedia-webservice.html).
 - `PAS`: [Portable Antiquities Scheme](https://finds.org.uk/) (archaeological finds in England and Wales).
 
+## Run Your Own Instance of *Locolligo*
+
+If you wish to customise the configuration of *Locolligo*, for example to change the basemap or link to a custom vocabulary (both described below), you will need to copy the software either to your own server or to your own (free) GitHub repository. A guide for setting up GitHub to run *Peripleo* can be found [here](https://github.com/britishlibrary/peripleo#-setting-up-github-pages): to set up *Locolligo* instead, use `https://github.com/docuracy/Locolligo` as your 'old repository's clone URL'. 
+
+## Change Basemap
+By default, *Locolligo* uses a basemap provided by [OpenStreetMap](https://www.openstreetmap.org/). When trying to geolocate historical sites (for example), you may find it convenient to use a different basemap, such as one offered by [Maptiler Cloud](https://cloud.maptiler.com/tiles/). If you are running your own instance of *Locolligo* (see above), such maps can be configured following the pattern shown in the file named `js/maplibre-config.json`. You should create your own free Maptiler Cloud account and generate your own tileset URL (which includes your own unique key) for the basemap of your choice, and then overwrite the default URL given in `js/maplibre-config.json`. You then need to adjust the `minzoom` and `maxzoom` values (for example 14 and 17) to define the zoom levels at which the basemap should be visible.
+
 ## Link to Vocabularies
 <img title="Example of a Type Library in use." src="./images/Screenshot-Type-Library.png" align="right" />
 
-You can link records to one or more definitions in external vocabularies, such as Wikidata, [Getty](http://vocab.getty.edu/), or [PeriodO](https://perio.do/). Look at the `VisitPlus.csv` example in the `types` folder, which is available in the *Locolligo* feature editor as illustrated here.
+If you are running your own instance of *Locolligo* (see above), you can link records to one or more definitions in external vocabularies, such as Wikidata, [Getty](http://vocab.getty.edu/), or [PeriodO](https://perio.do/). Look at the `VisitPlus.csv` example in the `types` folder, which is available in the *Locolligo* feature editor as illustrated here.
 
 To add your own vocabularies simply upload `.csv` files to the `types` folder. The name of the file is used in the drop-down list. Your file should have the words `label,identifer` on the first line, followed by comma-separated pairs of labels and identifiers such as `windmill,wd:Q38720`, `specialty software,http://vocab.getty.edu/aat/300433489`.
 
