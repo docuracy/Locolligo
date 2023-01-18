@@ -50,6 +50,9 @@ Once you have finished editing the column headings, save or export your data as 
 
 > To see a more complex example, load one of the `Try Example` files in *Locolligo*, and then click on the `CSV` button.
 
+## Change Basemap
+By default, *Locolligo* uses a basemap provided by [OpenStreetMap](https://www.openstreetmap.org/). When trying to geolocate historical sites (for example), you may find it convenient to use a different basemap, such as one offered by [Maptiler Cloud](https://cloud.maptiler.com/tiles/). If using a copy of *Locolligo* in your own GitHub repository, such maps can be configured following the pattern shown in the file named `js/maplibre-config.json`. You should create your own free Maptiler Cloud account and generate your own tileset URL (which includes your own unique key) for the basemap of your choice, and overwrite the default URL given in `js/maplibre-config.json`. You then need to adjust the `minzoom` and `maxzoom` values (for example 14 and 17) to define the zoom levels at which the basemap should be visible.
+
 ## Geolocate Place-Names
 Although *Locolligo* can detect place-names in blocks of text (using the [Google Natural Language API](https://cloud.google.com/natural-language/docs/reference/rest/v1/documents/analyzeEntities)), reliable automatic geolocation of place-names using the Geonames API is dependent on having simple, clear place-names in your dataset. Street addresses are not covered in the standard configuration of *Locolligo*, but it would be possible to reconfigure the API requests (in `/templates/APIs.json`) to use the Geonames postcode search API.
 
