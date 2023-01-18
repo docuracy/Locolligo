@@ -41,8 +41,8 @@
         "id": "simple-tiles",
         "type": "raster",
         "source": "nls-OS-1888-1913",
-        "minzoom": 0,
-        "maxzoom": 0
+        "minzoom": 24,
+        "maxzoom": 24
       }
   ],
   "bearing": 0,
