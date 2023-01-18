@@ -36,6 +36,13 @@
             "source": "Open-Street-Map",
             "minzoom": 0,
             "maxzoom": 22
+        },
+        {
+            "id": "simple-tiles",
+            "type": "raster",
+            "source": "nls-OS-1888-1913",
+            "minzoom": 9999,
+            "maxzoom": 9999
         }
     ],
     "bearing": 0,
@@ -47,6 +54,14 @@
             ],
             "tileSize": 256,
             "attribution": "OpenStreetMap contributors"
+        },
+        "nls-OS-1888-1913": {
+            "type": "raster",
+            "tiles": [
+                "https://api.maptiler.com/tiles/uk-osgb1888/{z}/{x}/{y}?key=QmiXVzp1La6sH0nReb7D"
+            ],
+            "tileSize": 256,
+            "attribution": "Historical OS Map Layer, 1888-1913, by National Library of Scotland"
         }
     },
     "version": 8,
